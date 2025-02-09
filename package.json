@@ -4,7 +4,7 @@
   "description": "",
   "main": "build.js",
   "scripts": {
-    "build": "node build.js",
+    "build": "node build.js && cd frontend && npm run build && cd .. && cp -r ./dist/* .",
     "test": "cd frontend && npm run build && cd .. && nodemon test.js"
   },
   "author": "",

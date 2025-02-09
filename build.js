@@ -56,7 +56,7 @@ function extractPostData(filePath) {
 
   // 미리보기: 제목 다음의 첫 번째 문단 (빈 줄을 기준으로 분리)
   const paragraphs = mdContent.split('\n\n').map(p => p.trim()).filter(p => p);
-  console.log(paragraphs);
+  // console.log(paragraphs);
   let preview = '';
   if (paragraphs.length > 1) {
     // 첫 번째 단락은 제목이 아닐 수 있으므로, 두 번째 단락을 미리보기로 사용
