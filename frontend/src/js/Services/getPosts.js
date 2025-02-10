@@ -8,15 +8,13 @@ export async function getPosts() {
 }
 
 export async function getPost(href) {
-    try {
+
         const res = await fetch(href);
 
         if (!res.ok) {
             throw new Error(`HTTP error! status ${res.status}`);
         }
 
-        return new Post(await res.text(), href.split("/"));
-    } catch (err) {
-        return err;
-    }
+        const post = new Post(await res.text(), href.split("/"));
+        return post;
 }

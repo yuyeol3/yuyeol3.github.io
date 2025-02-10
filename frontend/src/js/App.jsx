@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
-import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { getPosts } from "./Services/getPosts.js";
 import PropTypes from 'prop-types';
 
 import '../css/App.css';
 import menu_icon from '../assets/menu-icon.svg';
 
-import Main from './Components/Main.jsx';
-import PostView from "./Components/PostView.jsx";
+import Main from './Components/Main/Main.jsx';
+import PostView from "./Components/PostView/PostView.jsx";
+import BoardView from "./Components/BoardView/BoardView.jsx";
+
+import NotFound from "./Components/NotFound.jsx";
 
 function Header({onClick}) {
     return (
@@ -33,18 +36,17 @@ function Footer() {
     );
 }
 
-function NotFound() {
-    return (
-        <div className="not-found">
-            <h1>Not Found</h1>
-        </div>
-    );
-}
 
 function SideBar({ posts, menuDisplay }) {
+    const navigate = useNavigate();
+
     const categories = posts
         ? Object.keys(posts).map((key) => (
-            <div key={key} className="sidebar-item">
+            <div
+                key={key}
+                className="sidebar-item"
+                onClick={() => {navigate(`/board-view/${key}/1`)}}
+            >
                 {key}
             </div>
         ))
@@ -54,7 +56,7 @@ function SideBar({ posts, menuDisplay }) {
         return (
 
             <div className="side-bar">
-                {categories ? categories : "로딩 중..."}
+                {categories ? categories : "Loading..."}
             </div>
         );
     }
@@ -73,15 +75,18 @@ function App() {
     const [posts, setPosts] = useState(null);
     const [menuDisplay, setMenuDisplay] = useState( window.innerWidth > 768);
 
+
     useEffect(() => {
-        async function fetchData() {
-            const data = await getPosts();
-            setPosts(data);
-            console.log(data);
-        }
-        fetchData();
+        getPosts()
+            .then(posts => {
+                setPosts(posts)
+            })
+            .catch(err=>{
+                console.log(err);
+            })
     }, []);
 
+    // if (loading) {return (<p>loading...</p>)}
 
     return (
         <div className="App" id="App">
@@ -94,6 +99,7 @@ function App() {
                     <div className="contents">
                         <Routes>
                             <Route path="/" element={<Main />} />
+                            <Route path="/board-view/:name/:page" element={<BoardView posts={posts}/>}/>
                             <Route path="/post-view/*" element={<PostView />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>

@@ -1,0 +1,36 @@
+/* 전체 Board 영역 스타일 */
+.board {
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+}
+
+/* 게시판 제목 스타일 */
+.board h1 {
+    font-size: 28px;
+    /*font-weight: 600;*/
+    margin-bottom: 16px;
+    border-bottom: 1px solid #e1e4e8;
+    padding-bottom: 8px;
+}
+
+/* 게시글 미리보기 컨테이너 */
+.post-previews {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* 각 미리보기 간 간격 */
+}
+
+/* PostPreview 컴포넌트 내부에 별도의 스타일이 없다면
+   아래와 같이 미리보기 항목에 대한 기본 스타일을 추가할 수도 있습니다. */
+.post-preview {
+    padding: 16px;
+    border: 1px solid #e1e4e8;
+    border-radius: 4px;
+    background-color: #f6f8fa;
+    transition: box-shadow 0.2s ease;
+}
+
+.post-preview:hover {
+    box-shadow: 0 2px 8px rgba(27, 31, 35, 0.15);
+}
