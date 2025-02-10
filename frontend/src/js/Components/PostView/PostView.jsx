@@ -10,7 +10,7 @@ import 'katex/dist/katex.min.css'
 import remarkGfm from "remark-gfm";
 
 import "../../../css/markdown.css";
-import "../../../css/post_header.css"
+import "../../../css/post_view.css"
 
 import TableOfContents from "./TableOfContents.jsx";
 import PostHeader from "./PostHeader.jsx";

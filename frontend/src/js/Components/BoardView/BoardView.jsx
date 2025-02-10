@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import NotFound from "../NotFound.jsx";
 import Board from "./Board.jsx";
+import SearchBar from "./SearchBar.jsx";
 
 const pageSize = 10;
 
@@ -12,41 +13,47 @@ export default function BoardView() {
     const { name, page } = useParams();
     const [posts, setPosts] = useState(window.posts || null);
     const [loading, setLoading] = useState(!(posts));
+    const [targetBoard, setTargetBoard] = useState(null);
+    const [pSize, setPSize] = useState(pageSize);
     // 초기 로딩 시 업데이트
     window.loadingStates.push((stat, posts)=>{
         setPosts(posts);
         setLoading(stat);
     });
-    // const [error, setError] = useState(null);
-    // const [pageNum, setPage] = useState(page ? parseInt(page) : 1);
     const pageNum = parseInt(page);
-    console.log(page);
+
+    // 페이지 업데이트를 라우트 변경으로 추상화
+    function setPage(num) {
+        navigate(`/board-view/${name}/${num}`);
+    }
 
     useEffect(() => {
-        navigate(`/board-view/${name}/${page}`);
-    }, [page, name, navigate]);
+        // navigate(`/board-view/${name}/${page}`);
+        if (posts)
+            setTargetBoard(posts[name]);
+        setPSize(pageSize);
+    }, [posts, page, name, navigate]);
 
+    // 로딩 중 표시
     if (loading) {
         return (<p>Loading...</p>)
     }
 
-    const targetBoard = posts[name];
 
     if (!targetBoard) {
         return (<NotFound/>)
     }
 
-    function setPage(num) {
-        navigate(`/board-view/${name}/${num}`);
-    }
+
     return (
         <div className="board-view">
+            <SearchBar searchRange={posts[name]} setTargetBoard={setTargetBoard} setPSize={setPSize} />
             <Board
                 key={`${name},${pageNum}`}
                 title={name}
                 posts={targetBoard}
                 page={pageNum}
-                pageSize={pageSize}/>
+                pageSize={pSize}/>
             <div className="button-area">
                 <button onClick={
                     () => {

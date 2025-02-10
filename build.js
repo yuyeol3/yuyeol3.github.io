@@ -2,9 +2,12 @@
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter'); // front-matter가 있다면 사용
+const groupSetting = require('./build.groupsetting');
 
 const postsDir = path.join(__dirname, 'posts');
 const outputFile = path.join(__dirname, 'posts.json'); // React 앱에서 사용할 위치
+
+
 
 // 재귀적으로 디렉토리 순회하는 함수
 /**
@@ -69,6 +72,25 @@ function extractPostData(filePath) {
   return { path: relativePath, pathList: relativePath.split('/'), title, date, preview };
 }
 
+function classifyCategories(posts) {
+  const groupSetting = posts.__groupSetting;
+  const groupedCategories = [];
+
+  for (const group in groupSetting) {
+    const categories = groupSetting[group];
+    groupedCategories.push(...categories);
+  }
+  console.log(groupedCategories);
+  const allCategories = Object.keys(posts);
+  const noGroup = allCategories
+    .filter((e)=> (
+      groupedCategories.indexOf(e) === -1 &&
+      e !== "__groupSetting"
+    ));
+  posts.__groupSetting.noGroup = noGroup;
+  return posts;
+}
+
 /**
  * builds Posts Json
  * @returns {void}
@@ -95,6 +117,9 @@ function buildPostsJson() {
     grouped[category].sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
+  // 그룹 설정 추가
+  grouped.__groupSetting = groupSetting;
+  classifyCategories(grouped);
   // JSON으로 저장 (필요에 따라 grouped 혹은 posts 배열을 저장)
   fs.writeFileSync(outputFile, JSON.stringify(grouped, null, 2), 'utf-8');
   console.log(`Posts JSON saved to ${outputFile}`);

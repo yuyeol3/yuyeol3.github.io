@@ -4,17 +4,21 @@
     flex-direction: column;
     min-height: 100vh;
     overflow-y: auto;
-    overflow-x: hidden;
-    height: 100vh;
+    -webkit-overflow-scrolling: touch;
+
+    /*overflow-x: hidden;*/
+    /*height: 100%;*/
 }
 
 
 .header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 1rem;
     background-color: #ffffff;
     border-bottom: 1px solid #ddd;
+
 }
 
 .header a {
@@ -22,6 +26,12 @@
     font-weight: 600;
     color: #333;
     text-decoration: none;
+}
+
+.header .header-left, .header .header-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .header a:hover {
@@ -72,6 +82,15 @@
     background-color: #ffffff;
     border-right: 1px solid #ddd;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-bar h3 {
+    /*font-weight: normal;*/
+    color: #333;
+}
+
+.side-bar .sidebar-group div {
+    margin-left: 30px;
 }
 
 /* 사이드바의 각 아이템 스타일 */

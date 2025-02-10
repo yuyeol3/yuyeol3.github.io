@@ -27,7 +27,10 @@ export default function Board({title, posts, page, pageSize}) {
         <div className="board">
             <h1>{title}</h1>
             <div className="post-previews">
-                {res}
+                {res.length ?
+                    res :
+                    <p>결과가 없습니다.</p>
+                }
             </div>
         </div>
     );

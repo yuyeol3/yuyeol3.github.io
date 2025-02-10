@@ -17,7 +17,7 @@ export default function TableOfContents({post}) {
                                 to={item.id}
                                 smooth={true}
                                 duration={500}
-                                containerId="App"
+                                // containerId="App"
                                 style={{ color: '#0366d6', cursor: 'pointer', textDecoration: 'none' }}
                             >
                                 {item.title}
