@@ -191,6 +191,17 @@
   ],
   "일반": [
     {
+      "path": "posts/일반/2025-02-10-hello-world.md",
+      "pathList": [
+        "posts",
+        "일반",
+        "2025-02-10-hello-world.md"
+      ],
+      "title": "Hello World!",
+      "date": "2025-02-10",
+      "preview": "Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!"
+    },
+    {
       "path": "posts/일반/2025-02-08.md",
       "pathList": [
         "posts",
@@ -199,7 +210,7 @@
       ],
       "title": "확률의 공리",
       "date": "2025-02-08",
-      "preview": ""
+      "preview": "# 1. 확률의 공리"
     }
   ]
 }

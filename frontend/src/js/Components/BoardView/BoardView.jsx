@@ -47,21 +47,24 @@ export default function BoardView() {
                 posts={targetBoard}
                 page={pageNum}
                 pageSize={pageSize}/>
-            <button onClick={
-                ()=> {
-                    page - 1 > 0 ?
-                        setPage(pageNum - 1) : null
-                }
-            }>prev</button>
-            {pageNum}
-            <button onClick={
-                ()=>{ (pageNum + 1) * pageSize < targetBoard.length + pageSize?
-                    setPage(pageNum + 1) : null } }>
-            next</button>
+            <div className="button-area">
+                <button onClick={
+                    () => {
+                        page - 1 > 0 ?
+                            setPage(pageNum - 1) : null
+                    }
+                }>prev
+                </button>
+                {pageNum}
+                <button onClick={
+                    () => {
+                        (pageNum + 1) * pageSize < targetBoard.length + pageSize ?
+                            setPage(pageNum + 1) : null
+                    }}>
+                    next
+                </button>
+            </div>
         </div>
     );
 }
 
-BoardView.propTypes = {
-    posts: PropTypes.object.isRequired,
-}

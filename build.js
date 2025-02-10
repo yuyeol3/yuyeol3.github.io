@@ -55,7 +55,7 @@ function extractPostData(filePath) {
   }
 
   // 미리보기: 제목 다음의 첫 번째 문단 (빈 줄을 기준으로 분리)
-  const paragraphs = mdContent.split('\n\n').map(p => p.trim()).filter(p => p);
+  const paragraphs = mdContent.split('\n').map(p => p.trim()).filter(p => p);
   // console.log(paragraphs);
   let preview = '';
   if (paragraphs.length > 1) {
@@ -90,6 +90,11 @@ function buildPostsJson() {
     grouped[category].push(post);
   });
   
+  // 그룹별로 최근에 작성된 글 순으로 정렬
+  for (const category in grouped) {
+    grouped[category].sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
   // JSON으로 저장 (필요에 따라 grouped 혹은 posts 배열을 저장)
   fs.writeFileSync(outputFile, JSON.stringify(grouped, null, 2), 'utf-8');
   console.log(`Posts JSON saved to ${outputFile}`);

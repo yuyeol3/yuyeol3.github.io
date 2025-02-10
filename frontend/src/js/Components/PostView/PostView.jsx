@@ -43,7 +43,10 @@ export default function PostView() {
     return (
         <div className="post-view">
             <PostHeader post={post} />
-            <TableOfContents post={post}></TableOfContents>
+            {post.titleContents.length > 0 ?
+                <TableOfContents post={post}></TableOfContents> :
+                <></>
+            }
             <hr className="hr"></hr>
             <div className="markdown-body">
                 <ReactMarkdown

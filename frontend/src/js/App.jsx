@@ -98,8 +98,8 @@ function App() {
                     <SideBar posts={posts} menuDisplay={menuDisplay} />
                     <div className="contents">
                         <Routes>
-                            <Route path="/" element={<Main />} />
-                            <Route path="/board-view/:name/:page" element={<BoardView posts={posts}/>}/>
+                            <Route path="/" element={<Main posts={posts}/>} />
+                            <Route path="/board-view/:name/:page" element={<BoardView/>}/>
                             <Route path="/post-view/*" element={<PostView />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>

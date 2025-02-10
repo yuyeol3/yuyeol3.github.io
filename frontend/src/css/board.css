@@ -34,3 +34,31 @@
 .post-preview:hover {
     box-shadow: 0 2px 8px rgba(27, 31, 35, 0.15);
 }
+
+.button-area {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-area button {
+    background-color: #0366d6; /* 기본 파란색 배경 */
+    color: #fff;              /* 흰색 텍스트 */
+    border: none;
+    padding: 8px 16px;        /* 적당한 여백 */
+    font-size: 14px;
+    border-radius: 4px;       /* 둥근 모서리 */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0 8px;            /* 좌우 간격 */
+}
+
+.button-area button:hover {
+    background-color: #024b9d; /* 호버 시 어두운 파란색 */
+    transform: translateY(-2px); /* 살짝 올라오는 효과 */
+}
+
+.button-area button:active {
+    transform: translateY(0);  /* 클릭 시 효과 초기화 */
+}
