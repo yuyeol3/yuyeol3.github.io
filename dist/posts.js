@@ -14,6 +14,17 @@
   ],
   "웹": [
     {
+      "path": "posts/웹/2025-02-11-AWS-배포.md",
+      "pathList": [
+        "posts",
+        "웹",
+        "2025-02-11-AWS-배포.md"
+      ],
+      "title": "AWS 배포",
+      "date": "2025-02-11",
+      "preview": "## 1. 개요"
+    },
+    {
       "path": "posts/웹/2025-02-11-https-적용.md",
       "pathList": [
         "posts",
