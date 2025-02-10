@@ -5,7 +5,7 @@ const matter = require('gray-matter'); // front-matter가 있다면 사용
 const groupSetting = require('./build.groupsetting');
 
 const postsDir = path.join(__dirname, 'posts');
-const outputFile = path.join(__dirname, 'posts.json'); // React 앱에서 사용할 위치
+const outputFile = path.join(__dirname, 'posts.js'); // React 앱에서 사용할 위치
 
 
 
