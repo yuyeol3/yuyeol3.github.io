@@ -12,6 +12,19 @@
       "preview": "알고리즘"
     }
   ],
+  "웹": [
+    {
+      "path": "posts/웹/2025-02-11-https-적용.md",
+      "pathList": [
+        "posts",
+        "웹",
+        "2025-02-11-https-적용.md"
+      ],
+      "title": "https 적용",
+      "date": "2025-02-11",
+      "preview": "## 1. 개요"
+    }
+  ],
   "일반": [
     {
       "path": "posts/일반/2025-02-10-hello-world.md",
@@ -55,6 +68,7 @@
       "프로젝트"
     ],
     "noGroup": [
+      "웹",
       "일반"
     ]
   }
