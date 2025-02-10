@@ -23,7 +23,7 @@ function setPostsData() {
 
 setPostsData();
 setInterval(()=>setPostsData(),
-    5 * 60 * 1000 // 5분마다 갱신
+    60 * 1000 // 5분마다 갱신
 );
 
 
