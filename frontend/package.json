@@ -16,6 +16,7 @@
     "react-markdown": "^9.0.3",
     "react-router-dom": "^7.1.5",
     "react-scroll": "^1.9.2",
+    "react-utterances": "^0.6.4",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",

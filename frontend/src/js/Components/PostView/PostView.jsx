@@ -15,6 +15,7 @@ import "../../../css/post_view.css"
 import TableOfContents from "./TableOfContents.jsx";
 import PostHeader from "./PostHeader.jsx";
 import HeadingRenderer from "./HeadingRenderer.jsx";
+import Comment from "../Comment.jsx";
 
 
 export default function PostView() {
@@ -26,7 +27,7 @@ export default function PostView() {
     useEffect(()=>{
         getPost(href)
             .then(post=>{
-                console.log(post);
+                console.log("postView post:", post.pathList.join("-"));
                 setPost(post);
             })
             .catch(err=>{
@@ -64,6 +65,7 @@ export default function PostView() {
                     {post.content}
                 </ReactMarkdown>
             </div>
+            <Comment term={post.fileName}></Comment>
         </div>
     )
 }

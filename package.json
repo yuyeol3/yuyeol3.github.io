@@ -5,7 +5,8 @@
   "main": "build.js",
   "scripts": {
     "build": "node build.js && cd frontend && npm run build && cd .. && cp -r ./dist/* .",
-    "test": "cd frontend && npm run build && cd .. && nodemon test.js"
+    "test": "cd frontend && npm run build && cd .. && nodemon test.js",
+    "post" : "npm run build && git add . && git commit -m \"posts 업데이트\" && git push"
   },
   "author": "",
   "license": "ISC",

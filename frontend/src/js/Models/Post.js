@@ -13,6 +13,7 @@ export default class Post {
         this.date = parsedObj.date;
         this.content = parsedObj.content;
         this.titleContents = parsedObj.titleContents;
+        this.fileName = parsedObj.fileName;
     }
 
     /**
@@ -26,7 +27,8 @@ export default class Post {
      *          title : string,
      *          headerIndex : number,
      *          level : number
- *          }[]
+ *          }[],
+ *          fileName : string
      * }}
      */
     static parse(markdownText, pathList) {
@@ -45,7 +47,7 @@ export default class Post {
         const titleContents = Post.analyzeHeaders(content.split('\n'));
 
         return {
-            title, date, content, titleContents
+            title, date, content, titleContents, fileName
         }
     }
 
