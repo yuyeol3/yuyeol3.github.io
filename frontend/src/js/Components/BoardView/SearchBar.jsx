@@ -29,6 +29,7 @@ export default function SearchBar({searchRange, setTargetBoard, setPSize}) {
                     placeholder="Search"
                     value={searchText}
                     onChange={(e)=>setSearchText(e.target.value)}
+                    autoFocus={true}
                 />
                 <button>검색</button>
             </form>
