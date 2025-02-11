@@ -30,14 +30,8 @@ setInterval(()=>setPostsData(),
 
 const rootElement = document.getElementById('root');
 
-
-
-if (rootElement.hasChildNodes()) {
-    hydrateRoot(rootElement, <App/>)
-} else {
-    createRoot(rootElement).render(
-        <StrictMode>
-            <App />
-        </StrictMode>,
-    )
-}
+createRoot(rootElement).render(
+    <StrictMode>
+        <App />
+    </StrictMode>,
+)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { getPosts } from "./Services/getPosts.js";
 import PropTypes from 'prop-types';
 import {Helmet} from "react-helmet";
