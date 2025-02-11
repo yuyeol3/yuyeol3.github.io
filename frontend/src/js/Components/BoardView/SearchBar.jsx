@@ -29,7 +29,7 @@ export default function SearchBar({searchRange, autofocus, setTargetBoard, setPS
                     placeholder="Search"
                     value={searchText}
                     onChange={(e)=>setSearchText(e.target.value)}
-                    autoFocus={true}
+                    autoFocus={autofocus}
                 />
                 <button>검색</button>
             </form>
