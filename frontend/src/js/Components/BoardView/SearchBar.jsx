@@ -10,8 +10,8 @@ export default function SearchBar({searchRange, setTargetBoard, setPSize}) {
         console.log(searchRange);
         const res = searchRange.filter((target)=>
                 target.title
-                    ?.toLowerCase()
-                    ?.includes(searchText.toLowerCase()) || false
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()) || false
             )
 
         console.log("res", res);

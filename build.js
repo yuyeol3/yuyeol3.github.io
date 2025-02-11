@@ -72,6 +72,7 @@ function extractPostData(filePath) {
   return { path: relativePath, pathList: relativePath.split('/'), title, date, preview };
 }
 
+
 function classifyCategories(posts) {
   const groupSetting = posts.__groupSetting;
   const groupedCategories = [];
@@ -89,6 +90,34 @@ function classifyCategories(posts) {
     ));
   posts.__groupSetting.noGroup = noGroup;
   return posts;
+}
+
+function renderStaticHtml(posts) {
+  const htmlTemplate = (title, content, path)=> `
+      <html lang="ko">
+      <head>
+        <title>${title}</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+      </head>
+      <body style="display : none;">
+        
+        ${content}
+        <script>
+          location.href = "/#/post-view/${path}"
+        </script>
+      </body>
+  `;
+
+  console.log(posts);
+  for (const category of Object.keys(posts)) {
+    const postList = posts[category];
+    for (const post of postList) {
+      const content = fs.readFileSync(__dirname + "/" + post.pathList.join("/"))
+      fs.writeFileSync(post.pathList.join("/") + ".html", 
+      htmlTemplate(post.title, content, post.pathList.join("/")), 'utf-8');
+    }
+  }
 }
 
 /**
@@ -117,6 +146,7 @@ function buildPostsJson() {
     grouped[category].sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
+  renderStaticHtml(grouped);
   // 그룹 설정 추가
   grouped.__groupSetting = groupSetting;
   classifyCategories(grouped);

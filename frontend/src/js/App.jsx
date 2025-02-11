@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { getPosts } from "./Services/getPosts.js";
 import PropTypes from 'prop-types';
+import {Helmet} from "react-helmet";
+
+
 
 import '../css/App.css';
 import menu_icon from '../assets/menu-icon.svg';
@@ -14,9 +17,15 @@ import SideBar from "./Components/Layouts/SideBar.jsx";
 import NotFound from "./Components/NotFound.jsx";
 import SearchView from "./Components/BoardView/SearchView.jsx";
 
+
 function Header({onClick}) {
     return (
         <div className="header">
+            <Helmet>
+                <meta charSet="utf-8"/>
+                <link rel="canonical" href="http://yuyeol3.github.io/"/>
+                <title>{"yuyeol3's blog"}</title>
+            </Helmet>
             <div className="header-left">
                 <button className='menu-button' onClick={onClick}>
                     <img src={menu_icon} alt="menu-icon"/>

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { getPost } from "../../Services/getPosts.js";
 import {useState, useEffect} from "react";
 import ReactMarkdown from "react-markdown";
-
+import {Helmet} from "react-helmet";
 
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
@@ -43,6 +43,9 @@ export default function PostView() {
 
     return (
         <div className="post-view">
+            <Helmet>
+                <title>{post.title}</title>
+            </Helmet>
             <PostHeader post={post}/>
             {post.titleContents.length > 0 ?
                 <TableOfContents post={post}></TableOfContents> :

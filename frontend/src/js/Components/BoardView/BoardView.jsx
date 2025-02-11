@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import NotFound from "../NotFound.jsx";
 import Board from "./Board.jsx";
 import SearchBar from "./SearchBar.jsx";
+import {Helmet} from "react-helmet";
 
 const pageSize = 10;
 
@@ -47,6 +48,9 @@ export default function BoardView() {
 
     return (
         <div className="board-view">
+            <Helmet>
+                <title>게시판 : {name}</title>
+            </Helmet>
             <SearchBar searchRange={posts[name]} setTargetBoard={setTargetBoard} setPSize={setPSize} />
             <Board
                 key={`${name},${pageNum}`}

@@ -10,12 +10,14 @@ export default defineConfig({
         nodePolyfills({
         protocolImports : true
         }),
+
         // compression({
         //     algorithm : 'brotliCompress'
         // }),
     ],
     build : {
         outDir: '../dist/',
-        emptyOutDir: true
+        emptyOutDir: true,
+        target : "es2017"
     }
 });
