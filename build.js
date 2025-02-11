@@ -6,7 +6,7 @@ const groupSetting = require('./build.groupsetting');
 const marked = require('marked');
 
 const postsDir = path.join(__dirname, 'posts');
-const outputFile = path.join(__dirname, 'posts.js'); // React 앱에서 사용할 위치
+const outputFile = path.join(__dirname, 'posts.html'); // React 앱에서 사용할 위치
 
 
 
