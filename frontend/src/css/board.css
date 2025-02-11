@@ -116,6 +116,13 @@
 }
 
 /* 반응형 디자인 (화면이 작을 때) */
+@media (max-width: 1500px) {
+    .search-bar form{
+        width: 40%;
+    }
+}
+
+/* 반응형 디자인 (화면이 작을 때) */
 @media (max-width: 1000px) {
     .search-bar form{
         width: 60%;
