@@ -47,7 +47,7 @@ export default function SideBar({ posts, menuDisplay, setMenuDisplay }) {
     const location = useLocation();
 
     useEffect(() => {
-        setMenuDisplay(window.innerWidth > settings.sidebar.hideCriteria);
+        setMenuDisplay((window.innerWidth > settings.sidebar.hideCriteria) && menuDisplay);
     }, [location])
 
 
