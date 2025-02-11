@@ -7,7 +7,7 @@ const marked = require('marked');
 
 const postsDir = path.join(__dirname, 'posts');
 const outputFile = path.join(__dirname, 'posts.html'); // React 앱에서 사용할 위치
-
+const hostName = "yuyeol3.github.io";
 
 
 // 재귀적으로 디렉토리 순회하는 함수
@@ -121,6 +121,20 @@ function renderStaticHtml(posts) {
   }
 }
 
+function createSiteMap(posts) {
+  let result = `https://${hostName}/\n`;
+  // console.log(posts);
+  for (const category of Object.keys(posts)) {
+    const postList = posts[category];
+    for (const post of postList) {
+      const content = post.pathList.join("/")
+      result += `https://${hostName}/previews/${post.pathList.at(-1)}.html\n`
+    }
+  }
+
+  fs.writeFileSync("./sitemap.txt", result, 'utf-8');
+}
+
 /**
  * builds Posts Json
  * @returns {void}
@@ -148,6 +162,7 @@ function buildPostsJson() {
   }
 
   renderStaticHtml(grouped);
+  createSiteMap(grouped);
   // 그룹 설정 추가
   grouped.__groupSetting = groupSetting;
   classifyCategories(grouped);
