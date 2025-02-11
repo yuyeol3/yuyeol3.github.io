@@ -68,13 +68,13 @@
     display: flex;            /* 가로배치 (form 자체에 flex를 주어도 됩니다) */
     justify-content: center;  /* 수평 가운데 정렬 (원하는 위치에 맞게 조정) */
     margin: 16px auto;           /* 위아래 간격 */
-    width: 80%;
 }
 
 /* form 내부를 가로배치하여 input과 button이 한 줄로 배치되도록 */
 .search-bar form {
     display: flex;
     align-items: center;
+    width: 30%;
 }
 
 /* 검색 입력창 스타일 */
@@ -113,4 +113,19 @@
 
 .search-bar button:active {
     transform: translateY(0);      /* 클릭 시 효과 초기화 */
+}
+
+/* 반응형 디자인 (화면이 작을 때) */
+@media (max-width: 1000px) {
+    .search-bar form{
+        width: 60%;
+    }
+}
+
+
+/* 반응형 디자인 (화면이 작을 때) */
+@media (max-width: 900px) {
+    .search-bar form{
+        width: 80%;
+    }
 }

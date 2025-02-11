@@ -44,3 +44,12 @@
 .table-of-contents a:hover {
     text-decoration: underline;
 }
+
+.post-view {
+    min-height: 100%;
+}
+
+
+.markdown-body {
+    min-height: 50vh;
+}

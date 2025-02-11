@@ -43,7 +43,7 @@ export default function PostView() {
 
     return (
         <div className="post-view">
-            <PostHeader post={post} />
+            <PostHeader post={post}/>
             {post.titleContents.length > 0 ?
                 <TableOfContents post={post}></TableOfContents> :
                 <></>
@@ -65,6 +65,8 @@ export default function PostView() {
                     {post.content}
                 </ReactMarkdown>
             </div>
+            <hr className="hr"></hr>
+            <h2>Comments</h2>
             <Comment term={post.fileName}></Comment>
         </div>
     )
