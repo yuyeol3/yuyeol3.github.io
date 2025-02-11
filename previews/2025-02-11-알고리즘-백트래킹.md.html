@@ -1,0 +1,156 @@
+
+      <html lang="ko">
+      <head>
+        <title>알고리즘 - 백트래킹</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+      </head>
+      <body style="display : none;">
+        
+        <h1>알고리즘 - 백트래킹</h1>
+<h1>1. 알고리즘 설명</h1>
+<p>현재 상태에서 가능한 모든 후보군을 따라 들어가며 탐색하는 알고리즘</p>
+<h1>2. STL next_permutation</h1>
+<p>현재 순열을 사전 순으로 생각했을 때 다음 순열로 만들고 true를 반환</p>
+<h2>순열</h2>
+<pre><code class="language-cpp">int a[3] = {1, 2, 3};
+do {
+	for (int i = 0; i &lt; 3; i++)
+		cout &lt;&lt; a[i];
+	cout &lt;&lt; &#39;\n&#39;;
+} while (next_permutation(a, a+3));
+// 사전 순으로 다음 수열이 있다. true
+// 현재 수열이 마지막 수열이다 . false
+
+/*
+123
+132
+213
+231
+312
+321
+*/
+</code></pre>
+<h2>조합</h2>
+<pre><code class="language-cpp">int a[4] = {0, 0, 1, 1};  // 4C2
+do {
+	for (int i = 0; i &lt; 4; i++) {
+		if (a[i] == 0)
+			cout &lt;&lt; i + 1;
+	}
+	cout &lt;&lt; &#39;\n&#39;;
+} while (next_permutation(a, a+4));
+
+/*
+12
+13
+14
+23
+24
+34
+*/
+</code></pre>
+<h1>문제</h1>
+<h2>1. N-Queen</h2>
+<p><a href="https://www.acmicpc.net/problem/9663">9663. N-Queen</a></p>
+<p>isused 배열을 3개 선언하여 각각 세로 열, 증가 방향 대각선, 감소 방향 대각선에 Queen 말이 들어있는지 확인하면 효과적으로 선택 가능 여부를 확인할 수 있다. </p>
+<table>
+<thead>
+<tr>
+<th>(0, 0)</th>
+<th>(0, 1)</th>
+<th>(0, 2)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(1, 0)</td>
+<td>(1, 1)</td>
+<td>(1, 2)</td>
+</tr>
+<tr>
+<td>(2, 0)</td>
+<td>(2, 1)</td>
+<td>(2, 2)</td>
+</tr>
+</tbody></table>
+<ul>
+<li>증가 방향 대각선 (x 기준) : x+y 로 확인</li>
+<li>감소 방향 대각선 (x 기준) : x-y+N-1 로 확인</li>
+</ul>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+// bool dat[15][15];
+bool isused1[15];
+bool isused2[30];
+bool isused3[30];
+int cnt = 0;
+int N;
+
+void f(int n) {
+    if (n == N) {
+        cnt++;
+        return;
+    }
+
+
+    for (int j = 0; j &lt; N; j++) {
+        if (!(isused1[j] || isused2[n+j] || isused3[n-j+N-1])) {
+            // cout &lt;&lt; &quot;inside if: &quot; &lt;&lt; n &lt;&lt; &#39; &#39; &lt;&lt; j &lt;&lt; &#39; &#39; &lt;&lt; n &lt;&lt; &#39;\n&#39;;
+            isused1[j] = 1;
+            isused2[n+j] = 1;
+            isused3[n-j+N-1] = 1;
+            f(n+1);
+            isused1[j] = 0;
+            isused2[n+j] = 0;
+            isused3[n-j+N-1] = 0;
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    cin &gt;&gt; N;
+    f(0);
+    cout &lt;&lt; cnt &lt;&lt; &#39;\n&#39;;
+    return 0;
+}
+</code></pre>
+<h2>2. 부분수열의 합</h2>
+<p><a href="https://www.acmicpc.net/problem/1182">1182. 부분수열의 합</a></p>
+<p>각 인덱스별로 선택하는 경우와 선택하지 않는 경우 각각을 재귀함수로 처리하면 쉽게 풀 수 있다.
+S 값이 0인 경우 공집합은 제외해야 하므로 1을 빼 준다</p>
+<pre><code class="language-cpp">// 부분집합의 개수 2^N
+// 진부분집합의 개수 2^N - 1 (공집합 제외)
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int N, S, cnt;
+int dat[20];
+
+void f(int idx, int sum) {
+    if (idx == N) {
+        cnt += (sum == S ? 1 : 0);
+        return;
+    }
+
+    f(idx+1, sum + dat[idx]);
+    f(idx+1, sum);
+}
+
+int main() {
+    cin &gt;&gt; N &gt;&gt; S;
+    for (int i = 0; i &lt; N; i++) {
+        cin &gt;&gt; dat[i];
+    }
+    f(0, 0);
+    cout &lt;&lt; (S == 0 ? cnt - 1 : cnt) &lt;&lt; &#39;\n&#39;;
+}
+</code></pre>
+
+        <script>
+          location.href = "/#/post-view/posts/CS／알고리즘/2025-02-11-알고리즘-백트래킹.md"
+        </script>
+      </body>
+  
