@@ -101,7 +101,7 @@ function renderStaticHtml(posts) {
         <link rel="canonical" href="http://yuyeol3.github.io/"/>
         <meta charset="utf-8"/>
       </head>
-      <body style="display : none;">
+      <body>
         
         ${marked.parse(content)}
         <script>
