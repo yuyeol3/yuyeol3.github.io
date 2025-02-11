@@ -1,5 +1,7 @@
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
+import {useEffect} from "react";
+import settings from "../../settings.js";
 
 function Category({name}) {
     const navigate = useNavigate();
@@ -41,8 +43,13 @@ Group.propTypes = {
 
 
 
-export default function SideBar({ posts, menuDisplay }) {
-    const navigate = useNavigate();
+export default function SideBar({ posts, menuDisplay, setMenuDisplay }) {
+    const location = useLocation();
+
+    useEffect(() => {
+        setMenuDisplay(window.innerWidth > settings.sidebar.hideCriteria);
+    }, [location])
+
 
     const categories = posts
         ? Object.keys(posts.__groupSetting).map((key) => (
@@ -65,5 +72,6 @@ export default function SideBar({ posts, menuDisplay }) {
 
 SideBar.propTypes = {
     posts: PropTypes.object.isRequired, // isRequired로 수정
-    menuDisplay : PropTypes.bool.isRequired
+    menuDisplay : PropTypes.bool.isRequired,
+    setMenuDisplay : PropTypes.func.isRequired,
 };

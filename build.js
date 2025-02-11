@@ -82,7 +82,7 @@ function classifyCategories(posts) {
     const categories = groupSetting[group];
     groupedCategories.push(...categories);
   }
-  console.log(groupedCategories);
+  // console.log(groupedCategories);
   const allCategories = Object.keys(posts);
   const noGroup = allCategories
     .filter((e)=> (
@@ -110,12 +110,12 @@ function renderStaticHtml(posts) {
       </body>
   `;
 
-  console.log(posts);
+  // console.log(posts);
   for (const category of Object.keys(posts)) {
     const postList = posts[category];
     for (const post of postList) {
-      const content = fs.readFileSync(__dirname + "/" + post.pathList.join("/"))
-      fs.writeFileSync(post.pathList.at(-1) + ".html", 
+      const content = fs.readFileSync(__dirname +  "/" + post.pathList.join("/"))
+      fs.writeFileSync("./previews/" + post.pathList.at(-1) + ".html", 
       htmlTemplate(post.title, content.toString('utf-8'), post.pathList.join("/")), 'utf-8');
     }
   }
