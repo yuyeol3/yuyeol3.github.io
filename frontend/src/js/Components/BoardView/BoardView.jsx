@@ -51,7 +51,7 @@ export default function BoardView() {
             <Helmet>
                 <title>게시판 : {name}</title>
             </Helmet>
-            <SearchBar searchRange={posts[name]} setTargetBoard={setTargetBoard} setPSize={setPSize} />
+            <SearchBar searchRange={posts[name]} autofocus={false} setTargetBoard={setTargetBoard} setPSize={setPSize} />
             <Board
                 key={`${name},${pageNum}`}
                 title={name}

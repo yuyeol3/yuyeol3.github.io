@@ -33,7 +33,11 @@ export default function SearchView() {
     console.log("searchRange:", searchRange);
     return (
         <div className="board-view">
-            <SearchBar searchRange={searchRange} setTargetBoard={setTargetBoard} setPSize={setPSize} />
+            <SearchBar
+                searchRange={searchRange}
+                autofocus={true}
+                setTargetBoard={setTargetBoard}
+                setPSize={setPSize} />
             <Board
                 key={pSize}
                 title="검색"

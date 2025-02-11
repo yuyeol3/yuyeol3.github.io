@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
 
-export default function SearchBar({searchRange, setTargetBoard, setPSize}) {
+export default function SearchBar({searchRange, autofocus, setTargetBoard, setPSize}) {
     const [searchText, setSearchText] = useState("");
 
 
@@ -39,6 +39,7 @@ export default function SearchBar({searchRange, setTargetBoard, setPSize}) {
 
 SearchBar.propTypes = {
     searchRange : PropTypes.array.isRequired,
+    autofocus : PropTypes.bool.isRequired,
     setTargetBoard: PropTypes.func.isRequired,
     setPSize : PropTypes.func.isRequired
 }
