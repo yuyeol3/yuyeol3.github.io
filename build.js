@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter'); // front-matter가 있다면 사용
 const groupSetting = require('./build.groupsetting');
+const marked = require('marked');
 
 const postsDir = path.join(__dirname, 'posts');
 const outputFile = path.join(__dirname, 'posts.js'); // React 앱에서 사용할 위치
@@ -102,7 +103,7 @@ function renderStaticHtml(posts) {
       </head>
       <body style="display : none;">
         
-        ${content}
+        ${marked.parse(content)}
         <script>
           location.href = "/#/post-view/${path}"
         </script>
@@ -114,8 +115,8 @@ function renderStaticHtml(posts) {
     const postList = posts[category];
     for (const post of postList) {
       const content = fs.readFileSync(__dirname + "/" + post.pathList.join("/"))
-      fs.writeFileSync(post.pathList.join("/") + ".html", 
-      htmlTemplate(post.title, content, post.pathList.join("/")), 'utf-8');
+      fs.writeFileSync(post.pathList.at(-1) + ".html", 
+      htmlTemplate(post.title, content.toString('utf-8'), post.pathList.join("/")), 'utf-8');
     }
   }
 }
