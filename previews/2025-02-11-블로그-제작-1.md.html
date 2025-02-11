@@ -9,6 +9,51 @@
         
         <h1>블로그 제작 프로젝트</h1>
 <p>github에서 react를 활용하여 블로그를 제작하고 싶었다. 하지만 github pages는 static 파일만 제공하기 때문에 동적으로 데이터를 주고받기에는 어려움이 있었다. 그래서 여러 가지 편법(?)을 사용하여 react를 이용한 정적 블로그 사이트를 생성해 보았다.</p>
+<h1>1. 계획</h1>
+<p>동적으로 데이터를 조작하는 것은 어려움이 있지만 정적 파일을 레포지토리에 올려놓고 조회하는 것은 가능했기에 다음과 같이 계획을 세웠다.</p>
+<ol>
+<li>포스트 하기 전 posts의 폴더를 훑고 포스트 목록을 json 형태로 생성</li>
+<li>frontend에서 해당 posts를 조회하여 게시판, 게시글 목록, 검색 기능을 제공</li>
+<li>SEO 문제는 정적 html 파일을 생성, previews 파일에 저장하여 해결</li>
+</ol>
+<h1>2. React 초보자</h1>
+<p>필자는 리액트를 이번에 처음 써 보았다. 가장 큰 어려움은 여러 훅들의 조작 방법을 익히는 것이었다. 주로 state hooks와 effect hooks를 사용하였다.</p>
+<ul>
+<li>State Hooks<ul>
+<li>컴포넌트에 상태 정보를 내장</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-javascript">function ImageGallery() {
+  const [index, setIndex] = useState(0);
+  // ...
+</code></pre>
+<ul>
+<li>Effect Hooks<ul>
+<li>컴포넌트를 외부 시스템과 연결</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-js">function ChatRoom({ roomId }) {
+  useEffect(() =&gt; {
+    const connection = createConnection(roomId);
+    connection.connect();
+    return () =&gt; connection.disconnect();
+  }, [roomId]);
+  // ...
+</code></pre>
+<ul>
+<li>Ref Hooks<ul>
+<li>렌더링에 사용되지 않는 정보를 보유</li>
+<li>React가 아닌 시스템으로 작업 시 유용</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-js">function Form() {
+  const inputRef = useRef(null);
+  // ...
+</code></pre>
+<p>출처 : <a href="https://ko.react.dev/reference/react/hooks">React Hooks</a></p>
 
         <script>
           location.href = "/#/post-view/posts/프로젝트/2025-02-11-블로그-제작-1.md"
