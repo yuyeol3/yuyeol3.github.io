@@ -1,7 +1,10 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
-import {useEffect} from "react";
+import {useContext, useEffect} from "react";
 import settings from "../../settings.js";
+import PostsContext from "../../Contexts/PostsContext.jsx";
+import Loading from "../Commons/Loading.jsx";
+import NotFound from "../Commons/NotFound.jsx";
 
 function Category({name}) {
     const navigate = useNavigate();
@@ -43,35 +46,29 @@ Group.propTypes = {
 
 
 
-export default function SideBar({ posts, menuDisplay, setMenuDisplay }) {
+export default function SideBar({ menuDisplay, setMenuDisplay }) {
     const location = useLocation();
-
+    const {posts, loading, error} = useContext(PostsContext);
     useEffect(() => {
         setMenuDisplay((window.innerWidth > settings.sidebar.hideCriteria) && menuDisplay);
     }, [location])
 
+    const wrapper = (contents)=>(<div className="side-bar">{contents}</div>);
 
-    const categories = posts
-        ? Object.keys(posts.__groupSetting).map((key) => (
+    if (loading) return wrapper(<Loading></Loading>);
+    if (error)   return wrapper(<NotFound></NotFound>);
+
+    const categories = Object.keys(posts.__groupSetting).map(
+        (key) => (
             <Group key={key} name={key} categories={posts.__groupSetting[key]}></Group>
-        ))
-        : null;
+        )
+    );
 
-    if (menuDisplay) {
-        return (
-            <div className="side-bar">
-                {categories ? categories : "Loading..."}
-            </div>
-        );
-    }
-    else {
-        return (<></>);
-    }
-
+    return menuDisplay ? wrapper(categories) : (<></>);
 }
 
 SideBar.propTypes = {
-    posts: PropTypes.object.isRequired, // isRequired로 수정
+    // posts: PropTypes.object.isRequired, // isRequired로 수정
     menuDisplay : PropTypes.bool.isRequired,
     setMenuDisplay : PropTypes.func.isRequired,
 };

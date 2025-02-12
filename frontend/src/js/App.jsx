@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import { HashRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getPosts } from "./Services/getPosts.js";
 import PropTypes from 'prop-types';
@@ -12,9 +12,10 @@ import Main from './Components/Main/Main.jsx';
 import PostView from "./Components/PostView/PostView.jsx";
 import BoardView from "./Components/BoardView/BoardView.jsx";
 import SideBar from "./Components/Layouts/SideBar.jsx";
-import NotFound from "./Components/NotFound.jsx";
+import NotFound from "./Components/Commons/NotFound.jsx";
 import SearchView from "./Components/BoardView/SearchView.jsx";
 import settings from "./settings.js";
+import PostsContext from "./Contexts/PostsContext.jsx";
 
 
 function Header({onClick}) {
@@ -50,11 +51,10 @@ function Footer() {
 
 
 function App() {
-    const [posts, setPosts] = useState(null);
-    const [menuDisplay, setMenuDisplay] = useState( window.innerWidth > settings.sidebar.hideCriteria);
-    window.loadingStates.push((loading, posts)=> setPosts(posts));
 
-
+    const [menuDisplay, setMenuDisplay] =
+        useState( window.innerWidth > settings.sidebar.hideCriteria);
+    // window.loadingStates.push((loading, posts)=> setPosts(posts));
 
     return (
         <div className="App" id="App">
@@ -69,10 +69,10 @@ function App() {
                 {/* 사이드바와 메인 컨텐츠를 좌우로 배치 */}
                 <div className="main-container">
 
-                    <SideBar posts={posts} menuDisplay={menuDisplay} setMenuDisplay={setMenuDisplay} />
+                    <SideBar menuDisplay={menuDisplay} setMenuDisplay={setMenuDisplay} />
                     <div className="contents">
                         <Routes>
-                            <Route path="/" element={<Main posts={posts}/>} />
+                            <Route path="/" element={<Main/>} />
                             <Route path="/board-view/:name/:page" element={<BoardView/>}/>
                             <Route path="/search-view" element={<SearchView/>}/>
                             <Route path="/post-view/*" element={<PostView />} />

@@ -1,26 +1,24 @@
 import { useParams, useNavigate } from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
-import NotFound from "../NotFound.jsx";
+import NotFound from "../Commons/NotFound.jsx";
 import Board from "./Board.jsx";
 import SearchBar from "./SearchBar.jsx";
 import {Helmet} from "react-helmet";
+import PostsContext from "../../Contexts/PostsContext.jsx";
 
 const pageSize = 10;
 
 export default function BoardView() {
     const navigate = useNavigate();
     const { name, page } = useParams();
-    const [posts, setPosts] = useState(window.posts || null);
-    const [loading, setLoading] = useState(!(posts));
+    const {posts, loading, error} = useContext(PostsContext);
+    // const [posts, setPosts] = useState(window.posts || null);
+    // const [loading, setLoading] = useState(!(posts));
     const [targetBoard, setTargetBoard] = useState(null);
     const [pSize, setPSize] = useState(pageSize);
-    // 초기 로딩 시 업데이트
-    window.loadingStates.push((stat, posts)=>{
-        setPosts(posts);
-        setLoading(stat);
-    });
+
     const pageNum = parseInt(page);
 
     // 페이지 업데이트를 라우트 변경으로 추상화
@@ -36,28 +34,26 @@ export default function BoardView() {
     }, [posts, page, name, navigate]);
 
     // 로딩 중 표시
-    if (loading) {
-        return (<p>Loading...</p>)
-    }
-
-
-    if (!targetBoard) {
-        return (<NotFound/>)
-    }
-
-
+    if (loading) return (<p>Loading...</p>)
+    if (!targetBoard || error) return (<NotFound/>)
     return (
         <div className="board-view">
             <Helmet>
                 <title>게시판 : {name}</title>
             </Helmet>
-            <SearchBar searchRange={posts[name]} autofocus={false} setTargetBoard={setTargetBoard} setPSize={setPSize} />
+            <SearchBar
+                searchRange={posts[name]}
+                autofocus={false}
+                setTargetBoard={setTargetBoard}
+                setPSize={setPSize}
+            />
             <Board
                 key={`${name},${pageNum}`}
                 title={name}
                 posts={targetBoard}
                 page={pageNum}
-                pageSize={pSize}/>
+                pageSize={pSize}
+            />
             <div className="button-area">
                 <button onClick={
                     () => {
