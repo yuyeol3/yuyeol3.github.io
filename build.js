@@ -145,7 +145,7 @@ function createSiteMap(posts) {
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
         <url>
           <loc>https://yuyeol3.github.io/</loc>
-          <lastmod>${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}</lastmod>
+          <lastmod>${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate()}</lastmod>
         </url>
         ${result}
       </urlset>
