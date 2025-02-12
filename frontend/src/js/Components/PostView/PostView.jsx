@@ -33,6 +33,7 @@ import TableOfContents from "./TableOfContents.jsx";
 import PostHeader from "./PostHeader.jsx";
 import HeadingRenderer from "./HeadingRenderer.jsx";
 import Comment from "../Commons/Comment.jsx";
+import rehypeRaw from "rehype-raw";
 
 
 export default function PostView() {
@@ -100,7 +101,7 @@ export default function PostView() {
                         h6: (props) => <HeadingRenderer level={6} {...props} />,
                     }}
                     remarkPlugins={[remarkMath, remarkGfm]}
-                    rehypePlugins={[rehypeKatex]}
+                    rehypePlugins={[rehypeKatex, rehypeRaw]}
                 >
                     {post.content}
                 </ReactMarkdown>
