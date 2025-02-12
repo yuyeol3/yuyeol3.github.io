@@ -1,0 +1,6 @@
+# robots.txt for https://yuyeol3.github.io/
+
+User-agent: *
+Disallow:
+
+Sitemap: https://yuyeol3.github.io/sitemap.xml
