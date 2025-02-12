@@ -135,17 +135,17 @@ function createSiteMap(posts) {
     const postList = posts[category];
     for (const post of postList) {
       const content = post.pathList.join("/")
-      result += urlTemplate(`https://${hostName}/previews/${post.pathList.at(-1)}.html`, new Date(post.date));
+      result += urlTemplate(`https://${hostName}/previews/${post.pathList.at(-1)}.html`, post.date);
     }
   }
-
+  const today = new Date();
   fs.writeFileSync(
     "./sitemap.xml",
     `
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
         <url>
           <loc>https://yuyeol3.github.io/</loc>
-          <lastmod>${new Date()}</lastmod>
+          <lastmod>${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}</lastmod>
         </url>
         ${result}
       </urlset>
