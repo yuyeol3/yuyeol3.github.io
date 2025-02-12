@@ -1,0 +1,65 @@
+
+      <html lang="ko">
+      <head>
+        <title>미적분학 기초 - 미분 - 극값</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+      </head>
+      <body style="display : none;">
+        
+        <h1>미적분학 기초 - 미분 - 극값</h1>
+<h1>극댓값과 극솟값</h1>
+<h2>극댓값, 극솟값, 극값, 극점</h2>
+<p>함수 $y=f(x)$의 정의역이 $D$이고, $c \in D$라고 하자.</p>
+<ol>
+<li><p>점 $c$의 근방의 모든 $x \in (a, \ b)$에 대하여</p>
+<p> $f(c) \ge f(x)$이면 $f(c)$를 함수 $f$의 <strong>극댓값(local maximum)이라고 한다.</strong></p>
+</li>
+<li><p>점 $c$의 근방의 모든 $x \in (a, b)$에 대하여</p>
+<p> $f(c) \le f(x)$이면 $f(c)$를 함수 $f$의 <strong>극솟값</strong>(local minimum)이라고 한다.</p>
+</li>
+<li><p>극댓값 또는 극솟값인 $f(c)$를 함수 $f$의 <strong>극값</strong>이라고 하고 점 $(c, f(c))$를 <strong>극점이라고 한다.</strong></p>
+</li>
+</ol>
+<p><img src="/images/%EC%88%98%ED%95%99/2025-02-13-%EB%AF%B8%EC%A0%81%EB%B6%84%ED%95%99-%EA%B8%B0%EC%B4%88-%EB%AF%B8%EB%B6%84-%EA%B7%B9%EA%B0%92/image.png" alt="image1"></p>
+<h2>임계점</h2>
+<p>함수 $f$의 정의역 안에 있는 점 $c$에 대하여 $f^\prime(c)=0$이거나 $f^\prime(c)$가 존재하지 않을 때 점 $c$를 $f$의 <strong>임계점</strong>(critical point)이라고 한다.</p>
+<p><img src="/images/%EC%88%98%ED%95%99/2025-02-13-%EB%AF%B8%EC%A0%81%EB%B6%84%ED%95%99-%EA%B8%B0%EC%B4%88-%EB%AF%B8%EB%B6%84-%EA%B7%B9%EA%B0%92/image(1).png" alt="image2"></p>
+<h2>임계점 정리</h2>
+<p>$f(c)$가 함수 $f$의 극값이면 $c$는 $f$의 임계점이다.</p>
+<p>역은 성립하지 않는다.</p>
+<h1>극값의 판정</h1>
+<h2>일계도함수 판정법</h2>
+<p>함수 $f$는 구간 $(a, \ b)$에서 미분가능하고 점  $c \in (a,\ b)$가 $f$의 임계점이라고 하자.</p>
+<ol>
+<li>$f^\prime(x)$의 부호가 $c$ 근방에서 양에서 음으로 바뀌면 $f(c)$는 극댓값이다.</li>
+<li>$f^\prime(x)$의 부호가 $c$ 근방에서 음에서 양으로 바뀌면 $f(c)$는 극솟값이다.</li>
+<li>$f^\prime(x)$의 부호가 $c$ 근방에서 부호의 변화가 없으면 $f(c)$는 극값이 아니다.</li>
+</ol>
+<p><img src="/images/%EC%88%98%ED%95%99/2025-02-13-%EB%AF%B8%EC%A0%81%EB%B6%84%ED%95%99-%EA%B8%B0%EC%B4%88-%EB%AF%B8%EB%B6%84-%EA%B7%B9%EA%B0%92/image(2).png" alt="image3"></p>
+<h2>이계도함수 판정법</h2>
+<p>함수 $f$가 이계미분가능하고 $f^\prime(c) = 0$이라고 하자.</p>
+<ol>
+<li>$f^{\prime\prime}(c) &lt; 0$이면 $f(c)$는 극댓값이다. (접선의 기울기가 갈수록 감소하므로)</li>
+<li>$f^{\prime\prime}(c) &gt; 0$이면 $f(c)$는 극솟값이다.  (접선의 기울기가 갈수록 증가하므로)</li>
+<li>$f^{\prime\prime}(c) = 0$이거나 $f^{\prime\prime}(c)$가 존재하지 않는 경우에는 판정할 수 없다.</li>
+</ol>
+<p><img src="/images/%EC%88%98%ED%95%99/2025-02-13-%EB%AF%B8%EC%A0%81%EB%B6%84%ED%95%99-%EA%B8%B0%EC%B4%88-%EB%AF%B8%EB%B6%84-%EA%B7%B9%EA%B0%92/image(3).png" alt="image4"></p>
+<h1>최댓값과 최솟값</h1>
+<p>함수 $f$의 정의역이 $D$이고, $a \in D$라고 하자.</p>
+<ol>
+<li><p>모든 $x \in D$에 대하여</p>
+<p> $f(a) \ge f(x)$이면 $f(a)$을 함수 $f$의 <strong>최댓값</strong>이라고 한다.</p>
+</li>
+<li><p>모든 $x \in D$에 대하여</p>
+<p> $f(a) \le f(x)$이면 $f(a)$을 함수 $f$의 <strong>최솟값</strong>이라고 한다.</p>
+</li>
+<li><p>최솟값 또는 최솟값인 $f(a)$을 함수 $f$의 <strong>절대극값</strong>이라고 한다.</p>
+</li>
+</ol>
+
+        <script>
+          location.href = "/#/post-view/posts/수학/2025-02-13-미적분학-기초-미분-극값.md"
+        </script>
+      </body>
+  
