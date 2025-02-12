@@ -29,7 +29,7 @@ export function PostsProvider({ children }) {
         setPostsData(setPosts, setLoading, setError);
         const intervalId = setInterval(
             () => {setPostsData(setPosts, setLoading, setError)},
-            settings.main.updateMin * 60 * 1000
+            settings.postProvider.updateMin * 60 * 1000
         )
         return ()=>{clearInterval(intervalId);}
     }, []);

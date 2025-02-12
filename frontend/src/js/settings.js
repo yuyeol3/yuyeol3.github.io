@@ -2,7 +2,7 @@ export default {
     sidebar : {
         hideCriteria : 900
     },
-    main : {
-        updateMin : 1
+    postProvider : {
+        updateMin : 5
     }
 }
