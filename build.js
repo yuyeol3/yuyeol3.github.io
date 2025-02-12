@@ -98,7 +98,7 @@ function renderStaticHtml(posts) {
       <html lang="ko">
       <head>
         <title>${title}</title>
-        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <link rel="canonical" href="http://${hostName}/"/>
         <meta charset="utf-8"/>
       </head>
       <body style="display : none;">
@@ -122,17 +122,36 @@ function renderStaticHtml(posts) {
 }
 
 function createSiteMap(posts) {
-  let result = `https://${hostName}/\n`;
+  const urlTemplate = (url, date)=>`
+    <url>
+      <loc>${url}</loc>
+      <lastmod>${date}</lastmod>
+    </url>
+  `
+
+  let result = "";
   // console.log(posts);
   for (const category of Object.keys(posts)) {
     const postList = posts[category];
     for (const post of postList) {
       const content = post.pathList.join("/")
-      result += `https://${hostName}/previews/${post.pathList.at(-1)}.html\n`
+      result += urlTemplate(`https://${hostName}/previews/${post.pathList.at(-1)}.html`, new Date(post.date));
     }
   }
 
-  fs.writeFileSync("./sitemap.txt", result, 'utf-8');
+  fs.writeFileSync(
+    "./sitemap.xml",
+    `
+      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+        <url>
+          <loc>https://yuyeol3.github.io/</loc>
+          <lastmod>${new Date()}</lastmod>
+        </url>
+        ${result}
+      </urlset>
+    `, 
+    'utf-8'
+  );
 }
 
 /**
