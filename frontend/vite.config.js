@@ -10,7 +10,7 @@ export default defineConfig({
         nodePolyfills({
         protocolImports : true
         }),
-
+        compression()
         // compression({
         //     algorithm : 'brotliCompress'
         // }),
