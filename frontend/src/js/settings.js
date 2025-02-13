@@ -1,4 +1,7 @@
 export default {
+    main : {
+        logEnable : false,
+    },
     sidebar : {
         hideCriteria : 900
     },

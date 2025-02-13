@@ -8,23 +8,19 @@ import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import 'katex/dist/katex.min.css'
 import remarkGfm from "remark-gfm";
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 // Prism 스타일을 사용할 경우, 아래와 같이 스타일을 임포트합니다.
-// import { prism as codeStyle } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { github as codeStyle } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { prism as codeStyle } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-// hljs용 언어들을 개별로 import
-import javascript from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
-import python from 'react-syntax-highlighter/dist/esm/languages/hljs/python';
-import cpp from "react-syntax-highlighter/src/languages/hljs/cpp.js";
-import java from 'react-syntax-highlighter/dist/esm/languages/hljs/java';
+// 색깔 정의
+const customCodeStyle = {
+    ...codeStyle,
+    "pre[class*=\"language-\"]": {
+        ...codeStyle["pre[class*=\"language-\"]"],
+        background: "#f6f8fa" // 여기서 배경색을 변경합니다.
+    },
+};
 
-// 언어 등록 (필요한 언어만 등록)
-SyntaxHighlighter.registerLanguage('javascript', javascript);
-SyntaxHighlighter.registerLanguage('js', javascript);
-SyntaxHighlighter.registerLanguage('python', python);
-SyntaxHighlighter.registerLanguage('cpp', cpp);
-SyntaxHighlighter.registerLanguage('java', java);
 
 import "../../../css/markdown.css";
 import "../../../css/post_view.css"
@@ -79,7 +75,7 @@ export default function PostView() {
                             const match = /language-(\w+)/.exec(className || '');
                             return !inline && match ? (
                                 <SyntaxHighlighter
-                                    style={codeStyle}
+                                    style={customCodeStyle}
                                     language={match[1]}
                                     PreTag="div"
                                     {...props}
