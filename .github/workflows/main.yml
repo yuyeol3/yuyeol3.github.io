@@ -27,5 +27,6 @@ jobs:
       - name : Push Changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub Actions의 기본 인증 토큰 사용
+        run: |
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git push origin main
