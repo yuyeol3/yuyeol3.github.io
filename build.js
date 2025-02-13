@@ -94,12 +94,13 @@ function classifyCategories(posts) {
 }
 
 function renderStaticHtml(posts) {
-  const htmlTemplate = (title, content, path)=> `
+  const htmlTemplate = (title, content, path, description)=> `
       <html lang="ko">
       <head>
         <title>${title}</title>
         <link rel="canonical" href="http://${hostName}/"/>
         <meta charset="utf-8"/>
+        <meta name=description content="${description}">
       </head>
       <body style="display : none;">
         
@@ -116,7 +117,7 @@ function renderStaticHtml(posts) {
     for (const post of postList) {
       const content = fs.readFileSync(__dirname +  "/" + post.pathList.join("/"))
       fs.writeFileSync("./previews/" + post.pathList.at(-1) + ".html", 
-      htmlTemplate(post.title, content.toString('utf-8'), post.pathList.join("/")), 'utf-8');
+      htmlTemplate(post.title, content.toString('utf-8'), post.pathList.join("/"), post.preview), 'utf-8');
     }
   }
 }
