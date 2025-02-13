@@ -4,9 +4,9 @@
   "description": "",
   "main": "build.js",
   "scripts": {
-    "build": "node build.js && cd frontend && npm run build && cd .. && cp -r ./dist/* .",
-    "test": "cd frontend && npm run build && cd .. && nodemon test.js",
-    "post": "node build.js && git add . && git commit -m \"posts 업데이트\" && git push"
+    "build": "cd frontend && npm run build && cd .. && cp -r ./dist/* .",
+    "test": "cd frontend && npm run build && cd .. && node build.js && nodemon test.js",
+    "post": "git add . && git commit -m \"posts 업데이트\" && git push"
   },
   "author": "",
   "license": "ISC",
