@@ -53,7 +53,11 @@ export default function SideBar({ menuDisplay, setMenuDisplay }) {
         setMenuDisplay((window.innerWidth > settings.sidebar.hideCriteria) && menuDisplay);
     }, [location])
 
-    const wrapper = (contents)=>(<div className="side-bar">{contents}</div>);
+    const wrapper = (contents)=>(
+        menuDisplay ?
+        <div className="side-bar">{contents}</div> :
+        <></>
+    );
 
     if (loading) return wrapper(<Loading></Loading>);
     if (error)   return wrapper(<NotFound></NotFound>);
@@ -64,7 +68,7 @@ export default function SideBar({ menuDisplay, setMenuDisplay }) {
         )
     );
 
-    return menuDisplay ? wrapper(categories) : (<></>);
+    return wrapper(categories);
 }
 
 SideBar.propTypes = {

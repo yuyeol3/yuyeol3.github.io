@@ -6,6 +6,6 @@ export default {
         hideCriteria : 900
     },
     postProvider : {
-        updateMin : 5
+        updateMin : 2
     }
 }
