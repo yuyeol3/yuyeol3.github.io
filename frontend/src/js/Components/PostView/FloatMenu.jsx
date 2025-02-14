@@ -18,7 +18,8 @@ export default function FloatMenu({href}) {
 
     const copyLink = ()=> {
         if (!href) return;
-        const shareLink = location.host + "/previews/" + href.split("/").join(".") + ".html";
+        const shareLink = (location.protocol + "//" +location.host + "/previews/" +
+                                 href.split("/").join(".") + ".html");
         navigator.clipboard
             .writeText(shareLink)
             .then(() => {
