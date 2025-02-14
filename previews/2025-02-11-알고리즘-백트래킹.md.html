@@ -149,6 +149,51 @@ int main() {
     cout &lt;&lt; (S == 0 ? cnt - 1 : cnt) &lt;&lt; &#39;\n&#39;;
 }
 </code></pre>
+<h2>3. N과 M(12)</h2>
+<p><a href="https://www.acmicpc.net/problem/15666">15666. N과 M(12)</a></p>
+<p>수열의 중복을 확인해야 할 경우 tmp 변수를 불가능한 값인 0으로 초기화하고 for문 안에서 현재 값으로 변경해서 이전 값과 현재 값이 겹치는지 비교한다.</p>
+<p>비오름차순 조건의 경우 K가 0인지 체크하고 0이 아니면 k-1과 현재 값을 비교하여 비오름차순 조건을 만족하는지 확인한다.</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int num[10];
+int res[10];
+int N, M;
+
+void f(int k) {
+    if (k == M) {
+        for (int i = 0; i &lt; M; i++) {
+            cout &lt;&lt; res[i] &lt;&lt; &#39; &#39;;
+        }
+        cout &lt;&lt; &#39;\n&#39;;
+        return;
+    }   
+
+    int tmp = 0;
+    for (int i = 0; i &lt; N; i++) {
+        if (
+            tmp != num[i]
+            &amp;&amp; (k == 0 || (k &gt; 0 &amp;&amp; res[k-1] &lt;= num[i])) 
+            // &amp;&amp; 
+        ) 
+        {
+            res[k] = num[i];
+            tmp = num[i];
+            f(k+1);
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    cin &gt;&gt; N &gt;&gt; M;
+    for (int i = 0; i &lt; N; i++) 
+        cin &gt;&gt; num[i];
+    sort(num, num+N);
+    f(0);
+}
+</code></pre>
 <p>출처 및 참고자료 : <a href="https://blog.encrypted.gg/945">바킹독의 실전 알고리즘</a></p>
 
         <script>

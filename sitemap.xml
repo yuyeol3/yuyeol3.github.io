@@ -1,5 +1,12 @@
 
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<<<<<<< HEAD
+=======
+        <url>
+          <loc>https://yuyeol3.github.io/</loc>
+          <lastmod>2025-02-14</lastmod>
+        </url>
+>>>>>>> 9b625fc333878ae8428429452bb3c5816bc0726d
         
     <url>
       <loc>https://yuyeol3.github.io/</loc>
