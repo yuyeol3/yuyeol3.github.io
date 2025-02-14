@@ -100,13 +100,14 @@ function renderStaticHtml(posts) {
         <title>${title}</title>
         <link rel="canonical" href="http://${hostName}/"/>
         <meta charset="utf-8"/>
-        <meta name=description content="${description}">
+        <meta name="description" content="${description}">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body style="display : none;">
         
         ${marked.parse(content)}
         <script>
-          location.href = "/#/post-view/${path}"
+          location.href = "/post-view?href=${path}"
         </script>
       </body>
   `;
@@ -116,7 +117,7 @@ function renderStaticHtml(posts) {
     const postList = posts[category];
     for (const post of postList) {
       const content = fs.readFileSync(__dirname +  "/" + post.pathList.join("/"))
-      fs.writeFileSync("./previews/" + post.pathList.at(-1) + ".html", 
+      fs.writeFileSync("./previews/" + post.pathList.join(".") + ".html", 
       htmlTemplate(post.title, content.toString('utf-8'), post.pathList.join("/"), post.preview), 'utf-8');
     }
   }
@@ -182,7 +183,7 @@ function buildPostsJson() {
     grouped[category].sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  // renderStaticHtml(grouped);
+  renderStaticHtml(grouped);
   createSiteMap(grouped);
   // 그룹 설정 추가
   grouped.__groupSetting = groupSetting;

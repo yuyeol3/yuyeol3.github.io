@@ -30,6 +30,7 @@ import PostHeader from "./PostHeader.jsx";
 import HeadingRenderer from "./HeadingRenderer.jsx";
 import Comment from "../Commons/Comment.jsx";
 import rehypeRaw from "rehype-raw";
+import FloatMenu from "./FloatMenu.jsx";
 
 
 export default function PostView() {
@@ -62,6 +63,7 @@ export default function PostView() {
             <Helmet>
                 <title>{post.title}</title>
             </Helmet>
+            <FloatMenu href={href}></FloatMenu>
             <PostHeader post={post}/>
             {post.titleContents.length > 0 ?
                 <TableOfContents post={post}></TableOfContents> :
@@ -105,8 +107,10 @@ export default function PostView() {
                 </ReactMarkdown>
             </div>
             <hr className="hr"></hr>
-            <h2>Comments</h2>
-            <Comment term={post.fileName}></Comment>
+            <div className="post-comments">
+                <h2>Comments</h2>
+                <Comment term={post.fileName}></Comment>
+            </div>
         </div>
     )
 }
