@@ -31,6 +31,7 @@ import HeadingRenderer from "./HeadingRenderer.jsx";
 import Comment from "../Commons/Comment.jsx";
 import rehypeRaw from "rehype-raw";
 import FloatMenu from "./FloatMenu.jsx";
+import Loading from "../Commons/Loading.jsx";
 
 
 export default function PostView() {
@@ -42,20 +43,22 @@ export default function PostView() {
     const [error, setError] = useState(null);
     console.log(href);
     useEffect(()=>{
-        getPost(href)
-            .then(post=>{
-                console.log("postView post:", post.pathList.join("-"));
-                setPost(post);
-            })
-            .catch(err=>{
-                setError(err);
-            })
-            .finally(()=>{
-                setLoading(false);
-            })
+        if (href) {
+            getPost(href)
+                .then(post=>{
+                    console.log("postView post:", post.pathList.join("-"));
+                    setPost(post);
+                })
+                .catch(err=>{
+                    setError(err);
+                })
+                .finally(()=>{
+                    setLoading(false);
+                })
+        }
     }, [href]);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading || !href) return <Loading></Loading>;
     if (error) return <h2>Error fetching markdown: {error.message}</h2>;
 
     return (
@@ -107,7 +110,7 @@ export default function PostView() {
                 </ReactMarkdown>
             </div>
             <hr className="hr"></hr>
-            <div className="post-comments">
+            <div className="post-footer">
                 <h2>Comments</h2>
                 <Comment term={post.fileName}></Comment>
             </div>

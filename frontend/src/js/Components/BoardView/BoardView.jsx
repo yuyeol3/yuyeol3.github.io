@@ -7,8 +7,10 @@ import Board from "./Board.jsx";
 import SearchBar from "./SearchBar.jsx";
 import {Helmet} from "react-helmet";
 import PostsContext from "../../Contexts/PostsContext.jsx";
+import Loading from "../Commons/Loading.jsx";
+import settings from "../../settings.js";
 
-const pageSize = 10;
+const pageSize = settings.boardView.pageSize;
 
 export default function BoardView() {
     // const navigate = useNavigate();
@@ -17,11 +19,8 @@ export default function BoardView() {
     const [name, setName] = useState(searchParams?.get("name"));
     const [page, _setPage] = useState(searchParams?.get("page"));
     const {posts, loading, error} = useContext(PostsContext);
-    // const [posts, setPosts] = useState(window.posts || null);
-    // const [loading, setLoading] = useState(!(posts));
     const [targetBoard, setTargetBoard] = useState(posts[name] || null);
     const [pSize, setPSize] = useState(pageSize);
-
     const pageNum = parseInt(page);
 
     useEffect(() => {
@@ -35,6 +34,7 @@ export default function BoardView() {
 
     }, [posts, searchParams]);
 
+
     // 페이지 업데이트를 라우트 변경으로 추상화
     function setPage(num) {
         // navigate(`/board-view?name=${name}&page=${num}`);
@@ -47,7 +47,7 @@ export default function BoardView() {
 
 
     // 로딩 중 표시
-    if (loading) return (<p>Loading...</p>)
+    if (loading || (!name && !page)) return (<Loading/>)
     if (!targetBoard || error || !name) return (<NotFound/>)
     return (
         <div className="board-view">

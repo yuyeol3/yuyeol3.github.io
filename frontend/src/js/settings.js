@@ -7,5 +7,8 @@ export default {
     },
     postProvider : {
         updateMin : 2
+    },
+    boardView : {
+        pageSize : 10,
     }
 }

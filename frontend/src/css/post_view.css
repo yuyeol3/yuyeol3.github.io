@@ -54,8 +54,8 @@
     min-height: 50vh;
 }
 
-.post-comments {
-    margin-bottom: 100px;
+.post-footer {
+    min-height: 400px;
 }
 
 /* float-menu 컨테이너 */
