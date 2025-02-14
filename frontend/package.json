@@ -7,7 +7,17 @@
     "dev": "vite",
     "build": "vite build && cp ../posts.html ../dist/",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postbuild" : "react-snap"
+  },
+  "reactSnap" : {
+    "include" : [
+      "/",
+      "/search-view",
+      "/board-view",
+      "/post-view"
+    ],
+    "source" : "../dist"
   },
   "dependencies": {
     "prop-types": "^15.8.1",

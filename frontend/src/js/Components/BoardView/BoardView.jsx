@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import {useParams, useNavigate, useSearchParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
@@ -11,31 +11,44 @@ import PostsContext from "../../Contexts/PostsContext.jsx";
 const pageSize = 10;
 
 export default function BoardView() {
-    const navigate = useNavigate();
-    const { name, page } = useParams();
+    // const navigate = useNavigate();
+    // const { name, page } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [name, setName] = useState(searchParams?.get("name"));
+    const [page, _setPage] = useState(searchParams?.get("page"));
     const {posts, loading, error} = useContext(PostsContext);
     // const [posts, setPosts] = useState(window.posts || null);
     // const [loading, setLoading] = useState(!(posts));
-    const [targetBoard, setTargetBoard] = useState(null);
+    const [targetBoard, setTargetBoard] = useState(posts[name] || null);
     const [pSize, setPSize] = useState(pageSize);
 
     const pageNum = parseInt(page);
 
-    // 페이지 업데이트를 라우트 변경으로 추상화
-    function setPage(num) {
-        navigate(`/board-view/${name}/${num}`);
-    }
-
     useEffect(() => {
         // navigate(`/board-view/${name}/${page}`);
-        if (posts)
-            setTargetBoard(posts[name]);
+        const name = searchParams?.get("name");
+        const page = searchParams?.get("page");
+        if (posts && name) setTargetBoard(posts[name]);
         setPSize(pageSize);
-    }, [posts, page, name, navigate]);
+        setName(name);
+        _setPage(page);
+
+    }, [posts, searchParams]);
+
+    // 페이지 업데이트를 라우트 변경으로 추상화
+    function setPage(num) {
+        // navigate(`/board-view?name=${name}&page=${num}`);
+        //
+        // setName(name);
+        // _setPage(num);
+        setSearchParams({name : name, page : num});
+    }
+
+
 
     // 로딩 중 표시
     if (loading) return (<p>Loading...</p>)
-    if (!targetBoard || error) return (<NotFound/>)
+    if (!targetBoard || error || !name) return (<NotFound/>)
     return (
         <div className="board-view">
             <Helmet>

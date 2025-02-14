@@ -6,16 +6,17 @@ import {getPosts} from "../../Services/getPosts.js";
 import settings from "../../settings.js";
 
 // posts 데이터는 전역 객체가 되는 게 맞는 것 같다.
-async function setPostsData(setPosts, setLoading, setError) {
+async function setPostsData(setPosts, setLoading, setError, showLoading=false) {
     try {
-        setLoading(true);
+        // 잦은 페이지 변경 및 깜빡임 방지
+        if (showLoading) setLoading(true);
         const posts =  await getPosts();
         setPosts(posts);
     } catch (err) {
         console.error(err);
         setError(err);
     } finally {
-        setLoading(false);
+        if (showLoading) setLoading(false);
     }
 }
 
@@ -26,7 +27,7 @@ export function PostsProvider({ children }) {
     const [error, setError] = useState(null);
 
     useEffect(()=>{
-        setPostsData(setPosts, setLoading, setError);
+        setPostsData(setPosts, setLoading, setError, true);
         const intervalId = setInterval(
             () => {setPostsData(setPosts, setLoading, setError)},
             settings.postProvider.updateMin * 60 * 1000

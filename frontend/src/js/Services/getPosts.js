@@ -9,7 +9,7 @@ export async function getPosts() {
 
 export async function getPost(href) {
 
-        const res = await fetch(href);
+        const res = await fetch("/" + href);
 
         if (!res.ok) {
             throw new Error(`HTTP error! status ${res.status}`);

@@ -136,18 +136,18 @@ function createSiteMap(posts) {
     const postList = posts[category];
     for (const post of postList) {
       const content = post.pathList.join("/")
-      result += urlTemplate(`https://${hostName}/previews/${post.pathList.at(-1)}.html`, post.date);
+      result += urlTemplate(`https://${hostName}/post-view?href=${post.pathList.join("/")}`, post.date);
     }
+    result += urlTemplate(`https://${hostName}/board-view?name=${category}&page=1`)
   }
   const today = new Date();
   fs.writeFileSync(
     "./sitemap.xml",
     `
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-        <url>
-          <loc>https://yuyeol3.github.io/</loc>
-          <lastmod>${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate()}</lastmod>
-        </url>
+        ${urlTemplate(`https://${hostName}/`, `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate()}`)}
+        ${urlTemplate(`https://${hostName}/board-view`, `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate()}`)}
+        ${urlTemplate(`https://${hostName}/search-view`, `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate()}`)}
         ${result}
       </urlset>
     `, 
@@ -181,7 +181,7 @@ function buildPostsJson() {
     grouped[category].sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  renderStaticHtml(grouped);
+  // renderStaticHtml(grouped);
   createSiteMap(grouped);
   // 그룹 설정 추가
   grouped.__groupSetting = groupSetting;

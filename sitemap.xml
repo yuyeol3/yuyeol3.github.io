@@ -1,53 +1,87 @@
 
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-        <url>
-          <loc>https://yuyeol3.github.io/</loc>
-          <lastmod>2025-02-13</lastmod>
-        </url>
         
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-13-알고리즘-DFS.md.html</loc>
+      <loc>https://yuyeol3.github.io/</loc>
+      <lastmod>2025-02-14</lastmod>
+    </url>
+  
+        
+    <url>
+      <loc>https://yuyeol3.github.io/board-view</loc>
+      <lastmod>2025-02-14</lastmod>
+    </url>
+  
+        
+    <url>
+      <loc>https://yuyeol3.github.io/search-view</loc>
+      <lastmod>2025-02-14</lastmod>
+    </url>
+  
+        
+    <url>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/CS／알고리즘/2025-02-13-알고리즘-DFS.md</loc>
       <lastmod>2025-02-13</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-11-AWS-배포.md.html</loc>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/CS／알고리즘/2025-02-11-AWS-배포.md</loc>
       <lastmod>2025-02-11</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-11-https-적용.md.html</loc>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/CS／알고리즘/2025-02-11-https-적용.md</loc>
       <lastmod>2025-02-11</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-11-알고리즘-백트래킹.md.html</loc>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/CS／알고리즘/2025-02-11-알고리즘-백트래킹.md</loc>
       <lastmod>2025-02-11</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-13-미적분학-기초-미분-극값.md.html</loc>
+      <loc>https://yuyeol3.github.io/board-view?name=CS／알고리즘&page=1</loc>
+      <lastmod>undefined</lastmod>
+    </url>
+  
+    <url>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/수학/2025-02-13-미적분학-기초-미분-극값.md</loc>
       <lastmod>2025-02-13</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-13-hello-github-actions.md.html</loc>
+      <loc>https://yuyeol3.github.io/board-view?name=수학&page=1</loc>
+      <lastmod>undefined</lastmod>
+    </url>
+  
+    <url>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/일반/2025-02-13-hello-github-actions.md</loc>
       <lastmod>2025-02-13</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-10-hello-world.md.html</loc>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/일반/2025-02-10-hello-world.md</loc>
       <lastmod>2025-02-10</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-11-블로그-제작-1.md.html</loc>
+      <loc>https://yuyeol3.github.io/board-view?name=일반&page=1</loc>
+      <lastmod>undefined</lastmod>
+    </url>
+  
+    <url>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/프로젝트/2025-02-11-블로그-제작-1.md</loc>
       <lastmod>2025-02-11</lastmod>
     </url>
   
     <url>
-      <loc>https://yuyeol3.github.io/previews/2025-02-11-프로젝트.md.html</loc>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/프로젝트/2025-02-11-프로젝트.md</loc>
       <lastmod>2025-02-11</lastmod>
+    </url>
+  
+    <url>
+      <loc>https://yuyeol3.github.io/board-view?name=프로젝트&page=1</loc>
+      <lastmod>undefined</lastmod>
     </url>
   
       </urlset>

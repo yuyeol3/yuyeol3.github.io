@@ -11,7 +11,7 @@ function Category({name}) {
     return (
         <div
             className="sidebar-item"
-            onClick={() => {navigate(`/board-view/${name}/1`)}}
+            onClick={() => {navigate(`/board-view?name=${name}&page=1`)}}
         >
             {name}
         </div>

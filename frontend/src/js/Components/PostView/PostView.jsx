@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import { getPost } from "../../Services/getPosts.js";
 import {useState, useEffect} from "react";
 import ReactMarkdown from "react-markdown";
@@ -33,11 +33,13 @@ import rehypeRaw from "rehype-raw";
 
 
 export default function PostView() {
-    const { "*" : href } = useParams();
+    // const { "*" : href } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [href, setHref] = useState(searchParams.get("href"));
     const [post, setPost] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    console.log(href);
     useEffect(()=>{
         getPost(href)
             .then(post=>{

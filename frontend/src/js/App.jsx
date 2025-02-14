@@ -1,5 +1,5 @@
 import {useContext, useEffect, useState} from 'react';
-import { HashRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getPosts } from "./Services/getPosts.js";
 import PropTypes from 'prop-types';
 import {Helmet} from "react-helmet";
@@ -73,9 +73,9 @@ function App() {
                     <div className="contents">
                         <Routes>
                             <Route path="/" element={<Main/>} />
-                            <Route path="/board-view/:name/:page" element={<BoardView/>}/>
+                            <Route path="/board-view" element={<BoardView/>}/>
                             <Route path="/search-view" element={<SearchView/>}/>
-                            <Route path="/post-view/*" element={<PostView />} />
+                            <Route path="/post-view" element={<PostView />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>
                     </div>
