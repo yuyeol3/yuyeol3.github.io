@@ -123,6 +123,7 @@ function renderStaticHtml(posts) {
 }
 
 function createSiteMap(posts) {
+  const today = new Date();
   const urlTemplate = (url, date)=>`
     <url>
       <loc>${url}</loc>
@@ -138,9 +139,9 @@ function createSiteMap(posts) {
       const content = post.pathList.join("/")
       result += urlTemplate(`https://${hostName}/post-view?href=${post.pathList.join("/")}`, post.date);
     }
-    result += urlTemplate(`https://${hostName}/board-view?name=${category}&page=1`, `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate()}`)
+    result += urlTemplate(`https://${hostName}/board-view?name=${category}&amp;page=1`, `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate()}`)
   }
-  const today = new Date();
+
   fs.writeFileSync(
     "./sitemap.xml",
     `
