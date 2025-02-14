@@ -22,7 +22,7 @@ export default function Main() {
     return (
         <>
             <h1>yuyeol3.github.io</h1>
-            <p>블로그 방문을 환영합니다! 이 블로그는 React와 HashRouter를 이용한 github 기반 블로그입니다.</p>
+            <p>블로그 방문을 환영합니다! 이 블로그는 React를 이용한 github 기반 블로그입니다.</p>
             {posts ?
                 <Board title={"최근 게시글"} posts={postList} page={1} pageSize={5}/> :
                 <Loading></Loading>
