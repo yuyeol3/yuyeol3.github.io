@@ -18,11 +18,23 @@
 <li>frontend에서 해당 posts를 조회하여 게시판, 게시글 목록, 검색 기능을 제공</li>
 <li>SEO 문제는 정적 html 파일을 생성, previews 파일에 저장하여 해결</li>
 </ol>
-<h1>2. React 첫 시도</h1>
-<p>필자는 리액트를 이번에 처음 써 보았다. 가장 큰 어려움은 여러 훅들의 조작 방법을 익히는 것이었다. 주로 state hooks와 effect hooks를 사용하였다.</p>
+<h1>2. React 사용해보기</h1>
+<p>블로그를 만들 때 처음으로 리액트를 시도해 보았다. 기존에는 자바스크립트를 이용해 직접 dom을 조작하는 방식으로 개발하였다. 그러나 react를 사용하면 정의된 컴포넌트의 state들에 따라 자동으로 리렌더링되고, 가상 돔을 통해 필요한 부분만 렌더링하는 장점이 있다. </p>
+<h2>1. JSX</h2>
+<pre><code class="language-js">function Main() {
+    return (
+        &lt;&gt;&lt;p className=&quot;main-message&quot;&gt;Hello, World!&lt;/p&gt;&lt;/&gt;
+    );
+}
+
+
+</code></pre>
+<h2>2. Hooks</h2>
+<p>리액트를 시도하면서 가장 낯설었던 것은 여러 Hook 들이었다. 따라서 주로 사용하는 훅 세 가지를 정리해 보았다.</p>
 <ul>
 <li>State Hooks<ul>
 <li>컴포넌트에 상태 정보를 내장</li>
+<li>state가 바뀌면 컴포넌트는 리렌더링됨</li>
 </ul>
 </li>
 </ul>
@@ -33,6 +45,10 @@
 <ul>
 <li>Effect Hooks<ul>
 <li>컴포넌트를 외부 시스템과 연결</li>
+<li>컴포넌트가 렌더링 될 때 지정된 state의 변화를 감지한다.<ul>
+<li>지정된 state가 변화면 정의된 효과를 일으킨다.</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -46,8 +62,11 @@
 </code></pre>
 <ul>
 <li>Ref Hooks<ul>
-<li>렌더링에 사용되지 않는 정보를 보유</li>
-<li>React가 아닌 시스템으로 작업 시 유용</li>
+<li>렌더링에 사용되지 않는 정보를 보유<ul>
+<li>상태의 변화는 감지하지만 리렌더링을 일으키지 않음</li>
+</ul>
+</li>
+<li>특정 컴포넌트 인스턴스의 참조 등을 저장할 때 유용</li>
 </ul>
 </li>
 </ul>
