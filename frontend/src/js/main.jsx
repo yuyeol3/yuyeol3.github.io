@@ -10,7 +10,7 @@ window.console = new ConsoleWrapper(window.console, settings.main.logEnable);
 
 const rootElement = document.getElementById('root');
 
-if (rootElement.hasChildNodes()) {
+if (rootElement.hasChildNodes() && location.pathname !== "/") {
     hydrateRoot(rootElement,
         <StrictMode>
             <PostsProvider>
