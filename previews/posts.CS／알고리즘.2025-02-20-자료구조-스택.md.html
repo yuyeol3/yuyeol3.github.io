@@ -1,0 +1,242 @@
+
+      <html lang="ko">
+      <head>
+        <title>자료구조 - Stack</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="# What is Stack?">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>자료구조 - Stack</h1>
+<h1>What is Stack?</h1>
+<ul>
+<li>아이템 삽입과 제거가 한 지점에서만 가능한 자료구조.</li>
+<li>넣고 빼는 곳이 동일하다.</li>
+<li>ex) 쌓아둔 접시</li>
+</ul>
+<h1>Stack의 정의</h1>
+<ul>
+<li>Logical(ADT) 수준: 삽입, 삭제가 위에서만 가능한, 동질적인 원소로 이루어진 집합.</li>
+<li>Stack은 LIFO 자료구조이다.<ul>
+<li>Last In, First Out</li>
+<li>맨 마지막에 넣은 요소가 먼저 나오는 방식</li>
+</ul>
+</li>
+</ul>
+<h1>Stack ADT Operations</h1>
+<ul>
+<li>MakeEmpty : 스택을 빈 상태로</li>
+<li>IsEmpty : 스택이 비어 있는지 확인</li>
+<li>IsFull : 스택이 가득 차 있는지 확인</li>
+<li>Push(ItemType newItem) : 스택이 차 있으면 오류 던짐; 아니면 새 아이템을 스택의 최상단에 추가</li>
+<li>Pop: 스택이 비어 있으면 오류 던짐; 아니면 최상단에 있는 아이템을 제거</li>
+<li>Top: 스택이 비어 있으면 오류 던짐; 아니면 최상단의 아이템을 복사해서 리턴</li>
+</ul>
+<center>
+  <img src="https://github.com/user-attachments/assets/c13eb703-40a7-4788-aa6d-87ed328a4207" style="max-width : 700px; width : 100%;">
+</center>
+
+<h2>Array Based Stack</h2>
+<pre><code class="language-cpp">#include &quot;ItemType.h&quot;
+
+class StackType
+{
+public:
+  StackType();
+  bool IsFull() const;
+  bool IsEmpty() const;
+  void Push(ItemType item);
+  void Pop();
+  ItemType Top() const;
+private:
+  int top;
+  ItemType items[MAX_ITEMS];
+};
+
+// 스택이 가득 찼을 때 사용되는 예외 클래스
+class FullStack
+{};
+
+// 스택이 비었을 때 사용되는 예외 클래스
+class EmptyStack
+{};
+</code></pre>
+<pre><code class="language-cpp">// File: StackType.cpp
+#include &quot;StackType.h&quot;
+#include &lt;iostream&gt;
+StackType::StackType()
+{
+  top = -1;
+}
+
+bool StackType::IsEmpty() const
+{
+  return (top == -1);
+}
+
+bool StackType::IsFull() const
+{
+  return (top == MAX_ITEMS - 1);
+}
+
+void StackType::Push(ItemType newItem)
+{
+  if (IsFull())
+    throw FullStack();
+  top++;
+  items[top] = newItem;
+}
+
+void StackType::Pop()
+{
+  if (IsEmpty())
+    throw EmptyStack();  
+
+   top--;
+}
+
+ItemType StackType::Top()
+{
+  if (IsEmpty())
+    throw EmptyStack();
+  return items[top];
+}
+</code></pre>
+<ul>
+<li>Exception Handling</li>
+</ul>
+<pre><code class="language-cpp">try
+{
+  stack.Push(item);
+  stack.Pop();
+}
+catch (FullStack &amp;exception)
+{
+  cerr &lt;&lt; &quot;FullStack exception thrown&quot; &lt;&lt; endl
+       &lt;&lt; &quot;Exiting with error code 1&quot;  &lt;&lt; endl;
+}
+catch (EmptyStack &amp;exception)
+{
+  cerr &lt;&lt; &quot;EmptyStack exception thrown&quot; &lt;&lt; endl
+       &lt;&lt; &quot;Exiting with error code 2&quot; &lt;&lt; endl;
+}
+</code></pre>
+<h2>Dynamically Allocated Array Based Stack</h2>
+<ul>
+<li>사용할 공간을 미리 지정</li>
+<li>logical garbage를 줄일 수 있음</li>
+</ul>
+<pre><code class="language-cpp">class StackType
+{
+public:
+  StackType(int max);
+  StackType();
+  // ...
+private:
+  int top;
+  int maxStack;
+  ItemType* items;
+};
+
+
+StackType::StackType(int max)
+{
+  maxStack = max;
+  top = -1;
+  items = new ItemType[maxStack];
+}
+
+StackType::StackType()
+{
+  maxStack = 500;
+  top = -1;
+  items = new ItemType[maxStack];
+}
+
+bool StackType::IsFull() const
+{
+  return (top == maxStack - 1);
+}
+
+StackType::~StackType()
+{
+  delete[] items;
+}
+</code></pre>
+<h2>Linked Structure Stack</h2>
+<pre><code class="language-cpp">// Dynamically Linked Implementation of Stack
+
+Struct NodeType;
+
+class StackType
+{
+public:
+  // Identical to previous implementation
+private:
+  NodeType * topPtr;
+};
+
+Struct NodeType
+{
+  ItemType info;
+  NodetType *next;
+}
+
+void StackType::Push(ItemType newItem)
+{
+  if (IsFull())
+    throw FullStack();
+  
+  NodeType *location;
+  location = new NodeType;
+  location-&gt;info = newItem;
+  location-&gt;next = topPtr;
+  topPtr = location;
+}
+
+void StackType::Pop()
+{
+  if (IsEmpty())
+    throw EmptyStack();
+  else 
+  {
+    NodeType *tempPtr;
+    tempPtr = topPtr;
+    topPtr = topPtr-&gt;next;
+    delete tempPtr;
+  }
+}
+
+ItemType StackType::Top()
+{
+  if (IsEmpty())
+    throw EmptyStack();
+  else
+    return topPtr-&gt;info;
+}
+
+
+bool StackType::IsFull() const
+{
+  NodeType *location;
+  try
+  {
+    location = new NodeType;
+    delete location;
+    return false;
+  }
+  catch(std::bad_alloc exception)
+  {
+    return true;
+  }
+}
+</code></pre>
+<p>출처 및 참고자료 : C++ Data Structures - Nell Dale</p>
+
+        <script>
+          location.href = "/post-view?href=posts/CS／알고리즘/2025-02-20-자료구조-스택.md"
+        </script>
+      </body>
+  
