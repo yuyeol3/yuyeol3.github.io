@@ -3,22 +3,32 @@
         
     <url>
       <loc>https://yuyeol3.github.io/</loc>
-      <lastmod>2025-02-16</lastmod>
+      <lastmod>2025-02-20</lastmod>
     </url>
   
         
     <url>
       <loc>https://yuyeol3.github.io/board-view</loc>
-      <lastmod>2025-02-16</lastmod>
+      <lastmod>2025-02-20</lastmod>
     </url>
   
         
     <url>
       <loc>https://yuyeol3.github.io/search-view</loc>
-      <lastmod>2025-02-16</lastmod>
+      <lastmod>2025-02-20</lastmod>
     </url>
   
         
+    <url>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/CS／알고리즘/2025-02-20-알고리즘-bfs.md</loc>
+      <lastmod>2025-02-20</lastmod>
+    </url>
+  
+    <url>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/CS／알고리즘/2025-02-20-자료구조-스택.md</loc>
+      <lastmod>2025-02-20</lastmod>
+    </url>
+  
     <url>
       <loc>https://yuyeol3.github.io/post-view?href=posts/CS／알고리즘/2025-02-11-AWS-배포.md</loc>
       <lastmod>2025-02-11</lastmod>
@@ -36,7 +46,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=CS／알고리즘&amp;page=1</loc>
-      <lastmod>2025-02-16</lastmod>
+      <lastmod>2025-02-20</lastmod>
     </url>
   
     <url>
@@ -46,7 +56,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=수학&amp;page=1</loc>
-      <lastmod>2025-02-16</lastmod>
+      <lastmod>2025-02-20</lastmod>
     </url>
   
     <url>
@@ -56,7 +66,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=일반&amp;page=1</loc>
-      <lastmod>2025-02-16</lastmod>
+      <lastmod>2025-02-20</lastmod>
     </url>
   
     <url>
@@ -76,7 +86,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=프로젝트&amp;page=1</loc>
-      <lastmod>2025-02-16</lastmod>
+      <lastmod>2025-02-20</lastmod>
     </url>
   
       </urlset>
