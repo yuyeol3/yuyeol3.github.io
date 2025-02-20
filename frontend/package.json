@@ -15,7 +15,8 @@
     "include" : [
       "/search-view",
       "/board-view",
-      "/post-view"
+      "/post-view",
+      "/404.html"
     ],
     "exclude" : [
       "/"
