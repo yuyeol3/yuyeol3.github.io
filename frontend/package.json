@@ -11,11 +11,14 @@
     "postbuild" : "react-snap"
   },
   "reactSnap" : {
+    "crawl" : false,
     "include" : [
-      "/",
       "/search-view",
       "/board-view",
       "/post-view"
+    ],
+    "exclude" : [
+      "/"
     ],
     "source" : "../dist"
   },
