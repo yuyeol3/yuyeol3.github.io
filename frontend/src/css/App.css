@@ -41,7 +41,7 @@
 /* 메인 컨텐츠 영역 */
 .contents {
     flex: 1;
-    max-width: 80%;
+    max-width: 60%;
     margin: 0 auto;
     padding: 2rem 1rem;
     background-color: #fff;
@@ -81,7 +81,7 @@
     padding: 1rem;
     background-color: #ffffff;
     border-right: 1px solid #ddd;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    /*box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);*/
 }
 
 .side-bar h3 {
@@ -140,6 +140,12 @@
 /*    }*/
 
 /*}*/
+
+@media (max-width: 1200px) {
+    .contents {
+        max-width: 80%;
+    }
+}
 
 /* 반응형 디자인 (화면이 작을 때) */
 @media (max-width: 900px) {
