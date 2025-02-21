@@ -23,14 +23,15 @@
 <h2>1. JSX</h2>
 <pre><code class="language-js">function Main() {
     return (
-        &lt;&gt;&lt;p className=&quot;main-message&quot;&gt;Hello, World!&lt;/p&gt;&lt;/&gt;
+        &lt;&gt;
+            &lt;p className=&quot;main-message&quot;&gt;Hello, World!&lt;/p&gt;
+        &lt;/&gt;
     );
 }
-
-
 </code></pre>
+<p>jsx는 자바스크립트 문법을 그대로 사용하지만 html처럼 마크업 문법도 사용할 수 있는 것이 특징이다. 위의 예시처럼 괄호 안에 마크업 문법을 사용하여 컴포넌트를 구성할 수 있다. html과 대체로 비슷하지만 class를 지정하는 경우는 className으로 지정해 줘야 하고, 엘리먼트 리스트를 만들 경우 key를 지정해 주어야 하는 등의 차이점이 있다. </p>
 <h2>2. Hooks</h2>
-<p>리액트를 시도하면서 가장 낯설었던 것은 여러 Hook 들이었다. 따라서 주로 사용하는 훅 세 가지를 정리해 보았다.</p>
+<p>리액트를 시도하면서 가장 낯설었던 것은 Hook을 사용해 상태(state)들을 관리하는 것이었다. 따라서 주로 사용하는 훅 세 가지를 정리해 보았다.</p>
 <ul>
 <li>State Hooks<ul>
 <li>컴포넌트에 상태 정보를 내장</li>
@@ -75,6 +76,79 @@
   // ...
 </code></pre>
 <p>출처 : <a href="https://ko.react.dev/reference/react/hooks">React Hooks</a></p>
+<h1>3. posts 목록 생성</h1>
+<pre><code class="language-js">function buildPostsJson() {
+  const files = getMarkdownFiles(postsDir);
+  // 각 파일에 대해 메타 데이터 추출
+  const posts = files.map(extractPostData);
+  
+  // 필요한 경우 폴더별 그룹화
+  const grouped = {};
+  posts.forEach(post =&gt; {
+    // 예시로 posts/ 이후의 첫 폴더명을 카테고리로 사용
+    const parts = post.path.split(&#39;/&#39;);
+    const category = parts.length &gt; 2 ? parts[1] : &#39;default&#39;;
+    if (!grouped[category]) {
+      grouped[category] = [];
+    }
+    grouped[category].push(post);
+  });
+  
+  // 그룹별로 최근에 작성된 글 순으로 정렬
+  for (const category in grouped) {
+    grouped[category].sort((a, b) =&gt; new Date(b.date) - new Date(a.date));
+  }
+
+  // 정적 html, sitemap 생성성
+  renderStaticHtml(grouped);
+  createSiteMap(grouped);
+  // 그룹 설정 추가
+  grouped.__groupSetting = groupSetting;
+  classifyCategories(grouped);
+  // JSON으로 저장 (필요에 따라 grouped 혹은 posts 배열을 저장)
+  fs.writeFileSync(outputFile, JSON.stringify(grouped, null, 2), &#39;utf-8&#39;);
+  console.log(`Posts JSON saved to ${outputFile}`);
+}
+</code></pre>
+<center>
+    <img src="https://github.com/user-attachments/assets/2f02faa9-1141-4b21-bfdd-55958912a713"
+         style="width : 100%; max-width : 700px;"
+</center>
+
+<p><code>build.js</code>를 실행하면 위 사진과 같이 json 형태로 posts 폴더 내의 마크다운 문서가 폴더 이름에 따라 카테고리에 맞게 정리된다. <code>build.groupsetting.js</code> 에서는 그룹별로 묶을 카테고리를 지정할 수 있다.</p>
+<p>프론트엔드에서 이렇게 생성된 posts.html 파일에 대한 ajax 요청을 보내 게시글 목록을 동기화한다.</p>
+<h1>4. previews 파일 생성</h1>
+<pre><code class="language-js">function renderStaticHtml(posts) {
+  const htmlTemplate = (title, content, path, description)=&gt; `
+      &lt;html lang=&quot;ko&quot;&gt;
+      &lt;head&gt;
+        &lt;title&gt;${title}&lt;/title&gt;
+        &lt;link rel=&quot;canonical&quot; href=&quot;http://${hostName}/&quot;/&gt;
+        &lt;meta charset=&quot;utf-8&quot;/&gt;
+        &lt;meta name=&quot;description&quot; content=&quot;${description}&quot;&gt;
+        &lt;link rel=&quot;icon&quot; type=&quot;image/svg+xml&quot; href=&quot;/favicon.svg&quot; /&gt;
+      &lt;/head&gt;
+      &lt;body style=&quot;display : none;&quot;&gt;
+        
+        ${marked.parse(content)}
+        &lt;script&gt;
+          location.href = &quot;/post-view?href=${path}&quot;
+        &lt;/script&gt;
+      &lt;/body&gt;
+  `;
+
+  // console.log(posts);
+  for (const category of Object.keys(posts)) {
+    const postList = posts[category];
+    for (const post of postList) {
+      const content = fs.readFileSync(__dirname +  &quot;/&quot; + post.pathList.join(&quot;/&quot;))
+      fs.writeFileSync(&quot;./previews/&quot; + post.pathList.join(&quot;.&quot;) + &quot;.html&quot;, 
+      htmlTemplate(post.title, content.toString(&#39;utf-8&#39;), post.pathList.join(&quot;/&quot;), post.preview), &#39;utf-8&#39;);
+    }
+  }
+}
+</code></pre>
+<p>react를 사용하여 프론트엔드를 구성하면 페이지가 완전히 로드된 뒤의 사용자 경험은 좋지만, 검색 엔진에 대응할 때는 문제가 있다. 자바스크립트가 로드된 뒤에 페이지가 렌더링되기 때문에 검색 엔진의 봇이 단순히 페이지 원본만 스크랩한 경우 내용을 알 수 없다. 따라서 미리 렌더링된 previews 파일을 생성하여 페이지 공유나 sitemap 목록에 사용하였다.</p>
 
         <script>
           location.href = "/post-view?href=posts/프로젝트/2025-02-11-블로그-제작-1.md"
