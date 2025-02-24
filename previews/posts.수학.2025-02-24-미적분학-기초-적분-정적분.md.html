@@ -1,0 +1,51 @@
+
+      <html lang="ko">
+      <head>
+        <title>미적분학 기초 - 정적분</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="# 1. 영역의 넓이">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>미적분학 기초 - 정적분</h1>
+<h1>1. 영역의 넓이</h1>
+<p>구간 $[a, b]$에서 정의된 함수 $f$에 대하여 $f$가 $[a, b]$에서 연속이고 $f \ge 0$이면 $x=a, \ x=b$와 $y=f(x)$로 둘러싸인 영역의 넓이</p>
+<p>$$
+A = \lim_{n \to \infty} \sum^n_{i=1}f(x^*_i)\Delta x_i
+$$</p>
+<p>이다.</p>
+<h1>2. 정적분</h1>
+<p>구간 $[a, b]$에서 정의된 함수 $f$에 대하여 리만합의 극한</p>
+<p>$$
+\lim_{n \to \infty} \sum^n_{i=1}f(x^<em>_i)\Delta x_i   \ \ (\text{단, } x^</em><em>i \in [x</em>{i-1},x_i],\ i=1,2,\cdot\cdot\cdot,n)
+$$</p>
+<p>이 존재할 때 $f$는 구간 $[a, b]$에서 <strong>적분가능</strong> 하다고 한다. 이 때 극한</p>
+<p>$$
+\lim_{n \to \infty} \sum^n_{i=1}f(x^*_i)\Delta x_i = \int_a^b f(x) dx
+$$</p>
+<p>로 표기하며 함수 $f$의 구간 $[a, b]$에서의 <strong>정적분</strong> 이라고 한다. 이때 $a , b$를 <strong>적분한계</strong> 라 한다.</p>
+<h1>3. 정적분의 성질</h1>
+<p>함수 $f$와 $g$가 구간 $[a, b]$에서 적분가능하고 $k$가 임의의 상수일 때 다음이 성립한다.</p>
+<ol>
+<li>$\int_a^a f(x) dx = 0$</li>
+<li>$\int_a^b f(x) dx = -\int_b^a f(x)dx$</li>
+<li>$\int_a^b f(x)dx = \int_a^c f(x)dx + \int_c^b f(x)dx$</li>
+<li>$\int_a^b kf(x)dx = k \int_a^b f(x)dx$</li>
+<li>$\int_a^b [f(x) \pm g(x)] dx = \int_a^b f(x)dx \pm \int_a^b g(x)dx$</li>
+</ol>
+<h1>4. 적분가능성에 대한 정리</h1>
+<p>함수 $f$가 구간 $[a, b]$에서 연속이면 적분가능하다.</p>
+<h1>5. 적분의 비교성</h1>
+<p>모든 $x \in [a,b]$에 대하여 $g(x) \le f(x)$이고 $f$와 $g$가 적분가능하면</p>
+<p>$$
+\int_a^bg(x)dx \le \int_a^b f(x)dx
+$$</p>
+<p>이다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts/수학/2025-02-24-미적분학-기초-적분-정적분.md"
+        </script>
+      </body>
+  
