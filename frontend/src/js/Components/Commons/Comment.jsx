@@ -1,12 +1,17 @@
 // comment.tsx
-import { useEffect, useRef } from "react";
+import {useEffect, useRef, useState} from "react";
 import PropTypes from "prop-types";
+import NotFound from "./NotFound.jsx";
+import Loading from "./Loading.jsx";
 
 export default function Comment({term}) {
     const commentsEl = useRef(null);
+    const [status, setStatus] = useState("pending");
 
     useEffect(() => {
         const scriptEl = document.createElement("script");
+        scriptEl.onload = ()=>setStatus("success");
+        scriptEl.onerror = ()=>setStatus("failed");
         scriptEl.async = true;
         scriptEl.src = "https://utteranc.es/client.js";
         scriptEl.setAttribute("repo", "yuyeol3/yuyeol3.github.io");
@@ -18,7 +23,9 @@ export default function Comment({term}) {
     }, []);
 
     return (
-        <div>
+        <div className="comments-wrapper">
+            {status === "failed" && <NotFound></NotFound>}
+            {status === "pending" && <Loading></Loading>}
             <div ref={commentsEl} />
         </div>
     );
