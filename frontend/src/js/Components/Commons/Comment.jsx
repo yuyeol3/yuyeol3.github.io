@@ -24,8 +24,8 @@ export default function Comment({term}) {
 
     return (
         <div className="comments-wrapper">
-            {status === "failed" && <NotFound></NotFound>}
-            {status === "pending" && <Loading></Loading>}
+            {status === "pending" ? <Loading/> : ""}
+            {status === "failed" ? <NotFound/> : ""}
             <div ref={commentsEl} />
         </div>
     );
