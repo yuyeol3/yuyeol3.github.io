@@ -10,7 +10,11 @@ export default function Comment({term}) {
 
     useEffect(() => {
         const scriptEl = document.createElement("script");
-        scriptEl.onload = ()=>setStatus("success");
+        scriptEl.onload = ()=>{
+            commentsEl.current?.querySelector(".utterances-frame")
+                .addEventListener("load", ()=>setInterval(()=>setStatus("success"),500)
+            );
+        };
         scriptEl.onerror = ()=>setStatus("failed");
         scriptEl.async = true;
         scriptEl.src = "https://utteranc.es/client.js";
@@ -20,7 +24,8 @@ export default function Comment({term}) {
         scriptEl.setAttribute("crossorigin", "anonymous");
         scriptEl.setAttribute("issue-term", term);
         commentsEl.current?.appendChild(scriptEl);
-    }, []);
+    }, [term]);
+
 
     return (
         <div className="comments-wrapper">
