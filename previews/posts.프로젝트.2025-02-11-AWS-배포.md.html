@@ -1,0 +1,108 @@
+
+      <html lang="ko">
+      <head>
+        <title>AWS 배포</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="## 1. 개요">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>AWS 배포</h1>
+<h2>1. 개요</h2>
+<p>flask 웹앱의 AWS EC2 배포를 정리한 글이다.</p>
+<h2>2. webapp 설치</h2>
+<p>배포할 웹앱을 ec2에 올린다</p>
+<pre><code>git clone &quot;주소&quot;
+</code></pre>
+<h2>3. gunicorn 설정</h2>
+<h3>3.1 설치</h3>
+<pre><code>sudo apt install gunicorn
+</code></pre>
+<h3>3.2 동작 확인</h3>
+<pre><code>gunicorn3 --bind 0.0.0.0:5000 app:app &amp;
+</code></pre>
+<h3>3.3 리눅스 서비스 등록</h3>
+<pre><code class="language-fill100"># cd /etc/systemd/system/wigit.service
+
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/home/ubuntu/wigit
+ExecStart=/home/ubuntu/wigit/virt/bin/gunicorn \
+        --workers 5 \
+        --threads 4 \
+        --bind unix:/home/ubuntu/wigit/gunicorn.sock \
+        --access-logfile /home/ubuntu/wigit/access.log \
+        --error-logfile /home/ubuntu/wigit/error.log \
+        --preload \
+        main:app &amp;
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>--preload를 설정해야 flask-login 기능이 정상적으로 동작했다.(아마 --preload가 프로세스 간 메모리를 공유하게 해서 그런 것 같다)</p>
+<h3>3.4 서비스 등록</h3>
+<pre><code>sudo systemctl daemon-reload
+sudo systemctl enable wigit
+sudo systemctl start wigit
+</code></pre>
+<p>등록 후 정상 동작하는지 확인한다.</p>
+<pre><code>sudo systemctl status wigit
+</code></pre>
+<h2>4. nginx 설정</h2>
+<p>기존 default파일 내용을 지우고 다음으로 대체한다.</p>
+<pre><code class="language-fill100"># /etc/nginx/sites-available
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name 0.0.0.0;
+
+    root /home/ubuntu/wigitback;
+
+    location / {
+        try_files $uri $uri/ @app;
+
+    }
+
+    location @app {
+        proxy_pass http://unix:/home/ubuntu/wigit/gunicorn.sock;
+        access_log off;
+    }
+
+    location /assets/ {
+        alias /home/ubuntu/wigit/assets/;
+        autoindex on;
+    }
+
+}
+</code></pre>
+<p>설정 후 다음 커멘드로 구문 확인과 리로드를 수행한다.</p>
+<pre><code>$ sudo nginx -t         # 구문 테스트
+$ sudo nginx -s reload  # 리로드
+</code></pre>
+<h2>5. 502 Bad Gateway 발생시</h2>
+<ul>
+<li>1.폴더 권한 및 .sock 권한 확인</li>
+</ul>
+<pre><code>$ chmod 755 /home/ubuntu
+$ chmod 660 /home/ubuntu/wigit/gunicorn.sock
+</code></pre>
+<ul>
+<li>2.에러 로그 확인 후 대처..</li>
+</ul>
+<pre><code>$ sudo tail -f /var/log/nginx/error.log  # nginx
+$ tail -f ~/wigit/error.log              # gunicorn
+</code></pre>
+
+        <script>
+          location.href = "/post-view?href=posts/프로젝트/2025-02-11-AWS-배포.md"
+        </script>
+      </body>
+  
