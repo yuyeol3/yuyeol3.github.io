@@ -333,6 +333,32 @@ services:
 
 # volumes:
 </code></pre>
+<h1>4. service 등록하기</h1>
+<pre><code class="language-service">[Unit]
+Description=Youtube Shortener
+After=network.target docker.service
+
+[Service]
+User=(user name)
+Group=(user group)
+WorkingDirectory=/home/zerom50/server
+ExecStart=/usr/bin/docker compose up --detach
+Restart=always
+RestartSec=5
+Environment=&quot;DOCKER_HOST=unix:///var/run/docker.sock&quot;
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>user에게 docker 권한이 없을 수 있으므로 다음과 같이 설정한다.</p>
+<pre><code>groups zerom50  # 현재 그룹 확인
+sudo usermod -aG docker zerom50 # docker 그룹 추가가
+</code></pre>
+<pre><code class="language-bash">$ sudo systemctl daemon-reload
+$ sudo systemctl enable server
+$ sudo systemctl start server
+$ sudo systemctl status server
+</code></pre>
 
         <script>
           location.href = "/post-view?href=posts/프로젝트/2025-02-28-docker-container-https-적용.md"
