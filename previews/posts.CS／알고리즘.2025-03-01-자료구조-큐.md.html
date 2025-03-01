@@ -1,0 +1,377 @@
+
+      <html lang="ko">
+      <head>
+        <title>자료구조 - 큐</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="# Queue의 정의">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>자료구조 - 큐</h1>
+<h1>Queue의 정의</h1>
+<ul>
+<li>논리(ADT) 수준<ul>
+<li>동형의 순서가 있는(ordered) 원소들이 존재</li>
+<li>새 원소는 뒤에 추가되고, 앞에서 원소들이 하나씩 제거되며 꺼내진다.</li>
+</ul>
+</li>
+<li>큐는 FIFO(First in, First out) 구조이다.</li>
+</ul>
+<h1>Queue 연산</h1>
+<ul>
+<li>뒤에서 추가</li>
+<li>앞에서 제거</li>
+</ul>
+<h1>Queue ADT Members</h1>
+<ul>
+<li>MakeEmpty: 큐를 빈 상태로 만듦</li>
+<li>IsEmpty: 큐가 빈 상태인지 확인</li>
+<li>IsFull: 큐가 가득 찼는지 확인</li>
+<li>Enqueue(ItemType newItem): 큐의 뒤에 새 아이템을 추가</li>
+<li>Dequeue(ItemType &amp;item) : 앞에서 아이템을 제거하고 제거한 그 아이템을 반환함.</li>
+</ul>
+<h1>QueType의 Public Interface</h1>
+<pre><code class="language-cpp">typedef char ItemType;
+class QueType
+{
+public:
+  QueType(int max);
+  QueType();
+  ~QueType();
+  void MakeEmpty();
+  bool IsEmpty() const;
+  bool IsFull() const;
+  void Enqueue(ItemType item);
+  void Dequeue(ItemType &amp;item);
+private:
+  // ...
+}
+</code></pre>
+<p><img src="https://github.com/user-attachments/assets/c9facf07-9ee4-4535-a479-23a0b870c9ea" alt="대문 자료구조 queType-array"></p>
+<h1>Queue - array based</h1>
+<h2>Fixed Front</h2>
+<ul>
+<li><p>A, B, C, D를 넣는다</p>
+<ul>
+<li><code>[A][B][C][D]</code></li>
+</ul>
+</li>
+<li><p>Deque를 호출한 후</p>
+<ul>
+<li><code>[][B][C][D]</code> $\rightarrow$ <code>[B][C][D][]</code> (앞으로 당김)</li>
+<li>Deque를 호출할 때마다 원소들을 앞으로 당겨야 한다.</li>
+</ul>
+</li>
+</ul>
+<h2>Moving Front</h2>
+<ul>
+<li><p>A, B, C, D를 넣는다</p>
+<ul>
+<li><code>[A][B][C][D]</code></li>
+</ul>
+</li>
+<li><p>Deque를 호출한 후</p>
+<ul>
+<li>원소는 큐에서 움직이지 않는다</li>
+<li><code>[][B][C][D]</code></li>
+</ul>
+</li>
+<li><p>IsFull의 문제</p>
+<ul>
+<li>아래와 같은 경우, 정말 큐가 가득 찬 것일까?</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/d7a1c51b-2d3f-447d-8d42-514db15d8bac" alt="대문 자료구조 moving-front-isfull-problem"></p>
+<pre><code class="language-cpp">bool QueType::IsFull() const
+{
+  return (rear == MAX_ITEMS - 1);
+}
+</code></pre>
+<h2>Circular Queue</h2>
+<ul>
+<li>큐 요소 둘러싸기</li>
+</ul>
+<pre><code class="language-cpp">rear = (rear + 1) % MAX_ITEMS;
+items[rear] = newItem;
+</code></pre>
+<ul>
+<li><p>Full, Empty 판별의 문제</p>
+<ul>
+<li>Empty<ul>
+<li><code>[][][N][][]</code> : front=2, rear=2</li>
+<li><code>[][][][][]</code>  : front=3, rear=2</li>
+</ul>
+</li>
+<li>Full<ul>
+<li><code>[L][M][][J][K]</code> : front=3, rear=1</li>
+<li><code>[L][M][N][J][K]</code> : front=3, rear=2</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>One Slot Reservation</p>
+<ul>
+<li><code>front</code> = 첫 번째 요소 한 칸 앞으로 지정<ul>
+<li>Empty<ul>
+<li><code>[][][N][][]</code> : front=1, rear=2</li>
+<li><code>[][][][][]</code>  : front=2, rear=2</li>
+</ul>
+</li>
+<li>Full<ul>
+<li><code>[L][M][(reserved)][J][K]</code> : front=2, rear=1</li>
+<li>An enqueue operation fails: The stack is full</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-cpp">class FullQueue{};
+class EmptyQueue{};
+typedef char ItemType;
+
+class QueType
+{
+public:
+  QueType();
+  QueType(int max);
+  ~QueType();
+  void MakeEmpty();
+  bool IsEmpty() const;
+  bool IsFull() const;
+  void Enqueue(ItemType newItem);
+  void Dequeue(ItemType &amp;item);
+private:
+  int front;
+  int rear;
+  ItemType *items;
+  int maxQue;
+};
+</code></pre>
+<pre><code class="language-cpp">QueType::QueType(int max)
+{
+  maxQue = max + 1;
+  // Initially points to the last slot
+  front = maxQue - 1;
+  rear = maxQue - 1;
+  items = new ItemType[maxQue];
+}
+
+QueType::QueType()
+{
+  maxQue = 501;
+  front = maxQue - 1;
+  rear = maxQue - 1;
+  items = new ItemType[maxQue];
+}
+
+QueType::~QueType()
+{
+  delete []items;
+}
+
+void QueType::MakeEmpty()
+{
+  front = maxQue - 1;
+  rear = maxQue - 1;
+}
+
+bool QueType::IsEmpty() const
+{
+  return (rear == front);
+}
+
+bool QueType::IsFull() const
+{
+  return ((rear + 1) % maxQue == front);
+}
+
+
+void QueType::Enqueue(ItemType newItem)
+{
+  if (IsFull())
+    throw FullQueue();
+  else {
+    rear = (rear + 1) % maxQue;
+    items[rear] = newItem;
+  }
+}
+
+void QueType::Dequeue(ItemType&amp; item)
+{
+  if (IsEmpty())
+    throw EmptyQueue();
+  else {
+    front = (front + 1) % maxQue;
+    item = items[front];
+  }
+}
+</code></pre>
+<h1>Queue - Linked List based</h1>
+<p><img src="https://github.com/user-attachments/assets/eaff6401-4635-4cbb-9c14-58691453fda3" alt="대문 자료구조 queType-linked"></p>
+<pre><code class="language-cpp">class QueType
+{
+public:
+    QueType();
+    ~QueType();
+    void MakeEmpty();
+    bool IsEmpty() const;
+    bool IsFull() const;
+    void Enqueue(ItemType newItem);
+    ItemType Dequeue();
+private:
+    Node *front;
+    Node *rear; 
+};
+
+QueType::QueType()
+: front(NULL), rear(NULL)
+{}
+
+
+bool QueType::IsEmpty() const {
+    return (front == NULL);
+}
+
+bool QueType::IsFull() const {
+    Node *tempPtr;
+    try {
+        tempPtr = new Node;
+        delete tempPtr;
+        return false;
+    } catch(std::bad_alloc &amp;exception) {
+        return true;
+    }
+}
+
+void QueType::Enqueue(ItemType newItem)
+{
+    if (IsFull()) 
+        throw FullQueue();
+    
+    Node *newNode;
+    newNode = new Node;
+    newNode-&gt;info = newItem;
+    newNode-&gt;next = NULL;
+
+    if (rear == NULL) {
+        front = rear = newNode;
+    } else {
+        rear-&gt;next = newNode;
+        rear = newNode;
+    }
+
+}
+
+ItemType QueType::Dequeue()
+{
+    if (IsEmpty())
+        throw EmptyQueue();
+
+    Node *tempPtr;
+    ItemType item;
+
+    tempPtr = front;
+    front = front-&gt;next;
+    item = tempPtr-&gt;info;
+    delete tempPtr;
+
+    if (front == NULL)
+        rear = NULL;
+
+    return item;
+}
+
+
+void QueType::MakeEmpty()
+{
+    Node *tempPtr;
+
+    while (front != NULL)
+    {
+        tempPtr = front;
+        front = front-&gt;next;
+        delete tempPtr;
+    }
+
+    front = rear = NULL;
+}
+
+QueType::~QueType()
+{
+    Node *tempPtr;
+
+    while (front != NULL)
+    {
+        tempPtr = front;
+        front = front-&gt;next;
+        delete tempPtr;
+    }
+}
+</code></pre>
+<h2>Big-O Comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Dynamic Array</th>
+<th>Linked-List</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Class constructor</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>MakeEmpty</td>
+<td>O(1)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td>IsFull</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>IsEmpty</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>Enqueue</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>Dequeue</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>Destructor</td>
+<td>O(1)</td>
+<td>O(N)</td>
+</tr>
+</tbody></table>
+<ul>
+<li>List: 오래 저장<ul>
+<li>삭제하는 일이 빈번하지 않음</li>
+<li>Linked List 유리</li>
+</ul>
+</li>
+<li>Stack/Queue: 빈번한 삽입/삭제<ul>
+<li>배열 기반 유리(동적 할당 배열)</li>
+</ul>
+</li>
+</ul>
+
+        <script>
+          location.href = "/post-view?href=posts/CS／알고리즘/2025-03-01-자료구조-큐.md"
+        </script>
+      </body>
+  
