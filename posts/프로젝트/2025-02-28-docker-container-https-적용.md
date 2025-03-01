@@ -135,8 +135,8 @@ backend와 nginx가 살아있는지 확인한다.
 ```bash
 $ curl -L https://raw.githubusercontent.com/wmnnd/nginx-certbot/master/init-letsencrypt.sh > $ init-letsencrypt.sh
 $ chmod +x init-letsencrypt.sh
-$ nano init-letsencrypt.sh // 도메인, 이메일, 디렉토리 수정
-$ sudo ./init-letsencrypt.sh // script를 실행하여 인증서 발급
+$ nano init-letsencrypt.sh   # 도메인, 이메일, 디렉토리 수정
+$ sudo ./init-letsencrypt.sh # 인증서 발급
 ```
 
 ```bash
