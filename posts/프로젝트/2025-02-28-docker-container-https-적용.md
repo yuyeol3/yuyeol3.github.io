@@ -223,7 +223,7 @@ echo "### Reloading nginx ..."
 docker compose exec nginx nginx -s reload
 ```
 
-나의 경우 docker-compose가 오류나서 docker compose로 명령어를 전부 바꾸어 주었다.
+필자의 경우 docker-compose 명령어가 작동하지 않아서 docker compose로 전부 바꾸어 주었다.
 
 # 3. 인증 후 nginx, docker-compose.yml 수정하기
 
