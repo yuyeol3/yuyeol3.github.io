@@ -11,15 +11,15 @@ export default function Comment({term}) {
     useEffect(() => {
         const scriptEl = document.createElement("script");
         scriptEl.onload = ()=>{
-            commentsEl.current?.querySelector(".utterances-frame")
-                .addEventListener("load", ()=>setInterval(()=>setStatus("success"),500)
+            commentsEl.current
+                ?.querySelector(".utterances-frame")
+                ?.addEventListener("load", ()=>setInterval(()=>setStatus("success"),500)
             );
         };
         scriptEl.onerror = ()=>setStatus("failed");
         scriptEl.async = true;
         scriptEl.src = "https://utteranc.es/client.js";
         scriptEl.setAttribute("repo", "yuyeol3/yuyeol3.github.io");
-        scriptEl.setAttribute("issue-term", "url");
         scriptEl.setAttribute("theme", "github-light");
         scriptEl.setAttribute("crossorigin", "anonymous");
         scriptEl.setAttribute("issue-term", term);
