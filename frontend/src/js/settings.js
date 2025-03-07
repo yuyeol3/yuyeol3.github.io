@@ -10,5 +10,8 @@ export default {
     },
     boardView : {
         pageSize : 10,
+    },
+    postHeader : {
+        author : "yuyeol3"
     }
 }
