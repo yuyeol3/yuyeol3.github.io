@@ -2,4 +2,4 @@
 
 hello world!
 
-![image](/images/DALL·E%202025-02-10%2014.23.44%20-%20A%20minimalistic%20icon-style%20illustration%20representing%20software%20development.%20The%20image%20includes%20symbols%20such%20as%20a%20laptop%20with%20code%20on%20the%20screen,%20a%20datab.webp)
+![02bd0b1b-99af-41c1-9c2d-92ee16248ab4](https://github.com/user-attachments/assets/32473e4b-77e5-4258-b04c-57dfa12e4e35)
