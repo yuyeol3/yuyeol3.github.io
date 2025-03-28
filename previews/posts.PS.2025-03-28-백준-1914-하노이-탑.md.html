@@ -39,7 +39,7 @@ $
 <p>$$ \therefore W(n) = 2^{n} + 1 $$</p>
 <h2>DP 사용</h2>
 <p>위 방식만으로도 이 테스트케이스 범위 내에서 문제를 충분히 해결할 수 있다. 하지만 코드를 더 최적화하기 위해 메모이제이션 기법을 사용했다. 파이썬 dict 자료구조를 통해 <code>f&quot;{n},{start},{end},{via}&quot;</code>를 키로 사용하여 계산 결과를 저장하고, 중복 계산을 방지하므로써 코드를 최적화할 수 있었다. </p>
-<h2>코드드</h2>
+<h2>코드</h2>
 <pre><code class="language-python">import sys
 
 dp = {}
