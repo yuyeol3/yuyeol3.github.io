@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 export default function PostPreview({title, date, preview, onClick}) {
     return (<div className="post-preview" onClick={onClick}>
-            <h2>{title}</h2>
+            <h3>{title}</h3>
             <p>{date}</p>
             <p>{preview}</p>
         </div>
