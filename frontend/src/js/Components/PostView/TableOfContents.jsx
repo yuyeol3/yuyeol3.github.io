@@ -2,6 +2,11 @@ import { Link } from 'react-scroll';
 import PropTypes from "prop-types";
 
 export default function TableOfContents({post}) {
+
+    const minLevel = post.titleContents.map((item, )=>item.level)
+        .sort((a, b) => a - b)
+        .at(0);
+
     return (
         <div className="table-of-contents">
             <nav>
@@ -11,7 +16,7 @@ export default function TableOfContents({post}) {
                         return (
                         <li
                             key={idx}
-                            style={{ marginLeft: `${(item.level - 1) * 20}px`, listStyle: 'none' }}
+                            style={{ marginLeft: `${(item.level - minLevel) * 20}px`, listStyle: 'none' }}
                         >
                             <Link
                                 to={item.id}
