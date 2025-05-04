@@ -1,0 +1,217 @@
+
+      <html lang="ko">
+      <head>
+        <title>자료구조 - Binary Search Tree</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="## 1. Linear Linked List">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>자료구조 - Binary Search Tree</h1>
+<h2>1. Linear Linked List</h2>
+<h3>장점</h3>
+<ul>
+<li>삽입/삭제에 효율적</li>
+<li>데이터 수를 미리 알 필요가 없음</li>
+</ul>
+<h3>단점</h3>
+<ul>
+<li>복잡성</li>
+<li>동적 할당 비용</li>
+<li>이진 탐색 사용이 불가</li>
+</ul>
+<h2>2. 선형 탐색</h2>
+<ul>
+<li>$O(N)$의 시간 복잡도<ul>
+<li>평균 $N/2$번의 비교</li>
+</ul>
+</li>
+</ul>
+<h2>3. 높은 확률 정렬</h2>
+<ul>
+<li>자주 찾을 만한 원소를 앞에 배치</li>
+<li>두 접근법<ul>
+<li>최근에 탐색했던 원소를 가장 앞으로 옮김</li>
+<li>탐색한 원소를 이전 원소와 swap</li>
+</ul>
+</li>
+<li>부작용이 없다는 장점(worst case 에 영향 x)</li>
+</ul>
+<h2>4. Key Ordering</h2>
+<ul>
+<li>SortedList를 만드는 두 가지 방법<ul>
+<li>삽입 시 순서대로 정렬</li>
+<li>탐색 전에 정렬</li>
+</ul>
+</li>
+<li>SortedList에서는<ul>
+<li>아이템이 존재하지 않더라도 $N/2$ 회 안에 탐색</li>
+<li>이진 탐색 이용: $O(\log N)$ 보장</li>
+</ul>
+</li>
+</ul>
+<h2>5. 트리의 정의</h2>
+<p>계층적 데이터 구조, root를 제외한 각각의 노드가 정확히 하나의 parent만 가짐</p>
+<ul>
+<li>Root: 유니크한 트리의 시작 노드</li>
+<li>Parent: 노드의 직전자(predecessor)</li>
+<li>Child: 노드의 직후자(successor)</li>
+<li>Leaf node: 직후자를 갖지 않는 노드</li>
+<li>Subtree : 전체 트리 안에서 어떤 child를 root로 갖는 작은 트리</li>
+<li>Level: root에서의 거리<ul>
+<li>root의 level: 0</li>
+</ul>
+</li>
+<li>Height: 트리의 최대 level</li>
+<li>Siblings: 같은 level의 노드</li>
+</ul>
+<h2>6. 이진 트리의 정의</h2>
+<ul>
+<li>최대 2개의 자식 노드(left child, right child)를 가질 수 있는 트리<ul>
+<li>레벨 N에는 최대 $2^N$개의 노드</li>
+</ul>
+</li>
+<li>각 노드에 최대 2개의 subtree가 존재<ul>
+<li>left subtree, right subtree</li>
+</ul>
+</li>
+</ul>
+<h2>7. 코드</h2>
+<h3>클래스 정의</h3>
+<pre><code class="language-c++">template &lt;typename T&gt;
+struct NodeType {
+    T info;
+    NodeType&lt;T&gt; *left;
+    NodeType&lt;T&gt; *right;
+};
+
+template &lt;typename T&gt;
+class TreeType
+{
+public:
+    TreeType();
+    ~TreeType();
+    TreeType(const TreeType&amp; orignalTree);
+    void operator=(const TreeType&amp; orignalTree);
+    void MakeEmpty();
+    bool IsEmpty() const;
+    bool IsFull() const;
+    int GetLength() const;
+    T GetItem(T item, bool &amp;found);
+    void PutItem(T item);
+    void DeleteItem(T item);
+    void ResetTree(OrderType order);
+private:
+    NodeType&lt;T&gt;* tree;
+    void Destroy(NodeType&lt;T&gt; *&amp;tree);
+    int CountNodes(NodeType&lt;T&gt;* tree);
+    void Retrieve(NodeType&lt;T&gt; *tree, T &amp;item, bool &amp;found);
+    void Insert(NodeType&lt;T&gt; *&amp;tree, T item);
+};
+</code></pre>
+<h3>메소드 정의</h3>
+<ul>
+<li>constructor</li>
+</ul>
+<pre><code class="language-c++">template &lt;typename T&gt;
+TreeType&lt;T&gt;::TreeType()
+: tree(NULL) 
+{
+
+}
+</code></pre>
+<ul>
+<li>IsFull, IsEmpty</li>
+</ul>
+<pre><code class="language-c++">template &lt;typename T&gt;
+bool TreeType&lt;T&gt;::IsFull() const {
+    NodeType&lt;T&gt; *location;
+    try {
+        location = new NodeType&lt;T&gt;;
+        delete location;
+        return false;
+    }
+    catch(std::bad_alloc &amp;e) {
+        return true;
+    }
+}
+
+template &lt;typename T&gt;
+bool TreeType&lt;T&gt;::IsEmpty() const {
+    return tree == NULL;
+}
+</code></pre>
+<ul>
+<li>GetLength</li>
+</ul>
+<pre><code class="language-c++">template &lt;typename T&gt;
+int TreeType&lt;T&gt;::GetLength() const {
+    return CountNodes(tree);
+}
+
+template &lt;typename T&gt;
+int TreeType&lt;T&gt;::CountNodes(NodeType&lt;T&gt;* tree)
+{
+    if (tree == NULL)
+        return 0;
+    else
+        return
+        CountNodes(tree-&gt;left) + CountNodes(tree-&gt;right) + 1;
+}
+</code></pre>
+<ul>
+<li>GetItem</li>
+</ul>
+<pre><code class="language-c++">template &lt;typename T&gt;
+T TreeType&lt;T&gt;::GetItem(T item, bool &amp;found) {
+    Retrieve(tree, item, found);
+    return item;
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::Retrieve(NodeType&lt;T&gt; *tree, T &amp;item, bool &amp;found)
+{
+    if (tree == NULL)
+        found = false;
+    else if (item &lt; tree-&gt;info)
+        Retrieve(tree-&gt;left, item, found);
+    else if( item &gt; tree-&gt;info)
+        Retrieve(tree-&gt;right, item, found);
+    else {
+        item = tree-&gt;info;
+        found = true;
+    }
+}
+</code></pre>
+<ul>
+<li>PutItem</li>
+</ul>
+<pre><code class="language-c++">template &lt;typename T&gt;
+void TreeType&lt;T&gt;::PutItem(T item)
+{
+    Insert(tree, item);
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::Insert(NodeType&lt;T&gt; *&amp;tree, T item)
+{
+    if (tree == NULL) {
+        tree = new NodeType&lt;T&gt;;
+        tree-&gt;right = NULL;
+        tree-&gt;left = NULL;
+        tree-&gt;info = item;
+    }
+    else if (item &lt; tree-&gt;info)
+        Insert(tree-&gt;left, item);
+    else
+        Insert(tree-&gt;right, item);
+}
+</code></pre>
+
+        <script>
+          location.href = "/post-view?href=posts/CS／알고리즘/2025-05-04-자료구조-binary-search-tree.md"
+        </script>
+      </body>
+  
