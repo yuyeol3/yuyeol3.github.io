@@ -209,6 +209,394 @@ void TreeType&lt;T&gt;::Insert(NodeType&lt;T&gt; *&amp;tree, T item)
         Insert(tree-&gt;right, item);
 }
 </code></pre>
+<h2>8. 코드</h2>
+<h3>DeleteItem</h3>
+<ul>
+<li>아이템 삭제 : 세 가지 경우<ul>
+<li>leaf node 삭제</li>
+<li>child가 한 개인 node 삭제</li>
+<li>child가 두 개인 node 삭제</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+void TreeType&lt;T&gt;::DeleteItem(T item) {
+    Delete(tree, item);            
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::Delete(NodeType&lt;T&gt; *&amp;tree, T item) {
+    if (item &lt; tree-&gt;info)
+        Delete(tree-&gt;left, item);  // 작은 경우 왼쪽
+    else if (item &gt; tree-&gt;info)
+        Delete(tree-&gt;right, item); // 큰 경우 오른쪽
+    else  // target found
+        DeleteNode(tree);          // 찾은 경우-&gt; 노드 삭제
+}
+</code></pre>
+<h3>DeleteNode</h3>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+void TreeType&lt;T&gt;::DeleteNode(NodeType&lt;T&gt; *&amp;tree)
+{
+    T data;
+    NodeType&lt;T&gt; *tempPtr;
+    tempPtr = tree;
+
+    if ((tree-&gt;left == NULL) &amp;&amp; (tree-&gt;right == NULL)) {  // leaf 노드 (자식이 없음)
+        tree = NULL;
+        delete tempPtr;
+    }
+    else if (tree-&gt;left == NULL) {     // 자식이 한 개
+        tree = tree-&gt;right;
+        delete tempPtr;
+    } else if (tree-&gt;right == NULL) {  // 자식이 한 개
+        tree = tree-&gt;left;
+        delete tempPtr;
+    } else {  // 자식이 두 개
+        GetPredecessor(tree-&gt;left, data); // tree보다 작은 것 중 가장 큰 것
+
+        tree-&gt;info = data;
+        Delete(tree-&gt;left, data);
+    }
+}
+</code></pre>
+<ul>
+<li>자식이 없는 경우<ul>
+<li>tree를 NULL로 설정하고 할당 해제</li>
+</ul>
+</li>
+<li>자식이 한 개인 경우<ul>
+<li>자식을 원래 자신의 자리에 넣고 자신을 할당 해제</li>
+</ul>
+</li>
+<li>자식이 두 개인 경우<ul>
+<li>tree보다 작은 것 중 가장 큰 노드를 찾아 자신의 자리에 넣고 자신을 할당 해제</li>
+</ul>
+</li>
+</ul>
+<h3>GetPredecessor</h3>
+<p>tree보다 작은 것 중 가장 큰 노드를 찾는 메서드</p>
+<p>재귀적이지 않은 이유: 가장 오른쪽에 제일 큰 노드가 들어있기 때문</p>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+void TreeType&lt;T&gt;::GetPredecessor(NodeType&lt;T&gt; *tree, T &amp;data) 
+{
+    while (tree-&gt;right != NULL)
+        tree = tree-&gt;right;
+    data = tree-&gt;info;
+}
+</code></pre>
+<h2>9. 트리 구조에서의 순회</h2>
+<h3>Inorder traversal(순차적 순회)</h3>
+<p>Left subtree $\rightarrow$ Root $\rightarrow$ Right subtree</p>
+<p>ex: 트리 내 모든 원소를 차례대로 출력하고 싶을 때</p>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+void TreeType&lt;T&gt;::PrintTree(NodeType&lt;T&gt; *tree, std::ostream &amp;os){
+    if (tree != NULL) {
+        PrintTree(tree-&gt;left, os);
+        os &lt;&lt; tree-&gt;info &lt;&lt; &#39; &#39;;
+        PrintTree(tree-&gt;right, os);
+    }
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::Print(std::ostream &amp;os) {
+    PrintTree(tree, os);
+}
+</code></pre>
+<h3>Postorder traversal(후순차적 순회)</h3>
+<p>Left subtree $\rightarrow$  Right subtree $\rightarrow$ Root</p>
+<p>ex: 트리의 할당을 해제할 때</p>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+TreeType&lt;T&gt;::~TreeType() {
+    Destroy(tree);
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::Destroy(NodeType&lt;T&gt;*&amp; tree) {
+    if (tree != NULL)
+    {
+        Destroy(tree-&gt;left);
+        Destroy(tree-&gt;right);
+        delete tree;
+    }
+};
+</code></pre>
+<h3>Preorder traversal(선순차적 순회)</h3>
+<p>Root $\rightarrow$ Left subtree $\rightarrow$ Right subtree</p>
+<p>ex: 트리를 복제할 때</p>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+void TreeType&lt;T&gt;::operator=(const TreeType&amp; orignalTree) {
+    CopyTree(tree, orignalTree);
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::CopyTree(NodeType&lt;T&gt; *&amp;copy, const NodeType&lt;T&gt; *originalTree) {
+    if (originalTree == NULL)
+        copy = NULL;
+    else {
+        copy = new NodeType&lt;T&gt;;
+        copy-&gt;info = originalTree-&gt;info;
+        CopyTree(copy-&gt;left, originalTree-&gt;left);
+        CopyTree(copy-&gt;right, originalTree-&gt;right);
+    }
+}
+</code></pre>
+<h3>ResetTree와 GetNextItem</h3>
+<ul>
+<li>OrderType을 통해 어떤 방식으로 트리를 순회할 지 결정</li>
+<li>ResetTree는 특정 방식으로 순회한 큐를 생성</li>
+<li>GetNextItem은 지정한 방식에 따라 큐에서 원소를 꺼내며 순회</li>
+</ul>
+<h4>enum OrderType</h4>
+<pre><code class="language-fill100">enum OrderType {
+    PRE_ORDER,
+    IN_ORDER,
+    POST_ORDER
+};
+</code></pre>
+<h4>class TreeQue</h4>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+class TreeQue : public std::deque&lt;T&gt; {
+public:
+    void PreOrder(NodeType&lt;T&gt; *tree) {
+        if (tree != NULL) {
+            this-&gt;push_back(tree-&gt;info);
+            PreOrder(tree-&gt;left);
+            PreOrder(tree-&gt;right);
+        }
+    }
+
+    void InOrder(NodeType&lt;T&gt; *tree) {
+        if (tree != NULL) {
+            InOrder(tree-&gt;left);
+            this-&gt;push_back(tree-&gt;info);
+            InOrder(tree-&gt;right);
+        }
+    }
+
+    void PostOrder(NodeType&lt;T&gt; *tree) {
+        if (tree != NULL) {
+            PostOrder(tree-&gt;left);
+            PostOrder(tree-&gt;right);
+            this-&gt;push_back(tree-&gt;info);
+        }
+    }
+
+    T Dequeue() {
+        T value = this-&gt;front();
+        this-&gt;pop_front();
+        return value;
+    }
+
+};
+</code></pre>
+<h4>ResetTree, GetNextItem</h4>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+void TreeType&lt;T&gt;::ResetTree(OrderType order) {
+    switch (order) {
+        case PRE_ORDER : preQue.PreOrder(tree);
+                         break;
+        case IN_ORDER  : inQue.InOrder(tree);
+                         break;
+        case POST_ORDER : postQue.PostOrder(tree);
+                         break;
+    }
+}
+
+template &lt;typename T&gt;
+T TreeType&lt;T&gt;::GetNextItem(OrderType order, bool &amp;finished) {
+    finished = false;
+    T result;
+
+    switch (order) {
+        case PRE_ORDER : result = preQue.Dequeue();
+                         if (preQue.empty()) finished = true;
+                         break;
+        case IN_ORDER : result = inQue.Dequeue();
+                        if (inQue.empty()) finished = true;
+                        break;
+        case POST_ORDER : result = postQue.Dequeue();
+                          if (postQue.empty()) finished = true;
+                          break;
+    }
+    return result;
+}
+</code></pre>
+<h2>10. Iterative FindNode, PutItem, DeleteItem</h2>
+<pre><code class="language-fill100">template &lt;typename T&gt;
+void FindNode(NodeType&lt;T&gt; *tree, T item,
+     NodeType&lt;T&gt; *&amp;nodePtr, NodeType&lt;T&gt; *&amp;parentPtr) 
+{
+    nodePtr = tree;
+    parentPtr = NULL;
+    bool found = false;
+    while (nodePtr != NULL &amp;&amp; !found) {
+        if (item &lt; nodePtr-&gt;info) {
+            parentPtr = nodePtr;
+            nodePtr = nodePtr-&gt;left;
+        } else if (item &gt; nodePtr-&gt;info) {
+            parentPtr = nodePtr;
+            nodePtr = nodePtr-&gt;right;
+        } 
+        else 
+            found = true;
+    }
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::PutItemIter(T item)
+{
+    NodeType&lt;T&gt; *newNode;
+    NodeType&lt;T&gt; *nodePtr;
+    NodeType&lt;T&gt; *parentPtr;
+    newNode = new NodeType&lt;T&gt;;
+    newNode-&gt;info = item;
+    newNode-&gt;left = NULL;
+    newNode-&gt;right = NULL;
+
+    FindNode(tree, item, nodePtr, parentPtr);
+
+    if (parentPtr == NULL)
+        tree = newNode;
+    else if (item &lt; parentPtr-&gt;info)
+        parentPtr-&gt;left = newNode;
+    else parentPtr-&gt;right = newNode;
+}
+
+template &lt;typename T&gt;
+void TreeType&lt;T&gt;::DeleteItemIter(T item) {
+    NodeType&lt;T&gt; *nodePtr;
+    NodeType&lt;T&gt; *parentPtr;
+    FindNode(tree, item, nodePtr, parentPtr);
+
+    if (nodePtr == tree)
+        DeleteNode(root);
+    else {
+        if (parentPtr-&gt;left == nodePtr)
+            DeleteNode(parentPtr-&gt;left);
+        else DeleteNode(parentPtr-&gt;right);
+    }
+}
+</code></pre>
+<h2>11. 시간복잡도</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Function</strong></th>
+<th><strong>Binary Search Tree</strong></th>
+<th><strong>Array-based Linear List</strong></th>
+<th><strong>Linked-list</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Class constructor</strong></td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><strong>Destructor</strong></td>
+<td>O(N)</td>
+<td>O(1)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td><strong>MakeEmpty</strong></td>
+<td>O(N)</td>
+<td>O(1)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td><strong>GetLength</strong></td>
+<td>O(N)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><strong>IsFull</strong></td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><strong>IsEmpty</strong></td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><strong>GetItem</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- <strong>Find</strong></td>
+<td>O(log2N)</td>
+<td>O(log2N)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td>- <strong>Process</strong></td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>- <strong>Total</strong></td>
+<td>O(log2N)</td>
+<td>O(log2N)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td><strong>PutItem</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- <strong>Find</strong></td>
+<td>O(log2N)</td>
+<td>O(log2N)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td>- <strong>Process</strong></td>
+<td>O(1)</td>
+<td>O(N)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>- <strong>Total</strong></td>
+<td>O(log2N)</td>
+<td>O(N)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td><strong>DeleteItem</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- <strong>Find</strong></td>
+<td>O(log2N)</td>
+<td>O(log2N)</td>
+<td>O(N)</td>
+</tr>
+<tr>
+<td>- <strong>Process</strong></td>
+<td>O(1)</td>
+<td>O(N)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>- <strong>Total</strong></td>
+<td>O(log2N)</td>
+<td>O(N)</td>
+<td>O(N)</td>
+</tr>
+</tbody></table>
 
         <script>
           location.href = "/post-view?href=posts/CS／알고리즘/2025-05-04-자료구조-binary-search-tree.md"
