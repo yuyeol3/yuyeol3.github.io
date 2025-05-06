@@ -197,7 +197,7 @@ void TreeType<T>::Insert(NodeType<T> *&tree, T item)
   - child가 한 개인 node 삭제
   - child가 두 개인 node 삭제
 
-```fill100
+```c++
 template <typename T>
 void TreeType<T>::DeleteItem(T item) {
     Delete(tree, item);            
@@ -216,7 +216,7 @@ void TreeType<T>::Delete(NodeType<T> *&tree, T item) {
 
 ### DeleteNode
 
-```fill100
+```c++
 template <typename T>
 void TreeType<T>::DeleteNode(NodeType<T> *&tree)
 {
@@ -256,7 +256,7 @@ tree보다 작은 것 중 가장 큰 노드를 찾는 메서드
 
 재귀적이지 않은 이유: 가장 오른쪽에 제일 큰 노드가 들어있기 때문
 
-```fill100
+```c++
 template <typename T>
 void TreeType<T>::GetPredecessor(NodeType<T> *tree, T &data) 
 {
@@ -272,7 +272,7 @@ Left subtree $\rightarrow$ Root $\rightarrow$ Right subtree
 
 ex: 트리 내 모든 원소를 차례대로 출력하고 싶을 때
 
-```fill100
+```c++
 template <typename T>
 void TreeType<T>::PrintTree(NodeType<T> *tree, std::ostream &os){
     if (tree != NULL) {
@@ -293,7 +293,7 @@ void TreeType<T>::Print(std::ostream &os) {
 Left subtree $\rightarrow$  Right subtree $\rightarrow$ Root
 
 ex: 트리의 할당을 해제할 때
-```fill100
+```c++
 template <typename T>
 TreeType<T>::~TreeType() {
     Destroy(tree);
@@ -316,7 +316,7 @@ void TreeType<T>::Destroy(NodeType<T>*& tree) {
 Root $\rightarrow$ Left subtree $\rightarrow$ Right subtree
 
 ex: 트리를 복제할 때
-```fill100
+```c++
 template <typename T>
 void TreeType<T>::operator=(const TreeType& orignalTree) {
     CopyTree(tree, orignalTree);
@@ -343,7 +343,7 @@ void TreeType<T>::CopyTree(NodeType<T> *&copy, const NodeType<T> *originalTree) 
 - GetNextItem은 지정한 방식에 따라 큐에서 원소를 꺼내며 순회
 
 #### enum OrderType
-```fill100
+```c++
 enum OrderType {
     PRE_ORDER,
     IN_ORDER,
@@ -352,7 +352,7 @@ enum OrderType {
 ```
 
 #### class TreeQue
-```fill100
+```c++
 template <typename T>
 class TreeQue : public std::deque<T> {
 public:
@@ -390,7 +390,7 @@ public:
 ```
 
 #### ResetTree, GetNextItem
-```fill100
+```c++
 template <typename T>
 void TreeType<T>::ResetTree(OrderType order) {
     switch (order) {
@@ -426,7 +426,7 @@ T TreeType<T>::GetNextItem(OrderType order, bool &finished) {
 
 ## 10. Iterative FindNode, PutItem, DeleteItem
 
-```fill100
+```c++
 template <typename T>
 void FindNode(NodeType<T> *tree, T item,
      NodeType<T> *&nodePtr, NodeType<T> *&parentPtr) 
