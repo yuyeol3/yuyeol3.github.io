@@ -189,7 +189,6 @@ void TreeType<T>::Insert(NodeType<T> *&tree, T item)
 }
 ```
 
-## 8. 코드
 ### DeleteItem
 
 - 아이템 삭제 : 세 가지 경우
@@ -266,7 +265,7 @@ void TreeType<T>::GetPredecessor(NodeType<T> *tree, T &data)
 }
 ```
 
-## 9. 트리 구조에서의 순회
+## 8. 트리 구조에서의 순회
 ### Inorder traversal(순차적 순회)
 Left subtree $\rightarrow$ Root $\rightarrow$ Right subtree
 
@@ -424,7 +423,7 @@ T TreeType<T>::GetNextItem(OrderType order, bool &finished) {
 
 ```
 
-## 10. Iterative FindNode, PutItem, DeleteItem
+## 9. Iterative FindNode, PutItem, DeleteItem
 
 ```c++
 template <typename T>
@@ -484,7 +483,7 @@ void TreeType<T>::DeleteItemIter(T item) {
 ```
 
 
-## 11. 시간복잡도
+## 10. 시간복잡도
 
 | **Function**           | **Binary Search Tree** | **Array-based Linear List** | **Linked-list** |
 |-------------------------|------------------------|-----------------------------|------------------|
