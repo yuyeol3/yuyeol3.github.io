@@ -209,7 +209,6 @@ void TreeType&lt;T&gt;::Insert(NodeType&lt;T&gt; *&amp;tree, T item)
         Insert(tree-&gt;right, item);
 }
 </code></pre>
-<h2>8. 코드</h2>
 <h3>DeleteItem</h3>
 <ul>
 <li>아이템 삭제 : 세 가지 경우<ul>
@@ -285,7 +284,7 @@ void TreeType&lt;T&gt;::GetPredecessor(NodeType&lt;T&gt; *tree, T &amp;data)
     data = tree-&gt;info;
 }
 </code></pre>
-<h2>9. 트리 구조에서의 순회</h2>
+<h2>8. 트리 구조에서의 순회</h2>
 <h3>Inorder traversal(순차적 순회)</h3>
 <p>Left subtree $\rightarrow$ Root $\rightarrow$ Right subtree</p>
 <p>ex: 트리 내 모든 원소를 차례대로 출력하고 싶을 때</p>
@@ -422,7 +421,7 @@ T TreeType&lt;T&gt;::GetNextItem(OrderType order, bool &amp;finished) {
     return result;
 }
 </code></pre>
-<h2>10. Iterative FindNode, PutItem, DeleteItem</h2>
+<h2>9. Iterative FindNode, PutItem, DeleteItem</h2>
 <pre><code class="language-c++">template &lt;typename T&gt;
 void FindNode(NodeType&lt;T&gt; *tree, T item,
      NodeType&lt;T&gt; *&amp;nodePtr, NodeType&lt;T&gt; *&amp;parentPtr) 
@@ -478,7 +477,7 @@ void TreeType&lt;T&gt;::DeleteItemIter(T item) {
     }
 }
 </code></pre>
-<h2>11. 시간복잡도</h2>
+<h2>10. 시간복잡도</h2>
 <table>
 <thead>
 <tr>
