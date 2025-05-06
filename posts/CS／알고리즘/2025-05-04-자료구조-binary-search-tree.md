@@ -188,3 +188,321 @@ void TreeType<T>::Insert(NodeType<T> *&tree, T item)
         Insert(tree->right, item);
 }
 ```
+
+## 8. 코드
+### DeleteItem
+
+- 아이템 삭제 : 세 가지 경우
+  - leaf node 삭제
+  - child가 한 개인 node 삭제
+  - child가 두 개인 node 삭제
+
+```fill100
+template <typename T>
+void TreeType<T>::DeleteItem(T item) {
+    Delete(tree, item);            
+}
+
+template <typename T>
+void TreeType<T>::Delete(NodeType<T> *&tree, T item) {
+    if (item < tree->info)
+        Delete(tree->left, item);  // 작은 경우 왼쪽
+    else if (item > tree->info)
+        Delete(tree->right, item); // 큰 경우 오른쪽
+    else  // target found
+        DeleteNode(tree);          // 찾은 경우-> 노드 삭제
+}
+```
+
+### DeleteNode
+
+```fill100
+template <typename T>
+void TreeType<T>::DeleteNode(NodeType<T> *&tree)
+{
+    T data;
+    NodeType<T> *tempPtr;
+    tempPtr = tree;
+
+    if ((tree->left == NULL) && (tree->right == NULL)) {  // leaf 노드 (자식이 없음)
+        tree = NULL;
+        delete tempPtr;
+    }
+    else if (tree->left == NULL) {     // 자식이 한 개
+        tree = tree->right;
+        delete tempPtr;
+    } else if (tree->right == NULL) {  // 자식이 한 개
+        tree = tree->left;
+        delete tempPtr;
+    } else {  // 자식이 두 개
+        GetPredecessor(tree->left, data); // tree보다 작은 것 중 가장 큰 것
+
+        tree->info = data;
+        Delete(tree->left, data);
+    }
+}
+```
+
+- 자식이 없는 경우
+  - tree를 NULL로 설정하고 할당 해제
+- 자식이 한 개인 경우
+  - 자식을 원래 자신의 자리에 넣고 자신을 할당 해제
+- 자식이 두 개인 경우
+  - tree보다 작은 것 중 가장 큰 노드를 찾아 자신의 자리에 넣고 자신을 할당 해제
+
+
+### GetPredecessor
+tree보다 작은 것 중 가장 큰 노드를 찾는 메서드
+
+재귀적이지 않은 이유: 가장 오른쪽에 제일 큰 노드가 들어있기 때문
+
+```fill100
+template <typename T>
+void TreeType<T>::GetPredecessor(NodeType<T> *tree, T &data) 
+{
+    while (tree->right != NULL)
+        tree = tree->right;
+    data = tree->info;
+}
+```
+
+## 9. 트리 구조에서의 순회
+### Inorder traversal(순차적 순회)
+Left subtree $\rightarrow$ Root $\rightarrow$ Right subtree
+
+ex: 트리 내 모든 원소를 차례대로 출력하고 싶을 때
+
+```fill100
+template <typename T>
+void TreeType<T>::PrintTree(NodeType<T> *tree, std::ostream &os){
+    if (tree != NULL) {
+        PrintTree(tree->left, os);
+        os << tree->info << ' ';
+        PrintTree(tree->right, os);
+    }
+}
+
+template <typename T>
+void TreeType<T>::Print(std::ostream &os) {
+    PrintTree(tree, os);
+}
+```
+
+
+### Postorder traversal(후순차적 순회)
+Left subtree $\rightarrow$  Right subtree $\rightarrow$ Root
+
+ex: 트리의 할당을 해제할 때
+```fill100
+template <typename T>
+TreeType<T>::~TreeType() {
+    Destroy(tree);
+}
+
+template <typename T>
+void TreeType<T>::Destroy(NodeType<T>*& tree) {
+    if (tree != NULL)
+    {
+        Destroy(tree->left);
+        Destroy(tree->right);
+        delete tree;
+    }
+};
+```
+
+
+### Preorder traversal(선순차적 순회)
+
+Root $\rightarrow$ Left subtree $\rightarrow$ Right subtree
+
+ex: 트리를 복제할 때
+```fill100
+template <typename T>
+void TreeType<T>::operator=(const TreeType& orignalTree) {
+    CopyTree(tree, orignalTree);
+}
+
+template <typename T>
+void TreeType<T>::CopyTree(NodeType<T> *&copy, const NodeType<T> *originalTree) {
+    if (originalTree == NULL)
+        copy = NULL;
+    else {
+        copy = new NodeType<T>;
+        copy->info = originalTree->info;
+        CopyTree(copy->left, originalTree->left);
+        CopyTree(copy->right, originalTree->right);
+    }
+}
+
+```
+
+### ResetTree와 GetNextItem
+
+- OrderType을 통해 어떤 방식으로 트리를 순회할 지 결정
+- ResetTree는 특정 방식으로 순회한 큐를 생성
+- GetNextItem은 지정한 방식에 따라 큐에서 원소를 꺼내며 순회
+
+#### enum OrderType
+```fill100
+enum OrderType {
+    PRE_ORDER,
+    IN_ORDER,
+    POST_ORDER
+};
+```
+
+#### class TreeQue
+```fill100
+template <typename T>
+class TreeQue : public std::deque<T> {
+public:
+    void PreOrder(NodeType<T> *tree) {
+        if (tree != NULL) {
+            this->push_back(tree->info);
+            PreOrder(tree->left);
+            PreOrder(tree->right);
+        }
+    }
+
+    void InOrder(NodeType<T> *tree) {
+        if (tree != NULL) {
+            InOrder(tree->left);
+            this->push_back(tree->info);
+            InOrder(tree->right);
+        }
+    }
+
+    void PostOrder(NodeType<T> *tree) {
+        if (tree != NULL) {
+            PostOrder(tree->left);
+            PostOrder(tree->right);
+            this->push_back(tree->info);
+        }
+    }
+
+    T Dequeue() {
+        T value = this->front();
+        this->pop_front();
+        return value;
+    }
+
+};
+```
+
+#### ResetTree, GetNextItem
+```fill100
+template <typename T>
+void TreeType<T>::ResetTree(OrderType order) {
+    switch (order) {
+        case PRE_ORDER : preQue.PreOrder(tree);
+                         break;
+        case IN_ORDER  : inQue.InOrder(tree);
+                         break;
+        case POST_ORDER : postQue.PostOrder(tree);
+                         break;
+    }
+}
+
+template <typename T>
+T TreeType<T>::GetNextItem(OrderType order, bool &finished) {
+    finished = false;
+    T result;
+
+    switch (order) {
+        case PRE_ORDER : result = preQue.Dequeue();
+                         if (preQue.empty()) finished = true;
+                         break;
+        case IN_ORDER : result = inQue.Dequeue();
+                        if (inQue.empty()) finished = true;
+                        break;
+        case POST_ORDER : result = postQue.Dequeue();
+                          if (postQue.empty()) finished = true;
+                          break;
+    }
+    return result;
+}
+
+```
+
+## 10. Iterative FindNode, PutItem, DeleteItem
+
+```fill100
+template <typename T>
+void FindNode(NodeType<T> *tree, T item,
+     NodeType<T> *&nodePtr, NodeType<T> *&parentPtr) 
+{
+    nodePtr = tree;
+    parentPtr = NULL;
+    bool found = false;
+    while (nodePtr != NULL && !found) {
+        if (item < nodePtr->info) {
+            parentPtr = nodePtr;
+            nodePtr = nodePtr->left;
+        } else if (item > nodePtr->info) {
+            parentPtr = nodePtr;
+            nodePtr = nodePtr->right;
+        } 
+        else 
+            found = true;
+    }
+}
+
+template <typename T>
+void TreeType<T>::PutItemIter(T item)
+{
+    NodeType<T> *newNode;
+    NodeType<T> *nodePtr;
+    NodeType<T> *parentPtr;
+    newNode = new NodeType<T>;
+    newNode->info = item;
+    newNode->left = NULL;
+    newNode->right = NULL;
+
+    FindNode(tree, item, nodePtr, parentPtr);
+
+    if (parentPtr == NULL)
+        tree = newNode;
+    else if (item < parentPtr->info)
+        parentPtr->left = newNode;
+    else parentPtr->right = newNode;
+}
+
+template <typename T>
+void TreeType<T>::DeleteItemIter(T item) {
+    NodeType<T> *nodePtr;
+    NodeType<T> *parentPtr;
+    FindNode(tree, item, nodePtr, parentPtr);
+
+    if (nodePtr == tree)
+        DeleteNode(root);
+    else {
+        if (parentPtr->left == nodePtr)
+            DeleteNode(parentPtr->left);
+        else DeleteNode(parentPtr->right);
+    }
+}
+```
+
+
+## 11. 시간복잡도
+
+| **Function**           | **Binary Search Tree** | **Array-based Linear List** | **Linked-list** |
+|-------------------------|------------------------|-----------------------------|------------------|
+| **Class constructor**   | O(1)                  | O(1)                        | O(1)            |
+| **Destructor**          | O(N)                  | O(1)                        | O(N)            |
+| **MakeEmpty**           | O(N)                  | O(1)                        | O(N)            |
+| **GetLength**           | O(N)                  | O(1)                        | O(1)            |
+| **IsFull**              | O(1)                  | O(1)                        | O(1)            |
+| **IsEmpty**             | O(1)                  | O(1)                        | O(1)            |
+| **GetItem**             |                        |                             |                  |
+| - **Find**              | O(log2N)              | O(log2N)                    | O(N)            |
+| - **Process**           | O(1)                  | O(1)                        | O(1)            |
+| - **Total**             | O(log2N)              | O(log2N)                    | O(N)            |
+| **PutItem**             |                        |                             |                  |
+| - **Find**              | O(log2N)              | O(log2N)                    | O(N)            |
+| - **Process**           | O(1)                  | O(N)                        | O(1)            |
+| - **Total**             | O(log2N)              | O(N)                        | O(N)            |
+| **DeleteItem**          |                        |                             |                  |
+| - **Find**              | O(log2N)              | O(log2N)                    | O(N)            |
+| - **Process**           | O(1)                  | O(N)                        | O(1)            |
+| - **Total**             | O(log2N)              | O(N)                        | O(N)            |
