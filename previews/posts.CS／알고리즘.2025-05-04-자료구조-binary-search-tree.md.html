@@ -219,7 +219,7 @@ void TreeType&lt;T&gt;::Insert(NodeType&lt;T&gt; *&amp;tree, T item)
 </ul>
 </li>
 </ul>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 void TreeType&lt;T&gt;::DeleteItem(T item) {
     Delete(tree, item);            
 }
@@ -235,7 +235,7 @@ void TreeType&lt;T&gt;::Delete(NodeType&lt;T&gt; *&amp;tree, T item) {
 }
 </code></pre>
 <h3>DeleteNode</h3>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 void TreeType&lt;T&gt;::DeleteNode(NodeType&lt;T&gt; *&amp;tree)
 {
     T data;
@@ -277,7 +277,7 @@ void TreeType&lt;T&gt;::DeleteNode(NodeType&lt;T&gt; *&amp;tree)
 <h3>GetPredecessor</h3>
 <p>tree보다 작은 것 중 가장 큰 노드를 찾는 메서드</p>
 <p>재귀적이지 않은 이유: 가장 오른쪽에 제일 큰 노드가 들어있기 때문</p>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 void TreeType&lt;T&gt;::GetPredecessor(NodeType&lt;T&gt; *tree, T &amp;data) 
 {
     while (tree-&gt;right != NULL)
@@ -289,7 +289,7 @@ void TreeType&lt;T&gt;::GetPredecessor(NodeType&lt;T&gt; *tree, T &amp;data)
 <h3>Inorder traversal(순차적 순회)</h3>
 <p>Left subtree $\rightarrow$ Root $\rightarrow$ Right subtree</p>
 <p>ex: 트리 내 모든 원소를 차례대로 출력하고 싶을 때</p>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 void TreeType&lt;T&gt;::PrintTree(NodeType&lt;T&gt; *tree, std::ostream &amp;os){
     if (tree != NULL) {
         PrintTree(tree-&gt;left, os);
@@ -306,7 +306,7 @@ void TreeType&lt;T&gt;::Print(std::ostream &amp;os) {
 <h3>Postorder traversal(후순차적 순회)</h3>
 <p>Left subtree $\rightarrow$  Right subtree $\rightarrow$ Root</p>
 <p>ex: 트리의 할당을 해제할 때</p>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 TreeType&lt;T&gt;::~TreeType() {
     Destroy(tree);
 }
@@ -324,7 +324,7 @@ void TreeType&lt;T&gt;::Destroy(NodeType&lt;T&gt;*&amp; tree) {
 <h3>Preorder traversal(선순차적 순회)</h3>
 <p>Root $\rightarrow$ Left subtree $\rightarrow$ Right subtree</p>
 <p>ex: 트리를 복제할 때</p>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 void TreeType&lt;T&gt;::operator=(const TreeType&amp; orignalTree) {
     CopyTree(tree, orignalTree);
 }
@@ -348,14 +348,14 @@ void TreeType&lt;T&gt;::CopyTree(NodeType&lt;T&gt; *&amp;copy, const NodeType&lt
 <li>GetNextItem은 지정한 방식에 따라 큐에서 원소를 꺼내며 순회</li>
 </ul>
 <h4>enum OrderType</h4>
-<pre><code class="language-fill100">enum OrderType {
+<pre><code class="language-c++">enum OrderType {
     PRE_ORDER,
     IN_ORDER,
     POST_ORDER
 };
 </code></pre>
 <h4>class TreeQue</h4>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 class TreeQue : public std::deque&lt;T&gt; {
 public:
     void PreOrder(NodeType&lt;T&gt; *tree) {
@@ -391,7 +391,7 @@ public:
 };
 </code></pre>
 <h4>ResetTree, GetNextItem</h4>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 void TreeType&lt;T&gt;::ResetTree(OrderType order) {
     switch (order) {
         case PRE_ORDER : preQue.PreOrder(tree);
@@ -423,7 +423,7 @@ T TreeType&lt;T&gt;::GetNextItem(OrderType order, bool &amp;finished) {
 }
 </code></pre>
 <h2>10. Iterative FindNode, PutItem, DeleteItem</h2>
-<pre><code class="language-fill100">template &lt;typename T&gt;
+<pre><code class="language-c++">template &lt;typename T&gt;
 void FindNode(NodeType&lt;T&gt; *tree, T item,
      NodeType&lt;T&gt; *&amp;nodePtr, NodeType&lt;T&gt; *&amp;parentPtr) 
 {
