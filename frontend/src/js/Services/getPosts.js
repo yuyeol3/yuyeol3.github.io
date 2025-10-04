@@ -2,7 +2,7 @@ import Post from "../Models/Post.js";
 
 
 export async function getPosts() {
-    const res = await fetch("/posts.html");
+    const res = await fetch("/posts.html", { cache: 'reload' });
     const posts = await res.json();
     return posts;
 }
