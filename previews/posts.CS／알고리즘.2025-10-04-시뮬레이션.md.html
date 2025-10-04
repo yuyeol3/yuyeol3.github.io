@@ -1,0 +1,63 @@
+
+      <html lang="ko">
+      <head>
+        <title>시뮬레이션</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="- 목차">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>시뮬레이션</h1>
+<ul>
+<li>목차<ul>
+<li>날짜/시간 계산</li>
+<li>구간 색칠</li>
+<li>2차원 구간 색칠</li>
+</ul>
+</li>
+<li>시뮬레이션이 어떤 것인지에 대해 집중할 것<ul>
+<li>똑똑한 (계산식 등) 방법을 항상 알아내기는 어려움</li>
+<li>문제를 ==쉽게 풀어보는 방법==</li>
+</ul>
+</li>
+</ul>
+<h2>1. 날짜/시간 계산</h2>
+<ul>
+<li>계산식</li>
+<li>시계 구현</li>
+</ul>
+<pre><code class="language-python">h = 0
+m = 0
+elapsed = 0
+while not (h == h2 and m == m2):
+	m += 1
+	elapsed += 1
+	if (m == 60):
+		m = 0
+		h += 1
+</code></pre>
+<ul>
+<li>날짜 -&gt; 월별 날짜를 달력으로</li>
+</ul>
+<h2>2. 구간 칠하기</h2>
+<ul>
+<li>점, 블록</li>
+<li>선분, 시간범위, 구간 -&gt; 인덱스 주의하기
+==지점의 개수가 구간의 개수보다 항상 하나 많기 때문==</li>
+</ul>
+<pre><code>|-|-|-|-|-| // 지점 : 6, 구간: 5
+</code></pre>
+<h2>3. 사각형 칠하기</h2>
+<p>2차원 사각형 -&gt; 구간</p>
+<ul>
+<li>문제에 따라 점으로 표현되는 경우도 (격자)</li>
+</ul>
+<p>그림 보고 알아서 파악하기</p>
+
+        <script>
+          location.href = "/post-view?href=posts/CS／알고리즘/2025-10-04-시뮬레이션.md"
+        </script>
+      </body>
+  
