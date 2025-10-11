@@ -29,7 +29,7 @@ export default function Main() {
                 <Loading></Loading>
             }
             <div className="main-comments">
-                <h2>방명록</h2>
+                <h2>Comments</h2>
                 <Comment term="main"></Comment>
             </div>
         </>
