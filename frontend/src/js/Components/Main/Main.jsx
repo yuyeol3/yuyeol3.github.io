@@ -3,6 +3,7 @@ import Board from "../BoardView/Board.jsx";
 import Loading from "../Commons/Loading.jsx";
 import {useContext} from "react";
 import PostsContext from "../../Contexts/PostsContext.jsx";
+import Comment from "../Commons/Comment.jsx";
 
 
 export default function Main() {
@@ -27,6 +28,10 @@ export default function Main() {
                 <Board title={"최근 게시글"} posts={postList} page={1} pageSize={5}/> :
                 <Loading></Loading>
             }
+            <div className="main-comments">
+                <h2>방명록</h2>
+                <Comment term="main"></Comment>
+            </div>
         </>
     );
 }
