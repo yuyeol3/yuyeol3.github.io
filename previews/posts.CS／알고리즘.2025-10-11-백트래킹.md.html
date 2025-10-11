@@ -1,0 +1,142 @@
+
+      <html lang="ko">
+      <head>
+        <title>백트래킹(backtracking)</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="주어진 문제에 대해 정답 후보를 나열하고, 후보를 탐색하기 위해 재귀함수를 사용하는 방법이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>백트래킹(backtracking)</h1>
+<p>주어진 문제에 대해 정답 후보를 나열하고, 후보를 탐색하기 위해 재귀함수를 사용하는 방법이다.</p>
+<p>2자리 5진수 $\rightarrow$ 2중 for문으로 가능</p>
+<pre><code>00
+01
+02
+03
+04
+10
+11
+12
+13
+14
+20
+21
+</code></pre>
+<p>n자리 m진수??</p>
+<h3>기본형태</h3>
+<pre><code class="language-python">
+N = 5
+selected = []
+def recur(m, depth=0):
+	if (depth == N): return
+
+	for i in range(m):
+		recur(m, depth+1)
+</code></pre>
+<ul>
+<li>선택된 것 저장할 때 -&gt; 전역 변수에...</li>
+</ul>
+<h2>2개를 골라보기</h2>
+<ul>
+<li>크기 5짜리 배열에서 2개를 골라보는 모든 경우의 수
+   $\equiv$ 2자리 5진수(순서 상관 O; permutation, 중복순열)</li>
+<li>위 코드를 응용하여 모든 선택의 경우의 수를 구현할 수 있다</li>
+</ul>
+<pre><code class="language-python">arr = [0] * n
+
+def recur(depth):
+	# 가지치기
+	####################
+
+	# 기저 조건
+	if depth == n:
+		print(arr2[arr[0]], arr2[arr[1]])
+		return
+	# 재귀 호출부
+	for i in range(m):
+		arr[depth] = i
+		recur(depth + 1)
+
+arr2 = [3, 5, 1, 6, 8]
+recur(0)
+</code></pre>
+<p>재귀 $\rightarrow$ 꼭 필요한 경우에만 사용하면 좋겠다. (ex. 반복문의 중첩수를 모르는 경우)</p>
+<p>반복문이 반드시 필요한 것은 아님. 반복 횟수가 작다면 그냥 적는 경우도 있다.
+재귀가 각 함수당 한 번만 일어나면 그냥 <code>while</code> 쓰는 게 좋다</p>
+<h3>순서 상관이 없이 선택(combination, 조합)</h3>
+<pre><code class="language-python">
+def recur(depth, start):
+				 ^^^^^
+	if depth == n:
+		pass
+		return
+
+	for i in range(start, k):
+				   ^^^^^
+		recur(depth+1, i+1)
+</code></pre>
+<h2>중복을 허용하지 않는 수열(순열)</h2>
+<p>하나의 케이스 안에서 중복값이 있는 것 제거
+순서는 상관있지만, 같은 것 선택 x</p>
+<p>visited 배열 사용</p>
+<pre><code class="language-python">arr = [0] * n
+vis = [False] * k
+
+def recur(depth):
+	if depth == n:
+		return
+	for i in range(k):
+		if (vis[i]): continue
+
+		vis[i] = True
+		arr[depth] = i
+		recur(depth+1)
+		vis[i] = False
+</code></pre>
+<h2>가지치기(pruning)</h2>
+<p>상태공간트리에서 어떤 노드가 유망한지 아닌지를 미리 판단하여, 유망하지 않은 경우 가지치기</p>
+<pre><code class="language-python">def recur(depth):
+	# 가지치기
+	if not check(depth):
+		return
+	# ....
+</code></pre>
+<p>prv, sum 등 파라미터를 추가하여 더 간단하게 할 수 있다.</p>
+<ul>
+<li>파라미터 추가하는 응용도 다뤄보기</li>
+</ul>
+<h2>중복조합</h2>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+int N, M;
+int selected[100];
+void rec(int prev, int step) {
+    if (step == M) {
+        for (int i = 0; i &lt; M; i++) {
+            cout &lt;&lt; selected[i] &lt;&lt; &#39; &#39;;
+        }
+        cout &lt;&lt; &#39;\n&#39;;
+        return;
+    }
+
+    for (int i = prev; i &lt;= N; i++) {
+        selected[step] = i;
+        rec(i, step+1);
+    }
+}
+  
+int main() {
+    cin &gt;&gt; N &gt;&gt; M;
+    rec(1, 0);
+    return 0;
+}
+</code></pre>
+
+        <script>
+          location.href = "/post-view?href=posts/CS／알고리즘/2025-10-11-백트래킹.md"
+        </script>
+      </body>
+  
