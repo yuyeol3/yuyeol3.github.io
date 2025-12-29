@@ -18,7 +18,8 @@ export default function Board({title, posts, page, pageSize}) {
                 date={o.date}
                 preview={o.preview}
                 key={o.path}
-                onClick={()=>navigate(`/post-view?href=${o.path}`)}
+                href={`/post-view?href=${o.path}`}
+                // onClick={()=>navigate(`/post-view?href=${o.path}`)}
             />
     );
     console.log(res);
