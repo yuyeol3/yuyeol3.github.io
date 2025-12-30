@@ -4,14 +4,14 @@
         <title>2606 - 바이러스</title>
         <link rel="canonical" href="http://yuyeol3.github.io/"/>
         <meta charset="utf-8"/>
-        <meta name="description" content="[🔗](https://www.acmicpc.net/problem/2606)">
+        <meta name="description" content="전형적인 그래프 탐색 문제이다. 1번 컴퓨터가 바이러스에 먼저 감염되면, 1번 컴퓨터와 네트워크로 인접한 컴퓨터들이 바이러스에 감염되게 된다. 마찬가지로 x번 컴퓨터가 바이러스에 감염되면, x번 컴퓨터와 인접한 모든 컴퓨터들은 바이러스에 감염된다. 즉 먼저 감염된 1번 컴퓨터를 시작으로 dfs나 bfs를 통해 인접한 컴퓨터들을 탐색하면 되는 문제이다.">
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body style="display : none;">
         
         <h1>2606 - 바이러스</h1>
-<p><a href="https://www.acmicpc.net/problem/2606">🔗</a></p>
 <p>전형적인 그래프 탐색 문제이다. 1번 컴퓨터가 바이러스에 먼저 감염되면, 1번 컴퓨터와 네트워크로 인접한 컴퓨터들이 바이러스에 감염되게 된다. 마찬가지로 x번 컴퓨터가 바이러스에 감염되면, x번 컴퓨터와 인접한 모든 컴퓨터들은 바이러스에 감염된다. 즉 먼저 감염된 1번 컴퓨터를 시작으로 dfs나 bfs를 통해 인접한 컴퓨터들을 탐색하면 되는 문제이다.</p>
+<p><a href="https://www.acmicpc.net/problem/2606">🔗 문제 링크</a></p>
 <h2>코드</h2>
 <p>먼저 그래프를 담을 인접 리스트 <code>vector&lt;int&gt; graph[105]</code>와 방문 노드를 저장할 <code>bool visited[105]</code> 를 선언한다. 이 문제에서 단 두 노드간의 연결을 검사할 일이 없고 한 노드와 연결된 모든 노드를 검사하기 때문에 인접 행렬보다 인접 리스트가 더 효율적이다. 그런 다음 main 함수 내부에서 그래프 연결 상태를 입력받아 graph에 담는다. 이 문제에서 가정하는 그래프는 방향성이 없으므로 x와 y 모두에 노드를 삽입해 양방향 간선으로 처리한다. 다음으로 dfs로 구현하기 위해 스택 자료구조를 선언하고 제일 먼저 감염된 1번 노드를 삽입한 뒤 방문 처리를 한다. 이제 스택이 빌 때까지 while 문을 돌며 <code>st.top(); st.pop()</code>을 통해 가장 최근에 방문했던 노드를 꺼내 그 노드와 인접한 미방문 노드들을 모두 탐색하며 스택에 등록하고 방문 처리를 한다. 동시에 <code>cnt++</code>을 통해 감염된 컴퓨터 수를 증가시킨다. while 문을 빠져나오면 탐색이 완료된 것이므로 <code>cnt</code>를 출력하고 프로그램을 종료한다.</p>
 <pre><code class="language-c++">#include &lt;bits/stdc++.h&gt;
