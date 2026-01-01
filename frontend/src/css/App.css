@@ -89,18 +89,22 @@
     color: #333;
 }
 
-.side-bar .sidebar-group div {
+.side-bar .sidebar-group a {
     margin-left: 30px;
 }
 
 /* 사이드바의 각 아이템 스타일 */
 .sidebar-item {
     margin-bottom: 1rem;
+    /* margin-left: 10px; */
     padding: 0.5rem;
     font-size: 1rem;
     color: #333;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
+    display: block;
+    position: inherit;
+    text-decoration:none;
 }
 
 .sidebar-item:hover {

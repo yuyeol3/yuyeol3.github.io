@@ -1,4 +1,5 @@
 import {useLocation, useNavigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import {useContext, useEffect} from "react";
 import settings from "../../settings.js";
@@ -6,15 +7,17 @@ import PostsContext from "../../Contexts/PostsContext.jsx";
 import Loading from "../Commons/Loading.jsx";
 import NotFound from "../Commons/NotFound.jsx";
 
+
+
 function Category({name}) {
-    const navigate = useNavigate();
     return (
-        <div
+        <Link
             className="sidebar-item"
-            onClick={() => {navigate(`/board-view?name=${name}&page=1`)}}
+            to={`/board-view?name=${name}&page=1`}
+            // onClick={() => {navigate(`/board-view?name=${name}&page=1`)}}
         >
             {name}
-        </div>
+        </Link>
     )
 }
 
