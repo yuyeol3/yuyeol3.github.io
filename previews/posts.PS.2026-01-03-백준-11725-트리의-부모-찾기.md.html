@@ -1,0 +1,123 @@
+
+      <html lang="ko">
+      <head>
+        <title>11725 - 트리의 부모 찾기</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 트리를 입력받은 뒤 그래프 탐색 알고리즘을 이용해 노드 1부터 시작해 인접 노드를 순회하면서, 인접 노드의 부모 노드를 결정하면 되는 문제이다. BFS 또는 DFS를 사용하여 문제를 해결하면 된다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>11725 - 트리의 부모 찾기</h1>
+<p>이 문제는 트리를 입력받은 뒤 그래프 탐색 알고리즘을 이용해 노드 1부터 시작해 인접 노드를 순회하면서, 인접 노드의 부모 노드를 결정하면 되는 문제이다. BFS 또는 DFS를 사용하여 문제를 해결하면 된다.</p>
+<p><a href="https://www.acmicpc.net/problem/11725">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>먼저 N을 입력받은 뒤 트리를 저장할 인접 리스트 <code>tree</code>와 각 노드별 부모를 저장할 <code>parents</code> 배열을 선언한다. 인접 리스트의 경우 <code>ArrayList&lt;Integer&gt;</code>의 참조를 원소로 가지는 배열로 선언한 뒤, 각 원소에 대해 ArrayList 인스턴스를 생성해 참조하게 한다.</p>
+<pre><code class="language-java">class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    public static void main(String[] args) throws IOException {
+        int N = Integer.parseInt(br.readLine());
+        
+        @SuppressWarnings(&quot;unchecked&quot;)
+        ArrayList&lt;Integer&gt;[] tree = new ArrayList[N+5];
+        int[] parents = new int[N+5];
+
+        for (int i = 1; i &lt;= N; i++) 
+            tree[i] = new ArrayList&lt;&gt;();
+// ...
+</code></pre>
+<p>그 다음으로 트리를 입력받는다. 트리는 무향 그래프이므로 연결 관계를 대칭적으로 저장해야 한다.</p>
+<pre><code class="language-java">StringTokenizer st;
+for (int i = 1; i &lt; N; i++) {
+    st = new StringTokenizer(br.readLine());
+    int a = Integer.parseInt(st.nextToken());
+    int b = Integer.parseInt(st.nextToken());
+    tree[a].add(b);
+    tree[b].add(a);
+}
+</code></pre>
+<p>이제 DFS를 수행하기 위해 스택으로 쓸 Deque를 선언하고 제일 먼저 탐색할 노드 1을 스택에 넣는다. 노드 1은 루트이므로 <code>parents[1] = -1</code>로 둔다. 다음으로 s에 원소가 있는 동안 반복하며 노드를 꺼내고, 그 노드와 인접한 노드들에 대해 꺼낸 노드를 부모로 설정한다. 그런 다음 스택에 인접 노드들을 push한다. 만약 <code>parent[adj] != 0</code>이라면 이미 방문한 노드이므로 <code>continue</code> 문을 통해 스택에 추가하지 않고 건너뛰어야 한다.</p>
+<pre><code class="language-java">ArrayDeque&lt;Integer&gt; s = new ArrayDeque&lt;&gt;();
+s.push(1);
+parents[1] = -1;
+
+while (!s.isEmpty()) {
+    int parent = s.pop();
+    List&lt;Integer&gt; adjs = tree[parent];
+    for (int adj : adjs) {
+        if (parents[adj] != 0) continue;
+        parents[adj] = parent;
+        s.push(adj);
+    }
+}
+</code></pre>
+<p>마지막으로 노드 2번부터 N번까지 순회하며 찾은 부모 노드 번호를 전부 출력하게 된다.</p>
+<pre><code class="language-java">        for (int i = 2; i &lt;= N; i++) {
+            bw.write(parents[i] + &quot;\n&quot;);
+        }
+
+        bw.flush();
+        bw.close();
+    }
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    public static void main(String[] args) throws IOException {
+        int N = Integer.parseInt(br.readLine());
+        
+        @SuppressWarnings(&quot;unchecked&quot;)
+        ArrayList&lt;Integer&gt;[] tree = new ArrayList[N+5];
+        int[] parents = new int[N+5];
+
+        for (int i = 1; i &lt;= N; i++) 
+            tree[i] = new ArrayList&lt;&gt;();
+
+
+        StringTokenizer st;
+        for (int i = 1; i &lt; N; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            tree[a].add(b);
+            tree[b].add(a);
+        }
+
+        ArrayDeque&lt;Integer&gt; s = new ArrayDeque&lt;&gt;();
+        s.push(1);
+        parents[1] = -1;
+
+        while (!s.isEmpty()) {
+            int parent = s.pop();
+            List&lt;Integer&gt; adjs = tree[parent];
+            for (int adj : adjs) {
+                if (parents[adj] != 0) continue;
+                parents[adj] = parent;
+                s.push(adj);
+            }
+        }
+
+        for (int i = 2; i &lt;= N; i++) {
+            bw.write(parents[i] + &quot;\n&quot;);
+        }
+
+        bw.flush();
+        bw.close();
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>DFS 의 시간복잡도는 $O(V+E)$ 인데 이 문제에서 정점의 개수는 N, 간선의 개수는 N-1개이므로 시간복잡도는 $O(N)$이다. 또한 출력하는 데에도 $O(N)$의 시간복잡도가 소요되므로 최종 시간복잡도는 $O(N)$이다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts/PS/2026-01-03-백준-11725-트리의-부모-찾기.md"
+        </script>
+      </body>
+  
