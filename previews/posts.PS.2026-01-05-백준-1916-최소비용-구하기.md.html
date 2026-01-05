@@ -1,0 +1,194 @@
+
+      <html lang="ko">
+      <head>
+        <title>1916 - 최소비용 구하기</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 다익스트라 알고리즘을 사용하는 전형적인 문제이다. 다익스트라 알고리즘이란, 가중치가 있는 그래프에서 하나의 시작 정점으로부터 다른 모든 정점까지의 최단 경로를 구하는 알고리즘이다. 이 문제에서 정점은 도시이고, 간선은 각 도시를 잇는 버스이며, 가중치는 버스 비용이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>1916 - 최소비용 구하기</h1>
+<p>이 문제는 다익스트라 알고리즘을 사용하는 전형적인 문제이다. 다익스트라 알고리즘이란, 가중치가 있는 그래프에서 하나의 시작 정점으로부터 다른 모든 정점까지의 최단 경로를 구하는 알고리즘이다. 이 문제에서 정점은 도시이고, 간선은 각 도시를 잇는 버스이며, 가중치는 버스 비용이다. </p>
+<p><a href="https://www.acmicpc.net/problem/1916">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>코드를 살펴보며 다익스트라 알고리즘이 어떻게 진행되는지 확인해보자.</p>
+<p><code>Edge</code>와 <code>State</code> 클래스는 그래프나 우선순위 큐에서 담기는 자료형을 표현한 것이다. <code>Edge</code>는 그래프에서 간선을, <code>State</code>는 우선순위 큐에서 탐색 상태를 나타낼 자료형이다. 이 문제에서 탐색 상태란 어떤 노드(도시)에 위치해 있는지와, 그 노드로 이동하는데 얼마나 많은 비용이 들었는지로 정의할 수 있을 것이다.</p>
+<pre><code class="language-java">class State {
+    public long dist;
+    public int node;
+
+    public State(long dist, int node) {
+        this.node = node;
+        this.dist = dist;
+    }
+}
+
+class Edge {
+    public int cost;
+    public int node;
+
+    public Edge(int node, int cost) {
+        this.node = node;
+        this.cost = cost;
+    }
+}
+</code></pre>
+<p>main 함수에서 먼저 N과 M을 입력받은 뒤 인접 리스트 형태로 그래프를 선언한다. 그런 다음 간선 정보를 M번 읽어들여 그래프에 저장한다. 이 문제에서 버스는 출발 도시와 도착 도시가 정해져 있으므로 유향 그래프이고 따라서 대칭적으로 연결 관계를 저장하지 않는다. 또한 같은 출발지와 목적지에 대해 다른 비용의 버스가 있을 수 있으므로 지금처럼 Edge를 원소로 갖는 리스트 형태로 저장하거나, MultiSet을 써야 한다. 마지막으로 우리가 최소비용을 구해야 하는 출발점과 도착점 노드 번호를 입력받는다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    int N = Integer.parseInt(br.readLine());
+    int M = Integer.parseInt(br.readLine());
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    List&lt;Edge&gt;[] graph = new ArrayList[N+5];
+    for (int i = 0; i &lt; N+5; i++)
+        graph[i] = new ArrayList&lt;&gt;();
+
+    StringTokenizer s;
+    for (int i = 0; i &lt; M; i++) {
+        s = new StringTokenizer(br.readLine());
+
+        int a, b, e;
+        a = Integer.parseInt(s.nextToken());
+        b = Integer.parseInt(s.nextToken());
+        e = Integer.parseInt(s.nextToken());
+
+        graph[a].add(new Edge(b, e));
+    }
+
+    s = new StringTokenizer(br.readLine());
+    int st, ed;
+    st = Integer.parseInt(s.nextToken());
+    ed = Integer.parseInt(s.nextToken());
+</code></pre>
+<h3>1. 초기화</h3>
+<p>출발 정점에서 각 정점까지의 최단거리를 저장해 둘 <code>distances</code> 배열을 선언한다. 출발 정점의 거리는 0으로 설정하고, 나머지 모든 정점의 거리는 <code>INF</code>(=100000L * 100000L + 1)로 설정해둔다. 또한 <code>State</code> 객체를 원소로 가지고 <code>dist</code> 속성을 기준으로 최소 힙의 성질을 가지는 우선순위 큐를 선언한다. 가장 먼저 탐색할 시작점을 우선순위 큐에 넣는다.</p>
+<pre><code class="language-java">    long[] distances = new long[N+5];
+    for (int i = 1; i &lt;= N; i++) {
+        distances[i] = INF;
+    }
+    distances[st] = 0;
+
+    PriorityQueue&lt;State&gt; pq = new PriorityQueue&lt;&gt;(Comparator.comparingLong(n -&gt; n.dist));
+    pq.offer(new State(0, st));
+</code></pre>
+<h3>2. 정점 선택</h3>
+<p>다익스트라 알고리즘을 구현하기 위해서는 최단거리가 확정되지 않은 정점 중 가장 비용이 작은 정점을 항상 우선으로 선택해야 한다. 이를 위해 우선순위 큐를 사용한다. 우선순위 큐에서 이동 비용이 가장 낮은 상태(State)를 선택한다. </p>
+<p>만약 그 상태로의 이동 비용이, 지금까지 찾은 정점(상태가 위치해 있는)로의 최소 이동 비용보다 크다면, 그 상태가 가진 정점의 최단거리는 이미 확정되어 더 이상 탐색할 필요가 없으므로 추가 작업을 하지 않고 <code>continue</code>를 통해 건너뛴다. 한편 이 때 우선순위 큐에서 꺼내 확정한 상태의 정점 번호가 도착점 번호와 같다면, 시작점으로부터 도착점까지 최단비용(거리)가 결정된 것이므로 <code>break</code>를 통해 반복문을 빠져나온다.</p>
+<pre><code class="language-java">    while (!pq.isEmpty()) {
+        State state = pq.poll();
+        if (distances[state.node] &lt; state.dist) continue;
+        if (state.node == ed) break;
+</code></pre>
+<h3>3. 완화</h3>
+<p>선택한 정점과 인접한 정점들을 확인한다. 만약 인접한 정점 중에 선택한 정점을 거쳐 인접한 정점으로 가는 비용이 기존 이동 비용보다 저렴하다면, 이동 비용 최소값을 업데이트하고 인접 노드에 대한 이동 상태를 우선순위 큐에 추가한다. 수식으로 나타내면 다음과 같다.</p>
+<p>$$ 
+d[v] \leftarrow d[u] + w(u,v) \ \text{if} \ d[v] &gt; d[u] + w(u, v)
+$$</p>
+<pre><code class="language-java">    for (Edge adj : graph[state.node]) {
+                long newDist = state.dist + adj.cost;
+                
+                if (newDist &lt; distances[adj.node]) {
+                    distances[adj.node] = newDist;
+                    pq.offer(new State(newDist, adj.node));
+                }
+            }
+        }
+</code></pre>
+<p>반복문을 빠져나오면 도착점에 대한 최소 이동비용을 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    bw.write(distances[ed] + &quot;\n&quot;);
+    bw.flush();
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class State {
+    public long dist;
+    public int node;
+
+    public State(long dist, int node) {
+        this.node = node;
+        this.dist = dist;
+    }
+}
+
+class Edge {
+    public int cost;
+    public int node;
+
+    public Edge(int node, int cost) {
+        this.node = node;
+        this.cost = cost;
+    }
+}
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static final long INF = 100000L * 100000L + 1;
+    public static void main(String[] args) throws IOException {
+        int N = Integer.parseInt(br.readLine());
+        int M = Integer.parseInt(br.readLine());
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        List&lt;Edge&gt;[] graph = new ArrayList[N+5];
+        for (int i = 0; i &lt; N+5; i++)
+            graph[i] = new ArrayList&lt;&gt;();
+
+        StringTokenizer s;
+        for (int i = 0; i &lt; M; i++) {
+            s = new StringTokenizer(br.readLine());
+
+            int a, b, e;
+            a = Integer.parseInt(s.nextToken());
+            b = Integer.parseInt(s.nextToken());
+            e = Integer.parseInt(s.nextToken());
+
+            graph[a].add(new Edge(b, e));
+        }
+
+        s = new StringTokenizer(br.readLine());
+        int st, ed;
+        st = Integer.parseInt(s.nextToken());
+        ed = Integer.parseInt(s.nextToken());
+
+        long[] distances = new long[N+5];
+        for (int i = 1; i &lt;= N; i++) {
+            distances[i] = INF;
+        }
+        distances[st] = 0;
+
+        PriorityQueue&lt;State&gt; pq = new PriorityQueue&lt;&gt;(Comparator.comparingLong(n -&gt; n.dist));
+        pq.offer(new State(0, st));
+
+        while (!pq.isEmpty()) {
+            State state = pq.poll();
+            if (distances[state.node] &lt; state.dist) continue;
+            if (state.node == ed) break;
+
+            for (Edge adj : graph[state.node]) {
+                long newDist = state.dist + adj.cost;
+                
+                if (newDist &lt; distances[adj.node]) {
+                    distances[adj.node] = newDist;
+                    pq.offer(new State(newDist, adj.node));
+                }
+            }
+        }
+
+        bw.write(distances[ed] + &quot;\n&quot;);
+        bw.flush();
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>다익스트라 알고리즘의 시간복잡도는 $O(E \log V)$ 이므로 이 코드의 경우  $O(M \log N)$의 시간복잡도를 가진다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts/PS/2026-01-05-백준-1916-최소비용-구하기.md"
+        </script>
+      </body>
+  
