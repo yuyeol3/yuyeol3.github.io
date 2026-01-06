@@ -1,0 +1,140 @@
+
+      <html lang="ko">
+      <head>
+        <title>2096 - 내려가기</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 Nx3칸의 테이블에서 규칙을 따라 내려가면서 얻을 수 있는 최대 점수 및 최소 점수를 구해야 하는 문제이다. 규칙은 다음과 같다. 어떤 줄에서 다음 줄로 넘어갈 때 바로 아래의 수로 내려가거나, 또는 바로 아래의 수와 붙어 있는 수로만 이동할 수 있다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>2096 - 내려가기</h1>
+<p>이 문제는 Nx3칸의 테이블에서 규칙을 따라 내려가면서 얻을 수 있는 최대 점수 및 최소 점수를 구해야 하는 문제이다. 규칙은 다음과 같다. 어떤 줄에서 다음 줄로 넘어갈 때 바로 아래의 수로 내려가거나, 또는 바로 아래의 수와 붙어 있는 수로만 이동할 수 있다.</p>
+<p>문제 내용 자체는 꽤 흔한 DP 문제 패턴이다. 점화식을 다음과 같이 세우면 된다.</p>
+<p>먼저 점화식의 각 항에 대한 의미를 정의하자.</p>
+<ul>
+<li>$dp[i][j][0]$ : $(i, j)$번째 칸까지 방문했을 때 최소 점수</li>
+<li>$dp[i][j][1]$ : $(i, j)$번째 칸까지 방문했을 때 최대 점수</li>
+</ul>
+<p>그런 다음 기저 조건을 설정하자. 첫 번째 행에 있는 칸을 방문하면 그 상태에서 최대, 최소 점수는 방문한 크 칸의 점수뿐이므로</p>
+<p>$$
+dp[0][j][0] = dp[0][j][1] =arr[0][j]
+$$</p>
+<p>로 기저조건을 세울 수 있다.</p>
+<p>마지막으로 이러한 상태를 잘 이용해 점화식을 세워보자.</p>
+<ul>
+<li>(i, j칸까지 방문했을 때 최소 점수) = min(i-1 행의 칸 중 i, j칸으로 갈 수 있는 칸의 최소 점수) + (i, j)칸의 점수</li>
+<li>(i, j칸까지 방문했을 때 최대 점수) = max(i-1 행의 칸 중 i, j칸으로 갈 수 있는 칸의 최대 점수) + (i, j)칸의 점수</li>
+</ul>
+<p>이를 수식으로 표현하면</p>
+<p>$$ 
+dp[i][j][0] = \min({dp[i-1][k][0] \mid k \text{는 } j \text{로 이동할 수 있는 열 번호}}) + arr[i][j]
+$$</p>
+<p>$$ 
+dp[i][j][1] = \max({dp[i-1][k][1] \mid k \text{는 } j \text{로 이동할 수 있는 열 번호}}) + arr[i][j]
+$$</p>
+<p>가 되고, 이를 이용하면 문제를 풀 수 있다.</p>
+<p>한편 이 문제에서 추가로 주의해야 할 것은 메모리 제한이다. 이 문제의 메모리 제한은 4MB인데, 만약 점수를 담아둘 배열 <code>arr</code>과 점화식을 저장할 <code>dp</code>를 그대로 정의하면 4 * 100KB * 3 = 1.2MB 이고 dp의 경우 4 * 100KB * 3 * 2 = 2.4MB이므로 두 배열이 약 3.6MB의 공간을 차지해 메모리 초과를 받을 가능성이 크다. </p>
+<p>그러면 어떻게 해야 할까? 주목해야 할 것은 점화식에서 행 $i$번째의 dp 값을 구하기 위해서는 행 $i-1$에 대한 dp 값만 필요하다는 것이다. 따라서 모든 dp값을 저장할 필요는 없고 이전 행과 현재 행에 대한 dp 정보만 가지고 있으면 된다. 따라서 4 * 2 * 3 * 2 = 48 Bytes로 훨씬 작은 공간을 차지하게 할 수 있다. </p>
+<p>추가로 <code>arr</code>의 경우 입력받으면 즉시 dp값을 계산하는 방식으로 하면 <code>arr</code>배열을 만들지 않고도 값을 저장할 수 있다.</p>
+<p><a href="https://www.acmicpc.net/problem/2096">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>먼저 행의 수 N을 입력받은 뒤 dp 배열을 선언하고 초기값을 저장한다. dp 배열의 크기는 앞서 언급했듯이 2x3x2로 지정하였다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    int N = Integer.parseInt(br.readLine());
+    int[][][] dp = new int[2][3][2];
+    StringTokenizer st;
+    st = new StringTokenizer(br.readLine());
+    for (int i = 0; i &lt; 3; i++) {
+        int e = Integer.parseInt(st.nextToken());
+        dp[0][i][0] = e;
+        dp[0][i][1] = e;
+    }
+</code></pre>
+<p>이제 점화식을 이용해 첫번째 행부터 N-1번째 행까지 행별로 dp값을 구한다. <code>prev</code>는 이전 행 dp값이 저장된 위치를 나타내는 인덱스이고, <code>next</code>는 현재 행의 dp값을 저장할 위치를 나타내는 인덱스이다. </p>
+<p>규칙에 따라 0번째 열은 0번째 열과 1번째 열로부터 올 수 있고, 1번째 열은 모든 열로부터 올 수 있으며, 2번째 열은 1번째 열과 2번째 열로부터 올 수 있으니 이를 점화식에 반영하여 dp값을 구한다.</p>
+<p>루프의 마지막에서 prev와 next를 바꿔야 한다. 지금처럼 <code>x = (x + 1) % 2</code>를 이용해도 되고, <code>temp</code> 변수를 이용해 교환해도 된다.</p>
+<pre><code class="language-java">    int prev = 0, next = 1;
+    for (int i = 1; i &lt; N; i++) {
+        int one, two, three;
+        st = new StringTokenizer(br.readLine());
+        one = Integer.parseInt(st.nextToken());
+        two = Integer.parseInt(st.nextToken());
+        three = Integer.parseInt(st.nextToken());
+        dp[next][0][0] = Math.min(dp[prev][0][0], dp[prev][1][0]) + one;
+        dp[next][0][1] = Math.max(dp[prev][0][1], dp[prev][1][1]) + one;
+
+        dp[next][1][0] = Math.min(Math.min(dp[prev][0][0], dp[prev][1][0]), dp[prev][2][0]) + two;
+        dp[next][1][1] = Math.max(Math.max(dp[prev][0][1], dp[prev][1][1]), dp[prev][2][1]) + two;
+
+        dp[next][2][0] = Math.min(dp[prev][1][0], dp[prev][2][0]) + three;
+        dp[next][2][1] = Math.max(dp[prev][1][1], dp[prev][2][1]) + three;
+
+        prev = (prev + 1) % 2;
+        next = (next + 1) % 2;
+    }
+</code></pre>
+<p>마지막으로 제일 끝 열에서 최소 점수와 최대 점수를 구해 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    int minScore, maxScore;
+    minScore = Math.min(Math.min(dp[prev][0][0], dp[prev][1][0]), dp[prev][2][0]);
+    maxScore = Math.max(Math.max(dp[prev][0][1], dp[prev][1][1]), dp[prev][2][1]);
+    bw.write(String.format(&quot;%d %d\n&quot;, maxScore, minScore));
+    bw.flush();
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    public static void main(String[] args) throws IOException {
+        int N = Integer.parseInt(br.readLine());
+        int[][][] dp = new int[2][3][2];
+        StringTokenizer st;
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i &lt; 3; i++) {
+            int e = Integer.parseInt(st.nextToken());
+            dp[0][i][0] = e;
+            dp[0][i][1] = e;
+        }
+
+        int prev = 0, next = 1;
+        for (int i = 1; i &lt; N; i++) {
+            int one, two, three;
+            st = new StringTokenizer(br.readLine());
+            one = Integer.parseInt(st.nextToken());
+            two = Integer.parseInt(st.nextToken());
+            three = Integer.parseInt(st.nextToken());
+            dp[next][0][0] = Math.min(dp[prev][0][0], dp[prev][1][0]) + one;
+            dp[next][0][1] = Math.max(dp[prev][0][1], dp[prev][1][1]) + one;
+
+            dp[next][1][0] = Math.min(Math.min(dp[prev][0][0], dp[prev][1][0]), dp[prev][2][0]) + two;
+            dp[next][1][1] = Math.max(Math.max(dp[prev][0][1], dp[prev][1][1]), dp[prev][2][1]) + two;
+
+            dp[next][2][0] = Math.min(dp[prev][1][0], dp[prev][2][0]) + three;
+            dp[next][2][1] = Math.max(dp[prev][1][1], dp[prev][2][1]) + three;
+
+            prev = (prev + 1) % 2;
+            next = (next + 1) % 2;
+        }
+
+        
+        int minScore, maxScore;
+        minScore = Math.min(Math.min(dp[prev][0][0], dp[prev][1][0]), dp[prev][2][0]);
+        maxScore = Math.max(Math.max(dp[prev][0][1], dp[prev][1][1]), dp[prev][2][1]);
+        bw.write(String.format(&quot;%d %d\n&quot;, maxScore, minScore));
+        bw.flush();
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>점화식을 통해 dp값을 계산하기 위한 반복문의 시간복잡도는 행의 개수에 비례하여 $O(N)$이므로 이 프로그램의 시간복잡도는 $O(N)$ 이다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts/PS/2026-01-06-백준-2096-내려가기.md"
+        </script>
+      </body>
+  
