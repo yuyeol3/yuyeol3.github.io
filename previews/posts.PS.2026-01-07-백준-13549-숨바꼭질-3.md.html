@@ -1,0 +1,152 @@
+
+      <html lang="ko">
+      <head>
+        <title>13549 - 숨바꼭질 3</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 두 숫자 N과 K가 주어지고, 이동 방법을 이용해 N을 K로 만드는데 드는 최소 비용(문제에서는 시간)이 얼마인지 구해야 하는 문제이다. 이동 방법에는 두 가지가 있다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>13549 - 숨바꼭질 3</h1>
+<p>이 문제는 두 숫자 N과 K가 주어지고, 이동 방법을 이용해 N을 K로 만드는데 드는 최소 비용(문제에서는 시간)이 얼마인지 구해야 하는 문제이다. 이동 방법에는 두 가지가 있다.</p>
+<ul>
+<li>x+1 또는 x-1로 이동 (비용 1)</li>
+<li>2*x로 이동 (비용 0)</li>
+</ul>
+<p>숫자를 노드로 정의하고 비용을 간선의 가중치로 보면 이 문제가 그래프에서 최소 이동거리를 구하는 문제임을 알 수 있다. 가중치가 모든 간선마다 다르기 때문에 다익스트라 알고리즘을 쓰거나 0-1 BFS를 사용하면 이 문제를 풀 수 있다.</p>
+<h2>코드</h2>
+<h2>전체 코드</h2>
+<h3>다익스트라</h3>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static final int INF = 100005;
+    static final int[] costs = {1,1,0};
+    static class State {
+        public int dist;
+        public int num;
+
+        public State(int dist, int num) {
+            this.dist = dist;
+            this.num = num;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+
+        if (N == K) {
+            bw.write(0 + &quot;\n&quot;);
+            bw.flush();
+            return;
+        }
+        else if (N &gt; K) {
+            bw.write(N - K + &quot;\n&quot;);
+            bw.flush();
+            return;
+        }
+
+        int[] distances = new int[Math.max(N, K) + 5];
+        Arrays.fill(distances, INF);
+
+        PriorityQueue&lt;State&gt; pq = new PriorityQueue&lt;&gt;(Comparator.comparingLong(e-&gt;e.dist));
+        distances[N] = 0;
+        pq.offer(new State(0, N));
+
+        while (!pq.isEmpty()) {
+            State s = pq.poll();
+            if (s.dist &gt; distances[s.num]) continue;
+            if (s.num == K) break;
+            int[] adjs = {s.num-1, s.num+1, 2*s.num};
+            for (int i = 0; i &lt; 3; i++) {
+                int adjNum = adjs[i];
+                int adjCost = costs[i];
+                if (adjNum &gt; Math.max(K, N) + 2 || adjNum &lt; 0) continue;
+
+                int newDist = s.dist + adjCost;
+                if (newDist &lt; distances[adjNum]) {
+                    distances[adjNum] = newDist;
+                    pq.offer(new State(newDist, adjNum));
+                }
+            }   
+        }
+
+        bw.write(distances[K] + &quot;\n&quot;);
+        bw.flush();
+    }
+}
+</code></pre>
+<h3>0-1 BFS</h3>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static final int[] costs = {1,1,0};
+    static final int INF = 100005;
+
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+
+
+        if (N == K) {
+            bw.write(0 + &quot;\n&quot;);
+            bw.flush();
+            return;
+        }
+        else if (N &gt; K) {
+            bw.write(N - K + &quot;\n&quot;);
+            bw.flush();
+            return;
+        }
+
+        int[] distances = new int[Math.max(N, K)+5];
+        Arrays.fill(distances, INF);
+        Deque&lt;Integer&gt; q = new ArrayDeque&lt;&gt;();
+        q.addLast(N);
+        distances[N] = 0;
+
+        while (!q.isEmpty()) {
+            int s = q.pop();
+            if (s == K) break;
+            int[] adjs = {s+1, s-1, 2*s};
+            for (int i = 0; i &lt; 3; i++) {
+                int adjNum = adjs[i];
+                int adjCost = costs[i];
+                if (adjNum &gt; Math.max(K, N) + 2 || adjNum &lt; 0) continue;
+                
+                if (distances[s] + adjCost &lt; distances[adjNum]) {
+                    distances[adjNum] = distances[s] + adjCost;
+                    if (adjCost == 1) 
+                        q.addLast(adjNum);
+                    else
+                        q.addFirst(adjNum);
+                }
+                
+            }   
+        }
+
+        bw.write(distances[K] + &quot;\n&quot;);
+        bw.flush();
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+
+        <script>
+          location.href = "/post-view?href=posts/PS/2026-01-07-백준-13549-숨바꼭질-3.md"
+        </script>
+      </body>
+  
