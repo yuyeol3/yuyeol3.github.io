@@ -1,0 +1,172 @@
+
+      <html lang="ko">
+      <head>
+        <title>17070 - 파이프 옮기기 1</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 (1,1), (1,2)를 가로 방향으로 차지하고 있는 파이프의 한 쪽 끝을 정해진 방법만을 이용해 (N, N)까지 옮길 수 있는 경우의 수를 구하는 문제이다. 다만 공간에 벽이 있을 경우, 그 벽에 파이프가 닿지 않도록 해야 한다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>17070 - 파이프 옮기기 1</h1>
+<p>이 문제는 (1,1), (1,2)를 가로 방향으로 차지하고 있는 파이프의 한 쪽 끝을 정해진 방법만을 이용해 (N, N)까지 옮길 수 있는 경우의 수를 구하는 문제이다. 다만 공간에 벽이 있을 경우, 그 벽에 파이프가 닿지 않도록 해야 한다. </p>
+<p>또한 파이프의 방향별로 이동시킬 수 있는 방법이 다르다. 아래 그림은 각 방향별로 이동할 수 있는 방법을 모두 나타낸 것이다. 색칠된 칸은 벽이 없어야 하는 곳이다.</p>
+<center>
+
+<img width="1037" height="829" alt="image" src="https://github.com/user-attachments/assets/67985b4d-0ce2-4d86-b78f-f11190685cd1" />
+
+</center>
+
+<p>이 문제는 브루트 포스와 다이나믹 프로그래밍 방식으로 모두 풀 수 있다. 다만 DP 방식의 경우 파이프 옮기기 2에서 따로 다루고 여기서는 브루트 포스 방식으로만 풀어볼 것이다.</p>
+<p><a href="https://www.acmicpc.net/problem/17070">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>먼저 탐색 상태를 나타낼 클래스를 작성한다. 방향을 표시할 변수 <code>dir</code>과 상태의 위치(행, 열)를 나타낼 <code>r</code>, <code>c</code> 변수를 선언한다.</p>
+<pre><code class="language-java">static class State {
+    public int dir;  // 1 : 가로, 2 : 세로, 3 : 대각선
+    public int r, c;
+
+    public State(int r, int c, int dir) {
+        this.r = r;
+        this.c = c;
+        this.dir = dir;
+    }
+}
+</code></pre>
+<p>다음으로 위치 탐색을 쉽게 하기 위해 dr, dc 배열을 선언한다. 0번째는 <code>dir</code> 변수 값과 배열의 값을 맞춰주기 위한 원소로, 실제로 사용되지는 않는다. 1번째는 가로 이동 방향, 2번째는 세로 이동 방향, 3번째는 대각선 이동 방향이다.</p>
+<pre><code class="language-java">static int[] dr = {0, 0, 1, 1};
+static int[] dc = {0, 1, 0, 1};
+</code></pre>
+<p>이제 main 함수에서 집의 크기와 집의 상태를 입력받는다. 배열은 (N+5)x(N+5) 크기로 넉넉하게 잡는다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    int N = Integer.parseInt(br.readLine());
+
+    int arr[][] = new int[N+5][N+5];
+
+    StringTokenizer st;
+    for (int i = 1; i &lt;= N; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int j = 1; j &lt;= N; j++) {
+            arr[i][j] = Integer.parseInt(st.nextToken());
+        }
+    }
+</code></pre>
+<p>탐색을 위해 스택처럼 쓸 deque를 하나 만들고 최초 상태인 (1,2), 가로방향을 큐의 앞에 삽입한다. 경우의 수를 저장하기 위해 <code>result</code> 변수를 선언하고 0으로 초기화한다.</p>
+<pre><code class="language-java">    Deque&lt;State&gt; dq = new ArrayDeque&lt;&gt;();
+    dq.addFirst(new State(1, 2, 1));
+    int result = 0;
+</code></pre>
+<p>이제 <code>dq</code>가 비어있을 때까지 반복문을 돈다. 반복문 내에서 먼저 가장 앞에 있는 상태 s를 <code>dq</code>에서 꺼낸다. 만약 상태의 행과 열이 모두 N과 같다면 (N,N)에 오는 방법에 해당하므로 <code>result++</code>하고 인접 상태 탐색을 건너뛴다. </p>
+<p>(N,N)이 아니라면 for문을 돌면서 가능한 다음 상태를 모두 탐색한다. 먼저 현재 상태의 이동 방향과 앞으로 이동할 방향을 확인해 이동이 가능한 방향인지 검사한다. 이동 가능한 방향이라면 <code>cr</code>, <code>cc</code> 변수를 정의해 다음 행 위치와 열 위치로 초기화한 다음, 범위를 검사한다. 그리고 집 상태를 검사해 벽이 없는 것이 맞는지 확인한다. </p>
+<p>대각선 이동의 경우 <code>cr</code>, <code>cc</code> 뿐 아니라 위, 아래도 검사해야 하므로 <code>dir==3</code>이면 <code>(arr[cr-1][cc] &gt; 0 || arr[cr][cc-1] &gt; 0)</code>에 해당되는지 검사해준다.</p>
+<p>검사를 모두 통과했다면 유효한 다음 상태이므로 <code>dq</code>의 처음에 상태를 삽입해준다.</p>
+<pre><code class="language-java">    while (!dq.isEmpty()) {
+        State s = dq.poll();
+        if (s.r == N &amp;&amp; s.c == N) {
+            result++;
+            continue;
+        }
+
+        for (int dir = 1; dir &lt;= 3; dir++) {
+            // 방향 검사
+            if (s.dir == 1 &amp;&amp; dir == 2) continue;
+            if (s.dir == 2 &amp;&amp; dir == 1) continue;
+
+            int cr = s.r + dr[dir];
+            int cc = s.c + dc[dir];
+
+            if (cr &lt; 1 || cr &gt; N) continue;
+            if (cc &lt; 1 || cc &gt; N) continue;
+            if (arr[cr][cc] &gt; 0) continue;
+            if (dir == 3 &amp;&amp; (arr[cr-1][cc] &gt; 0 || arr[cr][cc-1] &gt; 0))
+                continue;
+
+
+            dq.addFirst(new State(cr, cc, dir));
+        }
+
+    }
+</code></pre>
+<p>while 문을 빠져나왔다면 탐색이 종료된 것이므로 결과를 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    bw.write(result + &quot;\n&quot;);
+    bw.flush();
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+    static class State {
+        public int dir;  // 1 : 가로, 2 : 세로, 3 : 대각선
+        public int r, c;
+
+        public State(int r, int c, int dir) {
+            this.r = r;
+            this.c = c;
+            this.dir = dir;
+        }
+    }
+
+    static int[] dr = {0, 0, 1, 1};
+    static int[] dc = {0, 1, 0, 1};
+
+    public static void main(String[] args) throws IOException {
+        int N = Integer.parseInt(br.readLine());
+
+        int arr[][] = new int[N+5][N+5];
+
+        StringTokenizer st;
+        for (int i = 1; i &lt;= N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 1; j &lt;= N; j++) {
+                arr[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+
+        Deque&lt;State&gt; dq = new ArrayDeque&lt;&gt;();
+        dq.addFirst(new State(1, 2, 1));
+        int result = 0;
+
+        while (!dq.isEmpty()) {
+            State s = dq.poll();
+            if (s.r == N &amp;&amp; s.c == N) {
+                result++;
+                continue;
+            }
+
+            for (int dir = 1; dir &lt;= 3; dir++) {
+                if (s.dir == 1 &amp;&amp; dir == 2) continue;
+                if (s.dir == 2 &amp;&amp; dir == 1) continue;
+
+                int cr = s.r + dr[dir];
+                int cc = s.c + dc[dir];
+
+                if (cr &lt; 1 || cr &gt; N) continue;
+                if (cc &lt; 1 || cc &gt; N) continue;
+                if (arr[cr][cc] &gt; 0) continue;
+                if (dir == 3 &amp;&amp; (arr[cr-1][cc] &gt; 0 || arr[cr][cc-1] &gt; 0))
+                    continue;
+
+
+                dq.addFirst(new State(cr, cc, dir));
+            }
+
+        }
+
+        bw.write(result + &quot;\n&quot;);
+        bw.flush();
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>대략적으로 계산해보면 한 상태당 인접한 상태의 수는 3개씩 확장되므로 지수적으로 3배씩 늘어나 $O(3^N)$이 된다. 이 문제에서는 $N \le 16$ 이므로 $3^{16} \approx 4300$만회 이므로 1초 내에 문제를 통과할 수 있다. 그러나 파이프 옮기기 2의 경우 $N \le 32$ 이고 0.5 초 내에 통과해야 하므로 브루트포스 방법으로는 불가능함을 알 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts/PS/2026-01-10-백준-17070-파이프-옮기기-1.md"
+        </script>
+      </body>
+  
