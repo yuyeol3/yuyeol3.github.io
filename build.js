@@ -107,7 +107,7 @@ function renderStaticHtml(posts) {
         
         ${marked.parse(content)}
         <script>
-          location.href = "/post-view?href=${path}"
+          location.href = "/post-view?href=${encodeURIComponent(path)}"
         </script>
       </body>
   `;
