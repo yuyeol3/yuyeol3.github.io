@@ -1,0 +1,238 @@
+
+      <html lang="ko">
+      <head>
+        <title>1043 - 거짓말</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제에서는 여러 개의 파티가 있고 그 파티에 참여하는 여러 사람이 있을 때, 진실을 알고 있는 사람을 피하여 거짓말을 할 수 있는 파티의 개수가 몇 개인지 알아내는 문제이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>1043 - 거짓말</h1>
+<p>이 문제에서는 여러 개의 파티가 있고 그 파티에 참여하는 여러 사람이 있을 때, 진실을 알고 있는 사람을 피하여 거짓말을 할 수 있는 파티의 개수가 몇 개인지 알아내는 문제이다. </p>
+<p>문제의 특징 중 하나는 먼저 진실을 알고 있는 사람과 같은 파티에 참석한 사람 또한 진실을 알고 있는 사람이 된다는 것이다. 즉 진실을 모르던 참여자들이 진실을 알고 있는 참여자들과 같은 파티에 참여하게 되면 진실을 알게 되며, 결국 같은 파티를 통해 연결되는 이 관계는 반사적, 추이적, 대칭적이라고 할 수 있다. 따라서 진실을 알고 있는 참여자들끼리는 하나의 집합으로 묶을 수 있다.</p>
+<p>이러한 상황에서 Union Find 알고리즘을 사용하면 문제를 효율적으로 풀 수 있다. 이 때 Union find 알고리즘이란 상호 배타적으로 이루어진 집합을 효율적으로 표현하기 위한 자료구조이다. union 연산은 두 서로소 집합을 합치는 연산이고, find 연산은 어떤 집합의 원소를 입력받아 그 원소가 속한 집합의 대표값을 반환해주는 연산이다. </p>
+<p>템플릿 코드는 아래와 같다.</p>
+<pre><code class="language-java">class UnionFind {
+    static int[] parent;
+    static int[] rank;
+    static void initialize(int n) {
+        parent = new int[n+1];
+        rank = new int[n+1];
+        for (int i = 0; i &lt;= n; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+
+    static int find(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    static void union(int a, int b) {
+        int rootA = find(a);
+        int rootB = find(b);
+
+        if (rootA == rootB) return;
+
+        if (rank[rootB] &gt; rank[rootA]) {
+            int tmp = rootA;
+            rootA = rootB;
+            rootB = tmp;
+        }
+        parent[rootB] = rootA;
+
+        if (rank[rootA] == rank[rootB])
+            rank[rootA] += 1;
+    }
+}
+</code></pre>
+<p><a href="https://www.acmicpc.net/problem/1043">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>먼저 Union-Find 자료구조를 사용하기 위한 템플릿 코드를 작성한다. </p>
+<pre><code class="language-java">    static int[] parent;
+    static int[] rank;
+    static void initialize(int n) {
+        parent = new int[n+1];
+        rank = new int[n+1];
+        for (int i = 0; i &lt;= n; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+
+    static int find(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    static void union(int a, int b) {
+        int rootA = find(a);
+        int rootB = find(b);
+
+        if (rootA == rootB) return;
+
+        // 높이가 높은 쪽이 rootA 에 있도록 보장
+        if (rank[rootB] &gt; rank[rootA]) {
+            int tmp = rootA;
+            rootA = rootB;
+            rootB = tmp;
+        }
+
+        parent[rootB] = rootA;
+        
+        // 높이가 같으면 A의 높이 증가함
+        if (rank[rootA] == rank[rootB])
+            rank[rootA] += 1;
+    }
+</code></pre>
+<p>다음으로 N, M을 입력받고 Union-Find를 초기화한다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException{
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    int N, M;
+    N = Integer.parseInt(st.nextToken());
+    M = Integer.parseInt(st.nextToken());
+
+    initialize(N);
+</code></pre>
+<p>진실을 알고 있는 사람들을 입력받는다. Union 연산을 이용해 진실을 알고 있는 사람들 모두를 같은 집합으로 연결한다. 한편 진실을 알고 있는 사람들이 한 명도 없다면 어느 파티에서든 거짓말을 할 수 있으므로 정답은 항상 M이다. 따라서 <code>K == 0</code>이면 <code>M</code>을 출력하고 프로그램을 즉시 종료한다.</p>
+<pre><code class="language-java">    st = new StringTokenizer(br.readLine());
+    int K = Integer.parseInt(st.nextToken());
+
+    if (K == 0) {
+        bw.write(M + &quot;\n&quot;);
+        bw.flush();
+        return;
+    }
+
+    int knowsTruth = Integer.parseInt(st.nextToken());
+    for (int i = 0; i &lt; K-1; i++)
+        union(knowsTruth, Integer.parseInt(st.nextToken()));
+</code></pre>
+<p>이제 파티와 관련한 정보를 입력받는다. 먼저 <code>partyCrits</code> 배열을 선언하여 해당 파티에 참여하는 참가자의 대표 원소들을 저장할 배열을 선언한다. 그런 다음 각 파티별 참여인원과 참여하는 사람 번호를 입력받아 즉시 파티의 대표 원소와 Union 연산을 수행한다. 이 때 파티에 진실을 알고 있는 사람이 참여한다면 그 파티의 모든 참여자들은 진실을 알고 있는 참여자들의 집합에 속하게 될 것이다.</p>
+<pre><code class="language-java">    int[] partyCrits = new int[M];
+    for (int i = 0; i &lt; M; i++) {
+        st = new StringTokenizer(br.readLine());
+        int partyNum = Integer.parseInt(st.nextToken());
+        partyCrits[i] = Integer.parseInt(st.nextToken());
+        
+        for (int j = 0; j &lt; partyNum-1; j++) {
+            int participantNum = Integer.parseInt(st.nextToken());
+            union(partyCrits[i], participantNum);
+        }
+    }
+</code></pre>
+<p>최종적으로 거짓말을 말할 수 있는 파티의 개수를 구한다. 파티의 대표 참여자가 속한 집합이 진실을 알고 있는 참여자들의 집합과 같다면 그 파티에는 진실을 알고 있는 사람이 있다는 뜻이므로 거짓말을 할 수가 없다. 따라서 파티의 각 대표 참여자에 대해 집합을 확인하고 결과를 구해 출력한다.</p>
+<pre><code class="language-java">    int result = 0;
+    int truthRoot = find(knowsTruth);
+    for (int crit : partyCrits) {
+        if (find(crit) != truthRoot) 
+            result++;
+    }
+
+    bw.write(result + &quot;\n&quot;);
+    bw.flush();
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static int[] parent;
+    static int[] rank;
+    static void initialize(int n) {
+        parent = new int[n+1];
+        rank = new int[n+1];
+        for (int i = 0; i &lt;= n; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+
+    static int find(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    static void union(int a, int b) {
+        int rootA = find(a);
+        int rootB = find(b);
+
+        if (rootA == rootB) return;
+
+        if (rank[rootB] &gt; rank[rootA]) {
+            int tmp = rootA;
+            rootA = rootB;
+            rootB = tmp;
+        }
+
+        parent[rootB] = rootA;
+
+        if (rank[rootA] == rank[rootB])
+            rank[rootA] += 1;
+    }
+
+
+    public static void main(String[] args) throws IOException{
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N, M;
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
+        initialize(N);
+
+
+        st = new StringTokenizer(br.readLine());
+        int K = Integer.parseInt(st.nextToken());
+
+        if (K == 0) {
+            bw.write(M + &quot;\n&quot;);
+            bw.flush();
+            return;
+        }
+
+        int knowsTruth = Integer.parseInt(st.nextToken());
+        // O(K)
+        for (int i = 0; i &lt; K-1; i++)
+            union(knowsTruth, Integer.parseInt(st.nextToken()));
+        
+        
+        int[] partyCrits = new int[M];
+        // O(M * #participants)
+        for (int i = 0; i &lt; M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int partyNum = Integer.parseInt(st.nextToken());
+            partyCrits[i] = Integer.parseInt(st.nextToken());
+            
+            for (int j = 0; j &lt; partyNum-1; j++) {
+                int participantNum = Integer.parseInt(st.nextToken());
+                union(partyCrits[i], participantNum);
+            }
+        }
+
+        int result = 0;
+        int truthRoot = find(knowsTruth);
+        // O(M * α(N)) 
+        for (int crit : partyCrits) {
+            if (find(crit) != truthRoot) 
+                result++;
+        }
+
+        bw.write(result + &quot;\n&quot;);
+        bw.flush();
+    }    
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>Union-Find 시간복잡도는 $O(M \times \alpha(N))$ 으로 알려져 있으며 $M$은 연산의 횟수, $N$은 원소의 개수를 뜻한다.</p>
+<p>이를 통해 도출해 보면, 각 루프별 시간복잡도를 더하면 $O(K \times \alpha(N)) + O(\sum(\text{#participants}) \times \alpha(N)) + O(M \times \alpha(N))$ 이다. 따라서 이 코드의 시간복잡도는 $O((K + \sum(\text{#participants}) + M)\alpha(N))$ 이다. 최악의 경우 대략 $50 + 2500 +50 = 2600 \le 2\text{억}$ 이므로 문제없이 통과할 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-12-%EB%B0%B1%EC%A4%80-1043-%EA%B1%B0%EC%A7%93%EB%A7%90.md"
+        </script>
+      </body>
+  
