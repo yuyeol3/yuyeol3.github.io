@@ -1,0 +1,205 @@
+
+      <html lang="ko">
+      <head>
+        <title>1504 - 특정한 최단 경로</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 1부터 N까지 이동할 때 u, v를 반드시 거치는 최단경로의 거리를 구하는 문제로 다익스트라를 사용하면 풀 수 있다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>1504 - 특정한 최단 경로</h1>
+<p>이 문제는 1부터 N까지 이동할 때 u, v를 반드시 거치는 최단경로의 거리를 구하는 문제로 다익스트라를 사용하면 풀 수 있다.</p>
+<p>이 문제에서 눈여겨봐야 할 곳이 있는데, 다음과 같다.</p>
+<blockquote>
+<p>세준이는 한번 이동했던 정점은 물론, 한번 이동했던 간선도 다시 이동할 수 있다. 하지만 반드시 최단 경로로 이동해야 한다는 사실에 주의하라. </p>
+</blockquote>
+<p>즉 우리가 경로를 찾을 때 간선이나 정점이 중복되는지는 신경 쓸 필요가 없다. 단지 그 경로의 거리가 최소인지만 확인하면 된다. </p>
+<p>이제 $dist(a, b)$가 정점 a에서 b까지 최단거리를 주는 함수라고 할 때 $dist(1, N)$은 다음과 같이 구할 수 있다.</p>
+<p>$$</p>
+<p>dist(1, N) = \min \begin{cases} dist(1, u) + dist(u, v) + dist(v, N) \ dist(1, v) + dist(v, u) + dist(u, N) \end{cases}</p>
+<p>$$</p>
+<p>왜 각 정점에서 정점까지의 최소 거리를 더한 것이 전체의 최소 거리가 될까? 귀류법으로 확인해보자. 어떤 정점으로부터 정점까지의 최소 이동 경로에서 어떤 부분 경로가 최소가 아닐 수 있다고 하자. 그렇다면 그 부분경로가 최소가 아니므로 최소 경로로 갈아끼우면 기존 최소 경로보다 더 작은 전체 최소 경로가 생기는데, 이는 모순이다. 따라서 전체 경로가 최소 비용이면 부분 경로도 최소 비용이다.</p>
+<p><a href="https://www.acmicpc.net/problem/1504">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>간선이나 탐색 상태를 나타내기 위해 유틸 클래스로 <code>Pair</code>을 선언한다.</p>
+<pre><code class="language-java">static class Pair&lt;T1, T2&gt; {
+    public T1 x;
+    public T2 y;
+
+    public Pair(T1 x, T2 y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+</code></pre>
+<p>정점의 개수 <code>N</code>과 간선의 개수 <code>E</code>를 입력받는다. 다음으로 그래프를 표현할 변수 <code>graph</code>를 선언하고 ArrayList로 초기화한다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    int N, E;
+    N = Integer.parseInt(st.nextToken());
+    E = Integer.parseInt(st.nextToken());
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    List&lt;Pair&lt;Integer, Integer&gt;&gt;[] graph = new List[N+1];
+
+    for (int i = 0; i &lt;= N; i++) 
+        graph[i] = new ArrayList&lt;&gt;();
+</code></pre>
+<p>그래프를 입력받는다. 문제에서 대칭이라고 하였으므로 from, to 양쪽에 모두 간선을 추가해야 한다. 그런 다음 반드시 거쳐야 하는 정점 <code>u</code>, <code>v</code>를 입력받는다.</p>
+<pre><code class="language-java">    for (int i = 0; i &lt; E; i++) {
+        st = new StringTokenizer(br.readLine());
+        int from, to, weight;
+
+        from = Integer.parseInt(st.nextToken());
+        to = Integer.parseInt(st.nextToken());
+        weight = Integer.parseInt(st.nextToken());
+
+        graph[from].add(new Pair&lt;Integer, Integer&gt;(to, weight));
+        graph[to].add(new Pair&lt;Integer, Integer&gt;(from, weight));
+    }
+
+    st = new StringTokenizer(br.readLine());
+    int u, v;
+    u = Integer.parseInt(st.nextToken());
+    v = Integer.parseInt(st.nextToken());
+</code></pre>
+<p>이제 필요한 다익스트라 연산을 한다. <code>dist1</code>에는 정점 1에서 모든 정점으로의 최단거리가 계산되어 있다. <code>distUV</code>에는 정점 u에서 모든 정점으로의 최단거리가 계산되어 있다.  <code>distN</code>에는 정점 N에서 모든 정점으로의 최단 거리가 계산되어 있다.</p>
+<p>이 세 가지를 모두 구했다면 답을 계산한다. 이 문제에서 그래프는 무향이므로 $dist(u, v) = dist(v, u)$, $dist(v, N) = dist(N, v)$, $dist(u, N) = dist(N, u)$ 를 이용해 아래 코드와 같이 식을 세울 수 있다.</p>
+<p>마지막으로 답을 출력한다. 만약 <code>result</code>가 <code>INF</code>보다 크거나 같다면 1, N까지 갈 수 있는 경로가 없다는 뜻이므로 -1을 출력하고 그렇지 않다면 <code>result</code>를 출력한다.</p>
+<pre><code class="language-java">    long dist1[] = new long[N+1];
+    dijkstra(1, dist1, graph);
+
+    long distUV[] = new long[N+1];
+    dijkstra(u, distUV, graph);
+
+    long distN[] = new long[N+1];
+    dijkstra(N, distN, graph);
+
+    long result = Math.min(
+        dist1[u] + distUV[v] + distN[v],
+        dist1[v] + distUV[v] + distN[u]
+    );
+
+    System.out.println((result &gt;= INF ? -1 : result));
+}
+</code></pre>
+<p>다익스트라 함수는 아래와 같다. 일반적인 구현 방법대로 구현했으며 dist를 외부에서 참조형식으로 받아 결과를 넣어준다.</p>
+<pre><code class="language-java">public static void dijkstra(int st, long[] dist, final List&lt;Pair&lt;Integer, Integer&gt;&gt;[] graph) {
+    Arrays.fill(dist, INF);
+    PriorityQueue&lt;Pair&lt;Integer, Long&gt;&gt; pq = new PriorityQueue&lt;&gt;(Comparator.comparingLong(e-&gt;e.y));
+
+    pq.offer(new Pair&lt;Integer, Long&gt;(st, 0L));
+    dist[st] = 0;
+
+    while (!pq.isEmpty()) {
+        Pair&lt;Integer, Long&gt; s = pq.poll();
+
+        if (s.y &gt; dist[s.x]) continue;
+
+        for (Pair&lt;Integer, Integer&gt; adj : graph[s.x]) {
+            if (s.y + adj.y &lt; dist[adj.x]) {
+                dist[adj.x] = s.y + adj.y;
+                pq.offer(new Pair&lt;Integer, Long&gt;(adj.x, dist[adj.x]));
+            }
+        }
+    }
+
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    static class Pair&lt;T1, T2&gt; {
+        public T1 x;
+        public T2 y;
+
+        public Pair(T1 x, T2 y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static final long INF = Long.MAX_VALUE / 4;
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N, E;
+        N = Integer.parseInt(st.nextToken());
+        E = Integer.parseInt(st.nextToken());
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        List&lt;Pair&lt;Integer, Integer&gt;&gt;[] graph = new List[N+1];
+
+        for (int i = 0; i &lt;= N; i++) 
+            graph[i] = new ArrayList&lt;&gt;();
+
+        for (int i = 0; i &lt; E; i++) {
+            st = new StringTokenizer(br.readLine());
+            int from, to, weight;
+
+            from = Integer.parseInt(st.nextToken());
+            to = Integer.parseInt(st.nextToken());
+            weight = Integer.parseInt(st.nextToken());
+
+            graph[from].add(new Pair&lt;Integer, Integer&gt;(to, weight));
+            graph[to].add(new Pair&lt;Integer, Integer&gt;(from, weight));
+        }
+
+        st = new StringTokenizer(br.readLine());
+        int u, v;
+        u = Integer.parseInt(st.nextToken());
+        v = Integer.parseInt(st.nextToken());
+
+        long dist1[] = new long[N+1];
+        dijkstra(1, dist1, graph);
+
+        long distUV[] = new long[N+1];
+        dijkstra(u, distUV, graph);
+
+        long distN[] = new long[N+1];
+        dijkstra(N, distN, graph);
+
+        long result = Math.min(
+            dist1[u] + distUV[v] + distN[v],
+            dist1[v] + distUV[v] + distN[u]
+        );
+
+        System.out.println((result &gt;= INF ? -1 : result));
+    }
+
+    public static void dijkstra(int st, long[] dist, final List&lt;Pair&lt;Integer, Integer&gt;&gt;[] graph) {
+        Arrays.fill(dist, INF);
+        PriorityQueue&lt;Pair&lt;Integer, Long&gt;&gt; pq = new PriorityQueue&lt;&gt;(Comparator.comparingLong(e-&gt;e.y));
+
+        pq.offer(new Pair&lt;Integer, Long&gt;(st, 0L));
+        dist[st] = 0;
+
+        while (!pq.isEmpty()) {
+            Pair&lt;Integer, Long&gt; s = pq.poll();
+
+            if (s.y &gt; dist[s.x]) continue;
+
+            for (Pair&lt;Integer, Integer&gt; adj : graph[s.x]) {
+                if (s.y + adj.y &lt; dist[adj.x]) {
+                    dist[adj.x] = s.y + adj.y;
+                    pq.offer(new Pair&lt;Integer, Long&gt;(adj.x, dist[adj.x]));
+                }
+            }
+        }
+
+    }
+} 
+</code></pre>
+<h2>시간복잡도</h2>
+<p>다익스트라의 시간복잡도는 $O((V+E)\log V)$ 로 알려져 있으며 이 문제의 시간복잡도는 $O(3 (N + E) \log N) \approx O((N+E) \log N)$ 이다. 최악의 경우에도 $200800 \times \log 800 \approx 2008000$ 이므로 컴퓨터가 1초에 연산할 수 있는 연산횟수 1억보다 훨씬 작다. 따라서 시간초과 없이 통과 가능하다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-15-%EB%B0%B1%EC%A4%80-1504-%ED%8A%B9%EC%A0%95%ED%95%9C-%EC%B5%9C%EB%8B%A8-%EA%B2%BD%EB%A1%9C.md"
+        </script>
+      </body>
+  
