@@ -1,0 +1,201 @@
+
+      <html lang="ko">
+      <head>
+        <title>1967 - 트리의 지름</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 트리의 정점 수와 간선 정보가 주어지면, 그 트리의 지름을 출력하는 문제이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>1967 - 트리의 지름</h1>
+<p>이 문제는 트리의 정점 수와 간선 정보가 주어지면, 그 트리의 지름을 출력하는 문제이다. </p>
+<p>이 때 트리의 지름이란 트리에 존재하는 모든 경로들 중에서 가장 긴 것의 길이이다.</p>
+<blockquote>
+<img width="310" height="123" alt="image" src="https://github.com/user-attachments/assets/7c610106-61db-4141-8492-2edad5d68cd1" />
+
+<p>출처 : 백준 - 트리의 지름</p>
+</blockquote>
+<p>간단하게 생각해보면 모든 노드에 대해 DFS를 하여 각 정점별로 가장 긴 거리를 구한 다음 그것의 최대값을 구하면 트리의 지름이 될 것이다. 이 방식의 시간복잡도는 $O(N^2)$일 것인데, 노드의 개수가 최대 10,000개여서 최악의 경우 딱 1억이 되므로 조금 아슬아슬하다. </p>
+<p>그렇다면 다른 방법은 없을까? 트리의 어떤 정점에서 출발하는 경로 중 가장 긴 경로의 마자막 정점은 지름을 이루는 시작과 끝 정점 중에 하나이다. 다시 말해, 아무 정점을 골라 DFS를 해서 가장 긴 경로의 마지막 정점을 뽑으면 그 정점은 위 그림에서 파란색으로 색칠된 정점 둘 중 하나이다.</p>
+<p>조금 더 깔끔하게 정리해보자.</p>
+<ul>
+<li>임의의 정점 s에서 가장 먼 정점을 $u$라고 하자.</li>
+<li>그러면 $u$는 트리 지름 경로의 한 끝점이다.</li>
+<li>따라서 $u$에서 다시 한 번 “가장 먼 정점까지의 거리”를 구하면 그 거리가 지름이다.</li>
+</ul>
+<p>위 성질을 이용하면 문제를 조금 더 간단하게 풀 수 있다. 먼저 루트 노드를 기점으로 DFS를 돌린다. 그러면 여러 경로 중 거리가 최대인 경로가 하나 있을 것이다. 위 성질에 따라 그 경로의 마지막 노드는 지름 경로의 시작 정점이라 볼 수 있을 것이다. 찾은 마지막 노드를 다시 기점으로 하여 다시 DFS를 돌리고 최장 경로를 다시 찾는다. 여기서 찾은 최장 경로가 바로 트리의 지름이다.</p>
+<p><a href="https://www.acmicpc.net/problem/1967">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>값 두 개를 담을 수 있는 클래스 Pair을 선언한다. y는 거리를 나타내는 데 주로 사용될 것이라 오버플로우 방지를 위해 long을 사용하였다.</p>
+<pre><code class="language-java">static class Pair{
+    int x;
+    long y;
+
+    public static Pair of(int x, long y) {
+        var p = new Pair();
+        p.x = x;
+        p.y = y;
+        return p;
+    }
+}
+</code></pre>
+<p>트리의 정점 개수 n을 먼저 입력받는다. 그런 다음 tree의 구조를 저장할 배열 <code>tree</code>를 선언한다. 각 원소별로 <code>ArrayList</code>를 생성해 초기화한다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException{
+    int n = Integer.parseInt(br.readLine());
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    List&lt;Pair&gt;[] tree = new List[n+1];
+
+    for (int i = 0; i &lt;= n; i++)
+        tree[i] = new ArrayList&lt;&gt;();
+</code></pre>
+<p>이제 간선 정보를 입력받아 <code>tree</code>에 저장한다. 부모 노드, 자식 노드, 가중치를 입력받아 Pair로 간선 정보를 만들어서 List에 넣어준다. 무향 그래프이므로 parent와 child 모두에 대칭적으로 간선을 추가해주어야 한다.</p>
+<pre><code class="language-java">    StringTokenizer st;
+    for (int i = 0; i &lt; n-1; i++) {
+        st = new StringTokenizer(br.readLine());
+
+        int parent, child, weight;
+        parent = Integer.parseInt(st.nextToken());
+        child = Integer.parseInt(st.nextToken());
+        weight = Integer.parseInt(st.nextToken());
+
+        tree[parent].add(Pair.of(child, weight));
+        tree[child].add(Pair.of(parent, weight));
+
+    }
+</code></pre>
+<p>DFS를 수행하기 위해 <code>visited</code> 배열과 스택으로 쓸 <code>dq</code> 를 선언한다. 루트 노드인 1번 노드를 기준으로 먼저 탐색할 것이므로 1번 노드를 먼저 넣어주고 <code>visited[1] = true</code>로 바꿔준다. 추가로 변수 <code>U</code>를 선언해준다. 이 변수는 최장 경로의 마지막 정점을 저장해두는 용도이다.</p>
+<p>위 과정을 모두 수행하면 다음으로 반복문을 돌며 DFS를 수행한다. 만저 스택에서 상태를 하나 꺼낸 뒤 그 상태의 거리를 검사한다. <code>U.y &gt; s.y</code>라면 최장 거리가 갱신된 것이므로 <code>U=s</code>를 통해 업데이트해 준다.
+다음으로 트리에서 인접 노드를 확인한다. 인접 노드가 이미 방문한 노드라면 스택에 추가하지 않고 건너뛴다. 방문한 노드가 아니라면 방문처리를 한 뒤 스택에 넣어준다. </p>
+<pre><code>    boolean[] visited = new boolean[n+1];
+    Deque&lt;Pair&gt; dq = new ArrayDeque&lt;&gt;();
+    dq.addFirst(Pair.of(1, 0L));
+    visited[1] = true;
+    var U = Pair.of(0, 0L);        
+
+    while (!dq.isEmpty()) {
+        var s = dq.pollFirst();
+        
+        if (s.y &gt; U.y) U = s;
+
+        for (var adj : tree[s.x]) {
+            if (visited[adj.x]) continue;
+            visited[adj.x] = true;
+            dq.addFirst(Pair.of(adj.x, s.y + adj.y));
+        }
+    }
+</code></pre>
+<p><code>U</code>를 기점으로 DFS를 한 번 더 수행해야 하므로 visited 배열을 다시 false로 초기화해준다. 그런 다음 <code>dq</code>에 <code>U.x</code>를 시작 노드로 하는 상태를 만들어 삽입하고 방문처리한다. 추가로 지름을 저장할 <code>diameter</code> 변수를 만든다. 이전 DFS에서는 정점 번호와 이동 거리가 모두 필요했지만 이번에는 거리만 필요하기 때문에 <code>Pair</code>로 선언하지 않는다. </p>
+<p>이제 다시 한 번 DFS를 수행한다. 대부분의 과정은 이전 반복문과 다르지 않지만 diameter을 <code>long</code> 타입으로 선언했기 때문에 최장 거리를 업데이트하는 부분만 차이가 있다.</p>
+<pre><code class="language-java">    Arrays.fill(visited, false);
+    dq.addFirst(Pair.of(U.x, 0L));
+    visited[U.x] = true;
+    long diameter = 0;
+    while (!dq.isEmpty()) {
+        var s = dq.pollFirst();
+        
+        if (s.y &gt; diameter) diameter = s.y;
+
+        for (var adj : tree[s.x]) {
+            if (visited[adj.x]) continue;
+            visited[adj.x] = true;
+            dq.addFirst(Pair.of(adj.x, s.y + adj.y));
+        }
+    }
+</code></pre>
+<p>반복문이 끝나면 트리의 지름이 구해진 것이므로 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    System.out.println(diameter);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    static class Pair{
+        int x;
+        long y;
+
+        public static Pair of(int x, long y) {
+            var p = new Pair();
+            p.x = x;
+            p.y = y;
+            return p;
+        }
+    }
+
+    public static void main(String[] args) throws IOException{
+        int n = Integer.parseInt(br.readLine());
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        List&lt;Pair&gt;[] tree = new List[n+1];
+
+        for (int i = 0; i &lt;= n; i++)
+            tree[i] = new ArrayList&lt;&gt;();
+
+        StringTokenizer st;
+        for (int i = 0; i &lt; n-1; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            int parent, child, weight;
+            parent = Integer.parseInt(st.nextToken());
+            child = Integer.parseInt(st.nextToken());
+            weight = Integer.parseInt(st.nextToken());
+
+            tree[parent].add(Pair.of(child, weight));
+            tree[child].add(Pair.of(parent, weight));
+
+        }
+        
+        boolean[] visited = new boolean[n+1];
+        Deque&lt;Pair&gt; dq = new ArrayDeque&lt;&gt;();
+        dq.addFirst(Pair.of(1, 0L));
+        visited[1] = true;
+
+        var U = Pair.of(0, 0L);        
+        while (!dq.isEmpty()) {
+            var s = dq.pollFirst();
+            
+            if (s.y &gt; U.y) U = s;
+
+            for (var adj : tree[s.x]) {
+                if (visited[adj.x]) continue;
+                visited[adj.x] = true;
+                dq.addFirst(Pair.of(adj.x, s.y + adj.y));
+            }
+        }
+
+        Arrays.fill(visited, false);
+        dq.addFirst(Pair.of(U.x, 0L));
+        visited[U.x] = true;
+        long diameter = 0;
+        while (!dq.isEmpty()) {
+            var s = dq.pollFirst();
+            
+            if (s.y &gt; diameter) diameter = s.y;
+
+            for (var adj : tree[s.x]) {
+                if (visited[adj.x]) continue;
+                visited[adj.x] = true;
+                dq.addFirst(Pair.of(adj.x, s.y + adj.y));
+            }
+        }
+
+        System.out.println(diameter);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>DFS의 시간복잡도는 $O(V+E)$ 로 알려져 있다.</p>
+<p>이 코드는 트리에 대해 DFS하는 것이다. 트리는 정점이 $N$ 개이면 간선은 최대 $N-1$개이다. 또한 DFS를 두 번 수행한다. 따라서 $O(2 \cdot (2N - 1)) \approx O(N)$ 이므로 총 시간복잡도는 $O(N)$이다. </p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-16-%EB%B0%B1%EC%A4%80-1967-%ED%8A%B8%EB%A6%AC%EC%9D%98-%EC%A7%80%EB%A6%84.md"
+        </script>
+      </body>
+  
