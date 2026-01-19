@@ -1,0 +1,107 @@
+
+      <html lang="ko">
+      <head>
+        <title>2166 - 다각형의 면적</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 다각형을 이루는 점의 좌표가 차례대로 주어졌을 때, 그 다각형의 넓이를 구하는 문제이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>2166 - 다각형의 면적</h1>
+<p>이 문제는 다각형을 이루는 점의 좌표가 차례대로 주어졌을 때, 그 다각형의 넓이를 구하는 문제이다.</p>
+<p>흔히 알려진 신발끈 공식을 사용하면 이 문제를 풀 수 있다. 다각형의 정점을 $P_1 (x_1, y_1), \ P_2(x_2, y_2), \ \cdots P_n(x_n, y_n)$ 으로 두면</p>
+<p>$$</p>
+<p>S = \frac{1}{2} \left | \begin{matrix} 
+x_1 &amp; x_2 &amp; \cdots &amp; x_n &amp; x_1 \
+y_1 &amp; y_2 &amp; \cdots &amp; y_n &amp; y_1
+\end{matrix} \right |</p>
+<p>$$</p>
+<p>이다. </p>
+<p>즉 풀어쓰면</p>
+<p>$$ 
+S = \frac 1 2 | (x_1y_2 + x_2y_3 + \cdots + x_{n-1}y_n + x_n y_1) - (x_2y_1 + x_3y_2 + \cdots + x_ny_{n-1} + x_1y_n) |
+$$</p>
+<p>이다. </p>
+<p><a href="https://www.acmicpc.net/problem/2166">🔗문제 링크</a></p>
+<h2>코드</h2>
+<p>먼저 꼭짓점의 개수를 입력받는다. 그런 다음 오른쪽 아래($\searrow$) 방향으로 곱한 값들의 합과 왼쪽 아래($\swarrow$) 방향으로 곱한 값들의 합을 저장할 <code>rightDir</code>, <code>leftDir</code>을 각각 변수로 선언한다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    int N = Integer.parseInt(br.readLine());
+    long leftDir = 0;
+    long rightDir = 0;
+</code></pre>
+<p>처음으로 입력받은 꼭짓점은 <code>firstX</code>, <code>firstY</code>에 저장해둔다. 이는 추후 맨 마지막 꼭짓점과 첫 꼭짓점을 가지고 연산하는 항이 있기 때문이다. 그런 다음 <code>prevX = firstX</code>, <code>prevY = firstY</code>로 대입한다.</p>
+<p>참고로 <code>long</code>을 쓰는 이유는 이 문제의 꼭짓점에 대한 최대 좌표가 <code>100000</code>이어서 오버플로우 가능성이 있기 때문이다. 예를 들어 한 변의 길이가 100000인 정사각형의 넓이를 구하면 $10^{10}$인데 이는 어림잡아 $2^{33}$ 보다 더 큰 값이므로 <code>int</code>로는 오버플로우가 발생할 것이다. 따라서 <code>long</code>을 써줘야 한다.</p>
+<pre><code class="language-java">    StringTokenizer st = new StringTokenizer(br.readLine());
+    long firstX = Long.parseLong(st.nextToken());
+    long firstY = Long.parseLong(st.nextToken());
+    long prevX = firstX;
+    long prevY = firstY;
+</code></pre>
+<p>이제 루프를 N-1번 돌며 2번 꼭짓점부터 N번 꼭짓점까지 위치를 입력받아 각 대각선 방향별로 항을 계산한다. 연속적으로 항을 계산하기 위해 현재 입력받은 <code>curX</code>, <code>curY</code>를 <code>prevX</code>, <code>prevY</code>에 대입한다.</p>
+<p>루프를 빠져나오면 N번째 꼭짓점과 1번째 꼭짓점을 이용한 마지막 항을 계산해 더해준다.</p>
+<pre><code class="language-java">    for (int i = 1; i &lt; N; i++) {
+        st = new StringTokenizer(br.readLine());
+        long curX = Long.parseLong(st.nextToken());
+        long curY = Long.parseLong(st.nextToken());
+
+        rightDir += prevX * curY;
+        leftDir += prevY * curX;
+        prevX = curX; prevY = curY;
+    }
+
+    rightDir += prevX * firstY;
+    leftDir += prevY * firstX;
+</code></pre>
+<p>마지막으로 <code>rightDir-leftDir</code>을 계산한 뒤 절댓값을 씌우고, 2로 나눠 다각형의 최종 넓이를 구한다. 문제에서 소수점 한 자리까지 반올림하라고 했으므로 <code>%.1f</code>로 포매팅해 출력한다.</p>
+<pre><code class="language-java">    double result = Math.abs(rightDir-leftDir)/2.0D;
+    System.out.printf(&quot;%.1f&quot;, result);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    public static void main(String[] args) throws IOException {
+        int N = Integer.parseInt(br.readLine());
+        long leftDir = 0;
+        long rightDir = 0;
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        long firstX = Long.parseLong(st.nextToken());
+        long firstY = Long.parseLong(st.nextToken());
+        long prevX = firstX;
+        long prevY = firstY;
+        for (int i = 1; i &lt; N; i++) {
+            st = new StringTokenizer(br.readLine());
+            long curX = Long.parseLong(st.nextToken());
+            long curY = Long.parseLong(st.nextToken());
+
+            rightDir += prevX * curY;
+            leftDir += prevY * curX;
+            prevX = curX; prevY = curY;
+        }
+
+        rightDir += prevX * firstY;
+        leftDir += prevY * firstX;
+
+        double result = Math.abs(rightDir-leftDir)/2.0D;
+        System.out.printf(&quot;%.1f&quot;, result);
+    }
+
+
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>루프는 $N-1$번 돌기 때문에 시간복잡도는 $O(N)$이다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-19-%EB%B0%B1%EC%A4%80-2166-%EB%8B%A4%EA%B0%81%ED%98%95%EC%9D%98-%EB%A9%B4%EC%A0%81.md"
+        </script>
+      </body>
+  
