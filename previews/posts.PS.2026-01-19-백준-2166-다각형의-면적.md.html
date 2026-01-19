@@ -27,13 +27,13 @@ $$</p>
 <p><a href="https://www.acmicpc.net/problem/2166">🔗문제 링크</a></p>
 <h2>코드</h2>
 <p>먼저 꼭짓점의 개수를 입력받는다. 그런 다음 오른쪽 아래($\searrow$) 방향으로 곱한 값들의 합과 왼쪽 아래($\swarrow$) 방향으로 곱한 값들의 합을 저장할 <code>rightDir</code>, <code>leftDir</code>을 각각 변수로 선언한다.</p>
+<p>참고로 <code>long</code>을 쓰는 이유는 이 문제의 꼭짓점에 대한 최대 좌표가 <code>100000</code>이어서 오버플로우 가능성이 있기 때문이다. 예를 들어 한 변의 길이가 100000인 정사각형의 넓이를 구하면 $10^{10}$인데 이는 어림잡아 $2^{33}$ 보다 더 큰 값이므로 <code>int</code>로는 오버플로우가 발생할 것이다. 따라서 <code>long</code>을 써줘야 한다.</p>
 <pre><code class="language-java">public static void main(String[] args) throws IOException {
     int N = Integer.parseInt(br.readLine());
     long leftDir = 0;
     long rightDir = 0;
 </code></pre>
 <p>처음으로 입력받은 꼭짓점은 <code>firstX</code>, <code>firstY</code>에 저장해둔다. 이는 추후 맨 마지막 꼭짓점과 첫 꼭짓점을 가지고 연산하는 항이 있기 때문이다. 그런 다음 <code>prevX = firstX</code>, <code>prevY = firstY</code>로 대입한다.</p>
-<p>참고로 <code>long</code>을 쓰는 이유는 이 문제의 꼭짓점에 대한 최대 좌표가 <code>100000</code>이어서 오버플로우 가능성이 있기 때문이다. 예를 들어 한 변의 길이가 100000인 정사각형의 넓이를 구하면 $10^{10}$인데 이는 어림잡아 $2^{33}$ 보다 더 큰 값이므로 <code>int</code>로는 오버플로우가 발생할 것이다. 따라서 <code>long</code>을 써줘야 한다.</p>
 <pre><code class="language-java">    StringTokenizer st = new StringTokenizer(br.readLine());
     long firstX = Long.parseLong(st.nextToken());
     long firstY = Long.parseLong(st.nextToken());
