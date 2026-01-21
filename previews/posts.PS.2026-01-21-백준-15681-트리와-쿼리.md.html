@@ -1,0 +1,251 @@
+
+      <html lang="ko">
+      <head>
+        <title>15681 - 트리와 쿼리</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 가중치가 없는 트리(루트 포함)가 주어질 때, 정점 U를 루트로 하는 서브 트리(부분 트리)에 속한 정점의 수를 구하는 문제이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>15681 - 트리와 쿼리</h1>
+<p>이 문제는 가중치가 없는 트리(루트 포함)가 주어질 때, 정점 U를 루트로 하는 서브 트리(부분 트리)에 속한 정점의 수를 구하는 문제이다. </p>
+<p>가장 간단하게 생각해 볼 수 있는 풀이 방법은 recursive DFS를 이용하는 것이다. <code>int dfs(node)</code> 함수를 구현하여 node를 시작점으로 dfs를 수행하며 찾은 모든 노드의 개수를 반환하도록 한다. 또한 결과를 <code>dp[node]</code>에 저장하여 추후 쿼리 시 $O(1)$로 답을 찾을 수 있도록 한다. 이 구현 방법은 재귀함수의 특징을 이용해 리프 노드부터 루트 노드까지 순서대로 노드 개수를 계산하여 더하는 것으로 구현이 간단한 장점이 있다. 반면 트리 높이가 너무 높아서 재귀 함수가 스택 프레임에 너무 많이 쌓일 경우 스택 오버플로우가 발생할 수 있다는 점은 고려해야 한다. 이 문제의 경우에는 recursive DFS로도 통과할 수 있었다. </p>
+<p>만약 스택 오버플로우나 코드 성능을 우려한다면 iterative DFS로도 풀 수 있다. 먼저 DFS를 통해 루트 노드부터 시작하는 트리의 순회 순서와 각 노드별 부모 노드를 기록한다. 그런 다음, 기록된 트리 순회 순서의 역순으로 돌면서 자신의 부모 노드의 dp 원소에 자신의 dp 원소를 더해준다. 이 과정을 완료하면 dp 배열에 최종적인 서브 트리의 원소 개수가 구해진다.</p>
+<p>두 방식 모두 dp의 정의와 점화식 자체는 동일하다. <code>dp[i]</code>를 자기 자신을 루트로 하는 서브 트리의 정점 개수로 정의하면 점화식은 아래와 같다.</p>
+<p>$$</p>
+<p>dp[i] = 1 + \sum_{v \ \in \ \text{children}[i]} dp[v]
+$$</p>
+<p>1을 더하는 이유는 자기 자신을 정점 개수로 포함해야 하기 때문이다. </p>
+<p><a href="https://www.acmicpc.net/problem/15681">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<h3>재귀로 풀 경우</h3>
+<p>먼저 정점의 개수 N, 루트 노드의 번호 R, 질의의 개수 Q를 입력받는다. </p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+
+    int N, R, Q;
+    N = Integer.parseInt(st.nextToken());
+    R = Integer.parseInt(st.nextToken());
+    Q = Integer.parseInt(st.nextToken());
+</code></pre>
+<p>다음으로 다이나믹 프로그래밍을 위한 <code>dp</code>배열과 노드 방문 체크를 위한 <code>visited</code> 배열을 선언한다. 또한 트리를 저장하기 위해 인접 배열 형태로 선언하고 <code>ArrayList</code>로 초기화해 준다.</p>
+<pre><code class="language-java">    dp = new int[N+1];
+    visited = new boolean[N+1];
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    List&lt;Integer&gt;[] tree = new List[N+1];
+
+    for (int i = 0; i &lt;= N; i++) 
+        tree[i] = new ArrayList&lt;&gt;();
+</code></pre>
+<p>다음으로 트리를 입력받는다.</p>
+<pre><code class="language-java">    for (int i = 0; i &lt; N-1; i++) {
+        st = new StringTokenizer(br.readLine());
+        int a = Integer.parseInt(st.nextToken());
+        int b = Integer.parseInt(st.nextToken());
+
+        tree[a].add(b);
+        tree[b].add(a);
+    }
+</code></pre>
+<p>이제 이 코드에서 핵심 로직인 dfs를 수행한다. 앞서 설명했듯 dfs 함수는 트리를 재귀적으로 순회하며 리프 노드부터 루트 노드까지의 노드 개수를 구하게 된다. 또한 각 노드마다, 그 노드를 루트로 하였을 때 서브 트리가 가진 정점의 개수를 dp에 저장한다.</p>
+<pre><code class="language-java">    dfs(R, tree);
+    // ...
+
+
+public static int dfs(int node, final List&lt;Integer&gt;[] tree) {
+    visited[node] = true;
+    
+    int tot = 1;
+    for (int adj : tree[node]) {
+        if (visited[adj]) continue;
+        tot += dfs(adj, tree);
+    }
+    dp[node] = tot;
+    return tot;
+}
+
+</code></pre>
+<p>dfs를 통한 트리 순회를 완료하면 쿼리를 입력받아 dp배열에 있는 값을 가져온 뒤 출력한다. 답변을 모두 출력하면 프로그램을 종료한다.</p>
+<pre><code class="language-java">    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i &lt; Q; i++) {
+        int q = Integer.parseInt(br.readLine());
+        sb.append(dp[q]).append(&quot;\n&quot;);
+    }
+    System.out.print(sb);
+}
+</code></pre>
+<h3>반복문으로 풀 경우</h3>
+<p>입력 코드는 이전과 비슷하므로 달라진 부분 위주로 살펴보자.</p>
+<p>기존에 선언했던 변수 이외에 <code>parent</code>와 <code>traverse</code> 배열을 추가로 선언하였다. <code>parent</code> 배열에는 어떤 노드의 부모 노드가 무엇인지 저장해둔다. traverse에는 DFS의 방문 순서를 저장해둔다.</p>
+<pre><code class="language-java">    int[] parent = new int[N+1];
+    int[] traverse = new int[N];
+    int tIdx = 0;
+</code></pre>
+<p>DFS를 수행하기 위해 dq를 선언한다. 루트 노드인 R을 삽입하고 방문처리도 해 준다. 이후 반복문을 돌며 DFS를 수행한다.</p>
+<p>스택에서 노드를 꺼낸 뒤 <code>traverse[tIdx++] = node</code>를 수행한다. 즉 방문 순서를 traverse에 저장한다. 다음으로 인접 노드들에 대해 <code>parent[adj] = node</code>로 인접 노드의 부모를 지정해준다. 다음으로 방문 처리 후 스택에 넣는다. </p>
+<pre><code class="language-java">    Deque&lt;Integer&gt; dq = new ArrayDeque&lt;&gt;();
+    dq.addFirst(R);
+    visited[R] = true;
+
+    while (!dq.isEmpty()) {
+        int node = dq.pollFirst();
+        traverse[tIdx++] = node;
+        for (int adj : tree[node]) {
+            if (visited[adj]) continue;
+            parent[adj] = node;
+            visited[adj] = true;
+            dq.addFirst(adj);
+        }
+    }
+</code></pre>
+<p>다음으로 dp 배열을 점화식을 이용해 계산해준다. 먼저 모든 dp 배열의 원소를 1로 채워준다. 왜냐하면 모든 서브 트리의 노드 개수는 최소 1개이기 때문이다. </p>
+<p>다음으로 N-1부터 1까지 반복문을 돌며 점화식을 계산해준다. DFS에서 순회한 순서의 역순으로 노드를 골라 그 노드를 루트로 하는 서브 트리의 노드 개수를(<code>=dp[traverse[i]]</code>) 선택한 노드의 부모 노드를 루트로 하는 서브 트리의 노드 개수에 더해준다(<code>=dp[parent[traverse[i]]]</code>)</p>
+<p><code>traverse</code>에는 부모가 자식보다 먼저 들어가므로(전위 순회), 이를 역순으로 처리하면 항상 자식의 dp가 먼저 확정되고 그 값을 부모에 누적할 수 있다.</p>
+<pre><code class="language-java">    Arrays.fill(dp, 1);
+
+    for (int i = N-1; i &gt; 0; i--) {
+        dp[parent[traverse[i]]] += (dp[traverse[i]]);
+    }
+</code></pre>
+<p>이후 쿼리를 입력받아 정답을 출력하는 코드는 이전과 같아 생략하였다.</p>
+<h2>전체 코드</h2>
+<h3>재귀로 풀 경우</h3>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int[] dp;
+    static boolean[] visited;
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int N, R, Q;
+        N = Integer.parseInt(st.nextToken());
+        R = Integer.parseInt(st.nextToken());
+        Q = Integer.parseInt(st.nextToken());
+
+        dp = new int[N+1];
+        visited = new boolean[N+1];
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        List&lt;Integer&gt;[] tree = new List[N+1];
+
+        for (int i = 0; i &lt;= N; i++) 
+            tree[i] = new ArrayList&lt;&gt;();
+
+
+        for (int i = 0; i &lt; N-1; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            tree[a].add(b);
+            tree[b].add(a);
+        }
+
+        dfs(R, tree);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i &lt; Q; i++) {
+            int q = Integer.parseInt(br.readLine());
+            sb.append(dp[q]).append(&quot;\n&quot;);
+        }
+        System.out.print(sb);
+    }
+
+    public static int dfs(int node, final List&lt;Integer&gt;[] tree) {
+        visited[node] = true;
+        
+        int tot = 1;
+        for (int adj : tree[node]) {
+            if (visited[adj]) continue;
+            tot += dfs(adj, tree);
+        }
+        dp[node] = tot;
+        return tot;
+    }
+}
+</code></pre>
+<h3>반복문으로 풀 경우</h3>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int[] dp;
+    static boolean[] visited;
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int N, R, Q;
+        N = Integer.parseInt(st.nextToken());
+        R = Integer.parseInt(st.nextToken());
+        Q = Integer.parseInt(st.nextToken());
+
+        dp = new int[N+1];
+        visited = new boolean[N+1];
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        List&lt;Integer&gt;[] tree = new List[N+1];
+
+        for (int i = 0; i &lt;= N; i++)  
+            tree[i] = new ArrayList&lt;&gt;();
+
+
+        for (int i = 0; i &lt; N-1; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            tree[a].add(b);
+            tree[b].add(a);
+        }
+
+        int[] parent = new int[N+1];
+        int[] traverse = new int[N];
+        int tIdx = 0;
+
+        Deque&lt;Integer&gt; dq = new ArrayDeque&lt;&gt;();
+        dq.addFirst(R);
+        visited[R] = true;
+
+        while (!dq.isEmpty()) {
+            int node = dq.pollFirst();
+            traverse[tIdx++] = node;
+            for (int adj : tree[node]) {
+                if (visited[adj]) continue;
+                parent[adj] = node;
+                visited[adj] = true;
+                dq.addFirst(adj);
+            }
+        }
+
+        Arrays.fill(dp, 1);
+
+        for (int i = N-1; i &gt; 0; i--) {
+            dp[parent[traverse[i]]] += (dp[traverse[i]]);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i &lt; Q; i++) {
+            int q = Integer.parseInt(br.readLine());
+            sb.append(dp[q]).append(&quot;\n&quot;);
+        }
+        System.out.print(sb);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>재귀의 경우 dfs를 통해 트리를 순회하면서 동시에 dp에 값을 계산해 저장한 뒤, 질의에 대한 답을 dp에서 꺼내 출력한다. 노드 개수가 N이므로 dfs의 시간복잡도는 $O(N)$이고, 쿼리 개수만큼 답변을 꺼내오는 시간복잡도는 $O(Q)$ 이다. 따라서 최종 시간복잡도는 $O(N+Q)$ 이다.</p>
+<p>반복문의 경우 dfs에 $O(N)$, 점화식을 통한 dp 계산에 $O(N)$, 쿼리에 따른 답변에 $O(Q)$의 시간이 걸리므로 $O(2N+Q) \approx O(N+Q)$ 이다.</p>
+<p>최악의 경우에도 $2\times 10^5 \lt 1\text{억}$ 이므로 1초 내에 통과할 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-21-%EB%B0%B1%EC%A4%80-15681-%ED%8A%B8%EB%A6%AC%EC%99%80-%EC%BF%BC%EB%A6%AC.md"
+        </script>
+      </body>
+  
