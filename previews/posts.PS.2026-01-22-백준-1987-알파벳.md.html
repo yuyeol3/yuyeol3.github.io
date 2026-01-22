@@ -1,0 +1,126 @@
+
+      <html lang="ko">
+      <head>
+        <title>1987 - 알파벳</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 보드의 크기와 알파벳이 적힌 보드가 주어졌을 때, 같은 알파벳을 두 번 이상 포함하지 않으면서 가장 멀리 갈 수 있는 경로를 찾는 문제이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>1987 - 알파벳</h1>
+<p>이 문제는 보드의 크기와 알파벳이 적힌 보드가 주어졌을 때, 같은 알파벳을 두 번 이상 포함하지 않으면서 가장 멀리 갈 수 있는 경로를 찾는 문제이다.</p>
+<p>얼핏 보면 BFS 최단거리 문제처럼 보일 수 있지만, 사실은 백트래킹 문제이다. 이 문제의 경우 경로별로 방문한 알파벳의 종류가 다르고, 상태를 독립적으로 관리해야 하기 때문에 백트래킹으로 풀어야 한다.</p>
+<p><a href="https://boj.kr/1987">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>필요한 변수들을 먼저 선언한다. <code>dx</code>, <code>dy</code>의 경우 격자판에서 상태의 이동을 쉽게 처리하기 위해 정의한 배열로, 각각 아래쪽, 오른쪽, 위쪽, 왼쪽 이동방향을 의미한다. <code>R</code>, <code>C</code>는 보드의 세로, 가로 크기이다. 또한 <code>board</code>에는 행별로 가지고 있는 알파벳의 문자열을 저장한다. <code>maximum</code>은 말이 지날 수 있는 최대의 칸 수를 저장하는 변수이다.</p>
+<pre><code class="language-java">class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    static int[] dx = {1, 0, -1, 0};
+    static int[] dy = {0, 1, 0, -1};
+    static int R, C;
+    static String[] board;
+    static int maximum = 0;
+</code></pre>
+<p>main 함수에서 보드의 크기를 먼저 입력받은 뒤 <code>board</code> 배열의 크기를 <code>R</code>로 잡는다. 그런 다음 행별로 문자열을 입력받아 <code>board</code>에 저장한다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    R = Integer.parseInt(st.nextToken());
+    C = Integer.parseInt(st.nextToken());
+
+    board = new String[R];
+
+    for (int i = 0; i &lt; R; i++) {
+        board[i] = br.readLine();
+    }
+</code></pre>
+<p>다음으로 미리 정의해둔 dfs 함수를 호출한다. 문제에서 말은 좌측 상단에 있다고 하였으므로 (0, 0) 부터 시작하고, (0,0)에 있는 알파벳은 방문처리를 해야 하므로 비트마스킹을 사용해 <code>1 &lt;&lt; (board[0].charAt(0) - &#39;A&#39;)</code> 로 해당 알파벳의 비트를 1로 조작해준다.</p>
+<pre><code class="language-java">    dfs(
+        0, 0, 
+        (1 &lt;&lt; (board[0].charAt(0) - &#39;A&#39;)), 
+        1
+    );
+</code></pre>
+<p>dfs 함수의 정의는 다음과 같다. 먼저 <code>dist</code>가 <code>maximum</code>보다 크다면 최대값을 업데이트한다. 또한 <code>maximum</code>이 이미 26이라면 더 이상 탐색해도 <code>dist</code>가 커질 가능성이 없으므로 return한다. (알파벳의 개수는 26개이고 각 알파벳은 전체 경로에 한 번씩만 등장할 수 있으므로 경로의 최대 길이는 26이다.)</p>
+<p>또한 현재 사용하지 않은 알파벳과 현재 거리를 더했을 때 최대값보다 작다면 유망하지 않으므로 가지치기(return)한다.</p>
+<p>위 조건을 모두 통과했다면 다음 상태를 탐색한다. 현재의 상태에서 방문 가능한 방향은 최대 4개이다. 그런데 방문했던 경로의 역방향으로는 당연히 갈 수 없다. 따라서 결론적으로는 최대 3개의 방향을 탐색하게 된다. </p>
+<p>각 방향별로 <code>nx = x + dx[i]</code>, <code>ny = y + dy[i]</code>를 통해 다음 위치를 계산하고, 이 위치가 보드 범위 내인지 확인한다. 만약 보드 범위 내라면, 다음 위치에 있는 알파벳이 경로에 이미 있는지 확인한다. 두 조건 모두 문제가 없다면 dfs 함수를 재귀적으로 호출한다. </p>
+<p>다음 위치인 <code>nx, ny</code>를 인자에 넣는다. 또한 다음 위치에 있는 알파벳에 대한 방문 처리도 해야 하므로 <code>mask | (1 &lt;&lt; (board[nx].charAt(ny) - &#39;A&#39;))</code> 를 통해 알파벳의 비트를 1로 업데이트한다. 거리도 1 증가한 것이므로 <code>dist+1</code>을 인자에 넣어 준다.</p>
+<pre><code class="language-java">public static void dfs(int x, int y, int mask, int dist) {
+    if (dist &gt; maximum) maximum = dist;
+    if (maximum == 26) return;
+
+
+    for (int i = 0; i &lt; 4; i++) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+
+        if (nx &lt; 0 || nx &gt;= R || ny &lt; 0 || ny &gt;= C) continue;
+        if (((mask &gt;&gt; (board[nx].charAt(ny) - &#39;A&#39;)) &amp; 1) == 1) continue;
+
+        dfs(nx, ny, mask | (1 &lt;&lt; (board[nx].charAt(ny) - &#39;A&#39;)), dist+1);
+    }
+}
+</code></pre>
+<p>dfs를 완료하면 maximum에 말이 갈 수 있는 최장 경로가 저장되어 있다. 따라서 결과를 출력하고 프로그램을 종료한다. </p>
+<pre><code class="language-java">    System.out.println(maximum);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.io.*;
+import java.util.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    static int[] dx = {1, 0, -1, 0};
+    static int[] dy = {0, 1, 0, -1};
+    static int R, C;
+    static String[] board;
+    static int maximum = 0;
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        R = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+
+        board = new String[R];
+
+        for (int i = 0; i &lt; R; i++) {
+            board[i] = br.readLine();
+        }
+
+        dfs(0, 0, (1 &lt;&lt; (board[0].charAt(0) - &#39;A&#39;)), 1);
+
+        System.out.println(maximum);
+    }
+
+    public static void dfs(int x, int y, int mask, int dist) {
+        if (dist &gt; maximum) maximum = dist;
+        if (maximum == 26) return;
+
+        int used = Integer.bitCount(mask);
+        if (dist + (26 - used) &lt;= maximum) return;
+
+        for (int i = 0; i &lt; 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx &lt; 0 || nx &gt;= R || ny &lt; 0 || ny &gt;= C) continue;
+            if (((mask &gt;&gt; (board[nx].charAt(ny) - &#39;A&#39;)) &amp; 1) == 1) continue;
+
+            dfs(nx, ny, mask | (1 &lt;&lt; (board[nx].charAt(ny) - &#39;A&#39;)), dist+1);
+        }
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>앞서 말했듯 이 문제는 사실상 백트래킹이다. 각 단계별로 선택할 수 있는 분기는 3개이고 단계는 아무리 커도 알파벳 개수의 제한 때문에 26개이다. 보드 칸의 크기가 26개보다 작다면 단계는 $RC$ 개일 것이다. 따라서 이를 식으로 옮기면 $O(3^{\min(26, RC)})$이다. </p>
+<p>최악의 경우 연산 횟수는 대략 $3^{26}$이고 이는 2조로 매우 크다. 하지만 실제로 이 문제에서는 알파벳 개수에 따라 방문할 수 있는 인접 노드가 급격히 줄어든다. 따라서 문제를 2초 내에 통과할 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-22-%EB%B0%B1%EC%A4%80-1987-%EC%95%8C%ED%8C%8C%EB%B2%B3.md"
+        </script>
+      </body>
+  
