@@ -1,0 +1,161 @@
+
+      <html lang="ko">
+      <head>
+        <title>1106 - 호텔</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제에서는 호텔의 고객을 C명 이상 늘리기 위해 필요한 최소 금액이 얼마인지 묻는다. 입력으로는 최소한 늘려야 하는 고객인 C와 홍보할 수 있는 도시의 수 N, 그리고 각 도시별 단위 홍보 비용과 홍보 효과(늘어나는 방문인원)이 주어진다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>1106 - 호텔</h1>
+<p>이 문제에서는 호텔의 고객을 C명 이상 늘리기 위해 필요한 최소 금액이 얼마인지 묻는다. 입력으로는 최소한 늘려야 하는 고객인 C와 홍보할 수 있는 도시의 수 N, 그리고 각 도시별 단위 홍보 비용과 홍보 효과(늘어나는 방문인원)이 주어진다.</p>
+<p>이 문제는 홍보 가능한 도시의 비용과 가치가 주어지는 것, 그리고 여러 홍보를 통해 비용 대비 가치가 최대화되는 것은 어떤 것인지 묻고 있다는 점에서 Knapsack 문제라고 할 수 있다. </p>
+<p>Knapsack 문제를 효율적으로 푸는 방법은 다이나믹 프로그래밍을 이용하는 것이다. </p>
+<p><code>dp[i]</code>를 다음과 같이 정의해보자.</p>
+<p>$$ </p>
+<p>dp[i] = (i\text{ 원을 썼을 때 얻을 수 있는 최대 고객 수})</p>
+<p>$$</p>
+<p>그렇다면 다음과 같이 점화식을 세울 수 있다.</p>
+<p>$$</p>
+<p>dp[i] = \max(dp[i], dp[i-\text{cost}[j]]+\text{value}[j])</p>
+<p>$$</p>
+<p>초기값은 아래와 같이 정의할 수 있다.</p>
+<p>$$
+dp[\text{cost}[i]] = \max(dp[\text{cost}[i]], \text{value}[i])
+$$</p>
+<p>이 점화식에 따라 코드를 작성하면 된다.</p>
+<p><a href="https://www.acmicpc.net/problem/1106">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>먼저 늘려야 할 최소 인원 <code>C</code>와 홍보 가능한 도시의 개수 <code>N</code>을 입력받는다. </p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    int C, N;
+
+    C = Integer.parseInt(st.nextToken());
+    N = Integer.parseInt(st.nextToken());
+</code></pre>
+<p>다음으로 비용을 입력받을 배열 <code>cost</code>와 가치를 입력받을 배열 <code>value</code>를 선언한다. 앞서 말했듯 <code>cost[i] = (단위 홍보비)</code> 이고, <code>value[i] = (단위홍보당 모객 인원)</code> 이다.</p>
+<pre><code class="language-java">    int[] cost = new int[21];
+    int[] value = new int[21];
+
+    for (int i = 0; i &lt; N; i++) {
+        st = new StringTokenizer(br.readLine());
+        cost[i] = Integer.parseInt(st.nextToken()); // cost
+        value[i] = Integer.parseInt(st.nextToken()); // value
+    }
+</code></pre>
+<p>이제 본격적으로 다이나믹 프로그래밍을 수행한다. 먼저 점화식의 값을 담을 <code>dp</code> 배열을 선언한다. 그런 다음 <code>C</code> 이상을 만족하는 최소 홍보 비용을 담을 <code>result</code> 변수도 선언한다.</p>
+<p><code>result</code>의 초기값이 <code>100 * C + 5</code>인 이유는, 만약 최악의 경우를 상정해 <code>100</code>의 홍보비용으로 1명이 모객되는 도시가 있다고 했을 때 <code>C</code> 이상을 모집하려면 최소 <code>100*C</code>가 필요하기 때문이다. (즉, 비용의 상한이다.) <code>+5</code>는 범위에 여유를 추기 위해 임의의 상수를 더한 것으로, 별 의미는 없다.</p>
+<p>그런 다음 반복문을 통해 점화식을 계산한다. 가능한 모든 비용에 대해 점화식을 계산하기 위해 <code>i</code>는 <code>[0,100 * C + 5)</code> 범위에서 반복한다. </p>
+<p>각 <code>i</code>마다 홍보 가능한 도시들에 대해 점화식을 통해 모객 가능한 최대 인원 수를 계산한다. 점화식을 계산하기 전에 <code>i - cost[j]</code>가 0 이상인지 확인해야 한다는 것에 유의하라. </p>
+<p>만약 모든 도시에 대해 점화식을 업데이트하였다면, <code>dp[i]</code> 가 <code>C</code> 이상인지 확인한다. <code>C</code> 이상이라면 <code>i</code>는 조건을 만족하는 최소 비용일 것이다. 왜냐하면 이 문제에서 <code>i</code>는 순차적으로 증가하고 있고, 따라서 제일 먼저 조건을 충족시킨 <code>i</code>가 최소 비용임은 자명하기 때문이다. 그러므로 <code>result=i</code>로 업데이트하고 반복문을 빠져나온다.</p>
+<pre><code class="language-java">    int[] dp = new int[100005];
+    int result = 100 * C + 5;
+    for (int i = 0; i &lt; 100 * C + 5; i++) {
+        for (int j = 0; j &lt; N; j++) {
+            if (i - cost[j] &lt; 0) continue;
+            dp[i] = Math.max(dp[i], dp[i-cost[j]] + value[j]);
+        }
+
+        if (dp[i] &gt;= C) {
+            result = i;
+            break;
+        }
+    }
+</code></pre>
+<p>반복문을 빠져나왔다면 결과가 구해진 것이므로 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    System.out.println(result);
+}
+</code></pre>
+<p>참고로 이 방식에서는 외부 루프가 금액이고 내부 루프가 도시였지만, 외부를 도시로 두고 내부를 금액으로 두어서 푸는 것도 가능하다. 전체 코드에 이 방법으로 푼 해답이 있다.</p>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.io.*;
+import java.util.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int C, N;
+
+        C = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+
+        int[] cost = new int[21];
+        int[] value = new int[21];
+
+        for (int i = 0; i &lt; N; i++) {
+            st = new StringTokenizer(br.readLine());
+            cost[i] = Integer.parseInt(st.nextToken()); // cost
+            value[i] = Integer.parseInt(st.nextToken()); // value
+        }
+
+        int[] dp = new int[100005];
+        int result = 100 * C + 5;
+        for (int i = 0; i &lt; 100 * C + 5; i++) {
+            for (int j = 0; j &lt; N; j++) {
+                if (i - cost[j] &lt; 0) continue;
+                dp[i] = Math.max(dp[i], dp[i-cost[j]] + value[j]);
+            }
+
+            if (dp[i] &gt;= C) {
+                result = i;
+                break;
+            }
+        }
+        
+        System.out.println(result);
+    }
+}
+</code></pre>
+<p>또는 아래와 같이 풀 수도 있다.</p>
+<pre><code class="language-java">import java.io.*;
+import java.util.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int C, N;
+
+        C = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+
+        int[][] adv = new int[N][2];
+
+        for (int i = 0; i &lt; N; i++) {
+            st = new StringTokenizer(br.readLine());
+            adv[i][0] = Integer.parseInt(st.nextToken()); // cost
+            adv[i][1] = Integer.parseInt(st.nextToken()); // value
+        }
+
+        int result = 100 * C + 5;
+        int[] dp = new int[result];
+
+        for (int i = 0; i &lt; N; i++) {
+            int cost = adv[i][0];
+            int value = adv[i][1];
+
+            for (int j = cost; j &lt;= 100*C; j++) {
+                dp[j] = Math.max(dp[j], dp[j-cost]+value);
+                if (dp[j] &gt;= C &amp;&amp; j &lt; result) 
+                    result = j;
+            }
+        }
+        
+        System.out.println(result);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>시간 복잡도는 도시의 수($N$)와 탐색하는 최대 비용($100 \times C$)에 비례하므로 두 경우 모두 시간복잡도는 $O(N \cdot 100C) \approx O(NC)$이다. 최악의 경우 $100 \times 20 \times 1000 = 200$만번 연산하므로 1초 내에 충분히 통과할 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-23-%EB%B0%B1%EC%A4%80-1106-%ED%98%B8%ED%85%94.md"
+        </script>
+      </body>
+  
