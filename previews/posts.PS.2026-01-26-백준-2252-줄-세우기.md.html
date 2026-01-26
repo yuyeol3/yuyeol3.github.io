@@ -1,0 +1,246 @@
+
+      <html lang="ko">
+      <head>
+        <title>2252 - 줄 세우기</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 전형적인 위상 정렬 문제이다. 학생 수와 일부 학생들의 키 비교 결과가 각각 주어지면, 이를 바탕으로 학생들의 줄을 세울 수 있는 방법을 구해야 하는 문제이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>2252 - 줄 세우기</h1>
+<p>이 문제는 전형적인 위상 정렬 문제이다. 학생 수와 일부 학생들의 키 비교 결과가 각각 주어지면, 이를 바탕으로 학생들의 줄을 세울 수 있는 방법을 구해야 하는 문제이다.</p>
+<blockquote>
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/588f2b3a-1753-4ec8-a095-66618ca44767" />
+출처 : CODEPATH - Topological Sort</blockquote>
+<p>위상 정렬의 정의는 아래와 같다고 한다.</p>
+<blockquote>
+<p>순환하지 않는 유향 그래프를 방향성에 거스르지 않도록 순서대로 배열하는 방법</p>
+</blockquote>
+<p>즉 사이클이 없는 유향 그래프의 방향성을 유지하면서 원소를 순서대로 일렬로 나열하는 방법이다. 이 문제에 적용해보면, 키의 비교 결과는 방향성이며 이 비교 결과를 유지하면서 학생들을 일렬로 나열(위상 정렬) 하는 것이 목표인 문제이다.</p>
+<p>위상 정렬을 수행하는 방법에는 DFS와 칸 알고리즘 두 가지가 있다. </p>
+<p>먼저 DFS 알고리즘으로 위상정렬을 하는 방법에 대해 보자. DFS로 위상 정렬을 하는 방법은 생각보다 간단한데, 먼저 재귀적으로 postorder DFS를 구현한다. postorder의 탐색 결과는 <code>child1 - ... - childN - parent</code> 방식이다. 이 순서를 단순히 뒤집으면 제약이 없는 parent가 먼저 오고, 그 다음으로 <code>parent</code>라는 제약(혹은 그래프의 아래 방향)을 가진 child들이 등장하게 된다. 따라서 이런 방식으로 위상정렬을 수행할 수 있다.</p>
+<p>칸 알고리즘은 진출 방향으로 그래프를 저장하고, 진입 방향으로는 진입차수(노드별 진입하는 간선의 개수)를 저장해둔다. 그런 다음, 진입 차수가 0개인(즉 선행제약이 없는) 노드를 먼저 큐에 모두 넣고, 큐에서 노드를 하나 뽑아 그 노드와 나가는 방향으로 인접한(즉 진출 방향 그래프에 대해 인접한) 노드들의 진입 차수를 1씩 차감한다. 인접한 노드 중 어떤 노드의 진입 차수가 0이 되었다면, 큐에 해당 노드를 새로 넣는다. 이러한 방식으로 큐가 완전히 빌 때까지 반복한다.</p>
+<p><a href="https://boj.kr/2252">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<h3>칸 알고리즘</h3>
+<p>입출력 부분을 간단히 보자. </p>
+<p>N, M을 입력받은 뒤 진출 방향의 그래프를 저장할 <code>graph</code> 변수, 진입차수를 저장할 <code>indegree</code> 변수를 선언한다.</p>
+<p>그래프를 입력받을 때 <code>graph[a].add(b)</code>를 통해 진출 방향의 그래프(앞에 서야 하는 학생에서 뒤에 서야 하는 학생으로 이동하는 방향)의 간선을 추가한다. 또한 진입차수를 저장하기 위해 <code>indegree[b]++</code>를 수행한다. 이는 b를 하기 전에 선행되어야 하는 제약조건을 추가하는 것이다. </p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    int N, M;
+
+    N = Integer.parseInt(st.nextToken());
+    M = Integer.parseInt(st.nextToken());
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    ArrayList&lt;Integer&gt;[] graph = new ArrayList[N+1]; // 나가는 방향 그래프
+    int[] indegree = new int[N+1];  // 들어오는 방향 그래프
+
+    for (int i = 1; i &lt;= N; i++) 
+        graph[i] = new ArrayList&lt;&gt;();
+
+    for (int i = 0; i &lt; M; i++) {
+        st = new StringTokenizer(br.readLine());
+        int a, b;   
+        a = Integer.parseInt(st.nextToken());
+        b = Integer.parseInt(st.nextToken());
+        if (a == b) continue;
+
+        graph[a].add(b);
+        indegree[b]++;
+    }
+</code></pre>
+<p>다음으로 BFS를 위해 큐처럼 쓸 Deque를 선언한다. 다음으로 <code>indegree[i] = 0</code>인 원소를 큐에 추가한다.</p>
+<pre><code class="language-java">    Deque&lt;Integer&gt; queue = new ArrayDeque&lt;&gt;();
+
+    for (int i = 1; i &lt;= N; i++) {
+        if (indegree[i] == 0)
+            queue.addLast(i);
+    }
+</code></pre>
+<p><code>sorted</code>배열을 선언한다. 이 배열은 위상 정렬 결과를 저장해 둘 배열이다. </p>
+<p>이제 BFS를 수행한다. 큐에서 값을 하나 꺼낸 뒤 <code>sorted[idx++] = s</code>를 통해 정렬 결과에 추가한다. 그런 다음 <code>s</code>와 인접한 노드의 진입차수를 1씩 감소시킨다. 만약 감소한 진입차수가 0과 같다면 큐에 인접 노드를 추가하게 된다.</p>
+<pre><code class="language-java">    int[] sorted = new int[N+1];
+    int idx = 0;
+    while (!queue.isEmpty()) {
+        int s = queue.pollFirst();
+        sorted[idx++] = s;
+
+        for (int adj : graph[s]) {
+            indegree[adj]--;
+            if (indegree[adj] == 0)
+                queue.addLast(adj);
+        }
+    }
+</code></pre>
+<p>반복문을 빠져나왔다면 정렬이 완료된 것이다. 정렬 결과를 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i &lt; idx; i++) {
+        sb.append(sorted[i]).append(&quot; &quot;);
+    }
+    System.out.println(sb);
+}
+</code></pre>
+<h3>DFS(postorder)</h3>
+<p>입출력 부분은 제외하고 중요한 부분 위주로 보자.</p>
+<p>1번 노드부터 N번 노드까지, 아직 방문처리가 되지 않았다면 dfs를 통해 탐색을 시도한다.</p>
+<pre><code class="language-java">    for (int i = 1; i &lt;= N; i++) {
+        if (!visited[i]) dfs(i, graph);
+    }
+</code></pre>
+<p>dfs 함수가 호출되면, 먼저 <code>visited[node] = true</code>를 통해 노드를 방문처리한다. 그런 다음 반드시 인접 노드를 먼저 확인한다. 인접 노드가 방문처리되지 않았다면 인접 노드에 대해 dfs를 먼저 수행한다. </p>
+<p>인접 노드에 대한 탐색이 모두 끝나면 마지막에 <code>sorted[sortedIdx++] = node</code>를 통해 노드 번호를 저장해 둔다.</p>
+<pre><code class="language-java">static void dfs(int node, final List&lt;Integer&gt;[] graph) {
+    visited[node] = true;
+
+    for (int adj : graph[node]) {
+        if (visited[adj]) continue;
+        dfs(adj, graph);
+    }
+    sorted[sortedIdx++] = node;
+}
+</code></pre>
+<p>앞서 언급했듯, 이런 식으로 postorder dfs를 수행하면 <code>child1 - child2 - ... - childN - parent</code> 순서가 된다. 이 순서를 뒤집어서 출력하면 위상 정렬의 형태가 될 것이다.</p>
+<p>따라서 sorted 배열을 거꾸로 출력하고 프로그램을 종료한다. </p>
+<pre><code class="language-java">    StringBuilder sb = new StringBuilder();
+    for (int i = sortedIdx-1; i &gt;= 0; i--) {
+        sb.append(sorted[i]).append(&quot; &quot;);
+    }
+    System.out.println(sb);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<h3>칸 알고리즘</h3>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N, M;
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        ArrayList&lt;Integer&gt;[] graph = new ArrayList[N+1]; // 나가는 방향 그래프
+        int[] indegree = new int[N+1];  // 들어오는 방향 그래프
+
+        for (int i = 1; i &lt;= N; i++) 
+            graph[i] = new ArrayList&lt;&gt;();
+
+        for (int i = 0; i &lt; M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a, b;   
+            a = Integer.parseInt(st.nextToken());
+            b = Integer.parseInt(st.nextToken());
+            if (a == b) continue;
+
+            graph[a].add(b);
+            indegree[b]++;
+        }
+
+
+        Deque&lt;Integer&gt; queue = new ArrayDeque&lt;&gt;();
+
+        for (int i = 1; i &lt;= N; i++) {
+            if (indegree[i] == 0)
+                queue.addLast(i);
+        }
+
+        // System.out.println(ltStack);
+        int[] sorted = new int[N+1];
+        int idx = 0;
+        while (!queue.isEmpty()) {
+            int s = queue.pollFirst();
+            sorted[idx++] = s;
+
+            for (int adj : graph[s]) {
+                indegree[adj]--;
+                if (indegree[adj] == 0)
+                    queue.addLast(adj);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i &lt; idx; i++) {
+            sb.append(sorted[i]).append(&quot; &quot;);
+        }
+        System.out.println(sb);
+    }
+}
+</code></pre>
+<h3>DFS(postorder)</h3>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+
+    static int[] sorted;
+    static boolean[] visited;
+    static int sortedIdx = 0;
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N, M;
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        ArrayList&lt;Integer&gt;[] graph = new ArrayList[N+1]; // 나가는 방향 그래프
+
+        visited = new boolean[N+1];
+        sorted = new int[N+1];
+
+        for (int i = 1; i &lt;= N; i++) 
+            graph[i] = new ArrayList&lt;&gt;();
+
+        for (int i = 0; i &lt; M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a, b;   
+            a = Integer.parseInt(st.nextToken());
+            b = Integer.parseInt(st.nextToken());
+            if (a == b) continue;
+
+            graph[a].add(b);
+        }
+
+
+        for (int i = 1; i &lt;= N; i++) {
+            if (!visited[i]) dfs(i, graph);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = sortedIdx-1; i &gt;= 0; i--) {
+            sb.append(sorted[i]).append(&quot; &quot;);
+        }
+        System.out.println(sb);
+    }
+
+    static void dfs(int node, final List&lt;Integer&gt;[] graph) {
+        visited[node] = true;
+
+        for (int adj : graph[node]) {
+            if (visited[adj]) continue;
+            dfs(adj, graph);
+        }
+        sorted[sortedIdx++] = node;
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>두 방법 모두 모든 정점과 모든 간선을 한 번씩 방문하게 된다. 따라서 대략 $O(V+E)$가 될 것이다. </p>
+<p>이 문제에서 $V=N$, $E=M$이므로 시간복잡도는 $O(N+M)$이다. 최악의 경우에도 $N+M = 132,000$이므로 2초 내에 무난하게 통과할 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-26-%EB%B0%B1%EC%A4%80-2252-%EC%A4%84-%EC%84%B8%EC%9A%B0%EA%B8%B0.md"
+        </script>
+      </body>
+  
