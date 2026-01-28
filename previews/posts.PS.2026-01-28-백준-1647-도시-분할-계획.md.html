@@ -1,0 +1,150 @@
+
+      <html lang="ko">
+      <head>
+        <title>1647 - 도시 분할 계획</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제에서는 어떤 그래프가 주어질 때, 그 그래프에서 정점을 두 그룹으로 나누면서 그룹 내 정점끼리 이동할 수 있는 경로를 유지하는 간선의 가중치의 합의 최소가 얼마인지 찾아야 한다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>1647 - 도시 분할 계획</h1>
+<p>이 문제에서는 어떤 그래프가 주어질 때, 그 그래프에서 정점을 두 그룹으로 나누면서 그룹 내 정점끼리 이동할 수 있는 경로를 유지하는 간선의 가중치의 합의 최소가 얼마인지 찾아야 한다.</p>
+<p>만약 문제가 존재하는 모든 정점끼리 이동할 수 있는 경로를 유지하는 간선의 가중치의 합의 최소를 물었다면 MST로 해결할 수 있었을 것이다. 그런데 문제는 정점들을 두 그룹으로 나누라고 요구하고 있다. 그래서 어떻게 해야 할 지 감이 잘 잡히지 않는다. 하지만 단순히 한 번 MST를 수행해 보자.</p>
+<div>
+<img width="50%" alt="image" src="https://github.com/user-attachments/assets/6eac02c3-5971-4059-8d4f-725a72bd7762" style="display : inline"/>
+<img width="50%" alt="image" src="https://github.com/user-attachments/assets/995dba18-306f-4a70-bb78-bcc64f3755a2" style="display : inline" />
+</div>
+
+<p>MST를 수행해서 얻은 트리에서, 어떤 단순한 작업을 통해 가중치의 합의 최소를 유지하면서 두 그룹으로 나눌 수 있을까? MST에서 가장 큰 가중치를 가진 간선을 제거해 보면 어떨까?</p>
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/8e3edd44-60ba-46bb-b561-1cd5f93afe79" />
+
+<p>위 그림과 같이 두 그룹으로 나누어지는 것을 볼 수 있다. 참고로 트리의 간선 하나를 제거하면, 트리는 정확히 두 개의 부분 트리로 나뉘는 것이 보장된다. 또한 이 문제는 $N$개의 노드를 2개의 그룹으로 나누는 문제였지만, 만약 $K$개의 그룹으로 나누어야 한다면 MST에서 가장 가중치가 큰 간선 $K-1$개를 제거하면 된다는 것을 생각해 볼 수 있다.</p>
+<p><a href="https://www.acmicpc.net/problem/1647">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>간선을 표현하기 위한 클래스 <code>Pair</code>을 정의한다.</p>
+<pre><code class="language-java">static class Pair {
+    int x; long y;
+    public Pair(int x, long y) {this.x = x; this.y = y;}
+}
+</code></pre>
+<p>정점의 수 <code>N</code>과 간선의 수 <code>M</code>을 입력받은 뒤 그래프를 담을 변수 <code>graph</code>를 선언한다. <code>graph</code>의 각 원소를 <code>ArrayList</code>로 초기화하고, 간선을 입력받는다. 대칭 그래프이므로 간선은 각 정점에 대칭으로 추가해야 한다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    int N = Integer.parseInt(st.nextToken());
+    int M = Integer.parseInt(st.nextToken());
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    List&lt;Pair&gt;[] graph = new List[N+1];
+
+    for (int i = 1; i &lt;= N; i++)
+        graph[i] = new ArrayList&lt;&gt;();
+
+    for (int i = 0; i &lt; M; i++) {
+        st = new StringTokenizer(br.readLine());
+
+        int a, b, w;
+        a = Integer.parseInt(st.nextToken());
+        b = Integer.parseInt(st.nextToken());
+        w = Integer.parseInt(st.nextToken());
+
+        graph[a].add(new Pair(b, w));
+        graph[b].add(new Pair(a, w));
+    }
+</code></pre>
+<p>정점 방문을 체크할 <code>visited</code> 변수와, 가중치 기준으로 간선을 정렬하기 위한 우선순위 큐 <code>pq</code>를 선언한다. 또한 최소신장트리의 가중치 합을 저장할 <code>mstWeight</code>와 최소신장트리에서 가장 큰 가중치를 기록할 <code>maxWeight</code> 변수를 선언해 둔다. <code>count</code>는 현재 확정한 간선의 개수를 확인하기 위해 선언하였다. </p>
+<p>변수를 모두 선언하면 정점 1부터 프림 알고리즘을 수행한다. 일반적인 프림 알고리즘과 크게 다른 것은 없으나 간선이 확정될 때마다 maxWeight를 업데이트 하는 것에 주목하자.</p>
+<pre><code class="language-java">    boolean[] visited = new boolean[N+1];
+    PriorityQueue&lt;Pair&gt; pq = new PriorityQueue&lt;&gt;((a,b)-&gt;Long.compare(a.y, b.y));
+    pq.offer(new Pair(1, 0));
+    long mstWeight = 0;
+    long maxWeight = 0;
+    int count = 0;
+    while (!pq.isEmpty()) {
+        Pair s = pq.poll();
+        if (visited[s.x]) continue;
+        mstWeight += s.y;
+        if (s.y &gt; maxWeight) maxWeight = s.y;
+        visited[s.x] = true;
+        
+        if (count++ == N-1) break;
+
+        for (Pair adj : graph[s.x]) {
+            if (visited[adj.x]) continue;
+            pq.offer(adj);
+        }
+    }
+</code></pre>
+<p>반복문에서 빠져나오면 MST의 가중치 총합과 MST에 들어있는 간선의 최대 가중치가 모두 확정된 것이다. 앞서 설명했듯 <code>mstWeight - maxWeight</code>을 통해 문제가 원하는 답을 얻을 수 있다. 따라서 해당 값을 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    System.out.println(mstWeight-maxWeight);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    static class Pair {
+        int x; long y;
+        public Pair(int x, long y) {this.x = x; this.y = y;}
+    }
+
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        List&lt;Pair&gt;[] graph = new List[N+1];
+
+        for (int i = 1; i &lt;= N; i++)
+            graph[i] = new ArrayList&lt;&gt;();
+
+        for (int i = 0; i &lt; M; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            int a, b, w;
+            a = Integer.parseInt(st.nextToken());
+            b = Integer.parseInt(st.nextToken());
+            w = Integer.parseInt(st.nextToken());
+
+            graph[a].add(new Pair(b, w));
+            graph[b].add(new Pair(a, w));
+        }
+
+        boolean[] visited = new boolean[N+1];
+        PriorityQueue&lt;Pair&gt; pq = new PriorityQueue&lt;&gt;((a,b)-&gt;Long.compare(a.y, b.y));
+        pq.offer(new Pair(1, 0));
+        long mstWeight = 0;
+        long maxWeight = 0;
+        int count = 0;
+        while (!pq.isEmpty()) {
+            Pair s = pq.poll();
+            if (visited[s.x]) continue;
+            mstWeight += s.y;
+            if (s.y &gt; maxWeight) maxWeight = s.y;
+            visited[s.x] = true;
+            
+            if (count++ == N-1) break;
+
+            for (Pair adj : graph[s.x]) {
+                if (visited[adj.x]) continue;
+                pq.offer(adj);
+            }
+        }
+
+        System.out.println(mstWeight-maxWeight);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>프림 알고리즘의 시간복잡도는 $O(E \log E)$이므로 이 코드의 시간복잡도는 $O(M \log M)$이다. 이 문제에서 $1 \le M \le 1,000,000$이므로 최악의 경우 약 2천만번 연산하므로 2초 내에 충분히 통과할 수 있을 것이다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-28-%EB%B0%B1%EC%A4%80-1647-%EB%8F%84%EC%8B%9C-%EB%B6%84%ED%95%A0-%EA%B3%84%ED%9A%8D.md"
+        </script>
+      </body>
+  
