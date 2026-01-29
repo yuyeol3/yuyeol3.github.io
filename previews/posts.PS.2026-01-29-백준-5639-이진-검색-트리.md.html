@@ -1,0 +1,156 @@
+
+      <html lang="ko">
+      <head>
+        <title>5639 - 이진 검색 트리</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제에서는 어떤 이진 검색 트리(Binary Search Tree)의 전위 순회 결과가 주어졌을 때, 후위 순회한 결과를 알아내 출력해야 한다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>5639 - 이진 검색 트리</h1>
+<p>이 문제에서는 어떤 이진 검색 트리(Binary Search Tree)의 전위 순회 결과가 주어졌을 때, 후위 순회한 결과를 알아내 출력해야 한다.</p>
+<p>이 문제를 해결하는 가장 간단한 방법은 단순히 입력받은 대로 이진 트리에 추가해 복원한 뒤, 후위 순회를 하는 것이다. 다만 익히 알려져 있듯, 이 방식의 문제는 한 쪽으로 편향된 트리가 주어질 경우 시간복잡도가 $O(N^2)$ 까지 될 수 있다. 전위 순회의 성질을 이용하여, 더 빠른 시간복잡도를 보장하는 알고리즘을 짤 수는 없을까?  </p>
+<img width="100%"  alt="image" src="https://github.com/user-attachments/assets/02cf018e-7366-4fb3-ae5f-2650bd65e053" />
+
+
+<p>전위 순회의 과정을 잘 살펴보면, 먼저 root 노드부터 left 방향으로 끝까지 내려간 뒤, 그 다음으로 right 노드들을 방문하는 식인 것을 알 수 있다. 또한 BST(이진 검색 트리)에서, 부모 노드에서 left 자식은 부모 노드보다 작은 값이고, right 자식은 부모보다 큰 값이다. 이 두 사실을 종합하면, BST를 전위순회 했을 때 숫자의 순서가 작아지다가 커졌다면 그 숫자는 어떤 노드의 right 자식이고, 그 right 자식의 부모 노드는 자신(right 노드)보다 큰 숫자의 노드의 left 자식이다. </p>
+<p>위 사실을 이용하면 $O(N)$에 동작하는 알고리즘을 짤 수 있다. </p>
+<p><a href="https://www.acmicpc.net/problem/5639">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>클래스 <code>Node</code>를 선언한다. 이 클래스에는 left child와 right child의 참조를 기록해둘 <code>left</code>, <code>right</code>와 현재 노드의 번호를 기록해둘 <code>num</code>을 멤버 변수로 선언한다.</p>
+<pre><code class="language-java">static class Node {
+    Node left = null;
+    Node right = null;
+    int num;
+    public Node(int num) {
+        this.num = num;
+    }
+}
+</code></pre>
+<p>트리의 root 노드를 저장할 변수 <code>tree</code>와 들어온 노드들을 추적하기 위한 스택 <code>stk</code>를 선언한다. root 노드는 가장 먼저 들어온 숫자이므로 <code>root = Integer.parseInt(br.readLine())</code>로 저장해 둔다. 트리와 스택에 root 노드를 삽입한다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    Deque&lt;Node&gt; stk = new ArrayDeque&lt;&gt;();
+    int root = Integer.parseInt(br.readLine());
+    Node tree = new Node(root);
+    stk.addFirst(tree);
+</code></pre>
+<p>나머지 숫자들을 입력받으며 트리를 계속 복원한다. 앞서 말했듯 지금 들어온 숫자가 <code>stk.peek()</code>보다 작다면 그 숫자를 이전 노드의 left child로 간주하면 된다. 반대로 만약 들어온 숫자가 <code>stk.peek()</code>보다 크다면 right child으로 붙여야 한다. 따라서 들어온 숫자보다 <code>stk.peek()</code>가 작은 동안 계속 스택에서 노드를 뺀 뒤, 가장 마지막으로 뺀 노드를 parent 노드로 간주하고 right에 들어온 숫자를 노드로 만들어 붙이면 된다. 그런 다음 공통적으로 스택에 들어온 새 노드를 추가한다.</p>
+<pre><code class="language-java">    while (true) {
+        String numStr = br.readLine();
+        if (numStr == null) break;
+        int num = Integer.parseInt(numStr);
+        if (num &lt; stk.peek().num) {
+            stk.peek().left = new Node(num);
+            stk.addFirst(stk.peek().left);
+        }
+        else {
+            Node parent = stk.pollFirst();
+            while (!stk.isEmpty() &amp;&amp; num &gt; stk.peek().num) {
+                parent = stk.pollFirst();
+            }
+            parent.right = new Node(num);
+            stk.addFirst(parent.right);
+        }
+    }
+</code></pre>
+<p>반복문을 빠져나왔다면 트리 복원이 완료된 것이다. 이제 복원된 트리를 후위 순회하기만 하면 된다. 후위 순회를 위한 스택을 하나 만들고 루트 노드를 가장 먼저 스택에 넣는다. 그런 다음 스택이 빌 때까지 작업을 반복한다. 먼저 스택에서 최상단 값을 확인한다. 그런 다음 그 노드의 left child와 right child가 모두 null이라면 <code>sb</code>에 그 노드의 값을 추가하고 스택에서 노드를 제거한 뒤 반복문을 다음 단계로 건너뛴다. </p>
+<p>만약 둘 중 하나라도 null이 아니었다면, 다음 단계로 넘어간다. 만약 <code>s.left</code>가 null이 아니라면 left 노드를 스택에 추가한 뒤, <code>s.left</code>를 null로 만든다. 마찬가지로 <code>s.left</code>는 null이고 <code>s.right</code>가 null이 아니라면 right 노드를 스택에 넣고 <code>s.right</code>를 null로 만든다.</p>
+<pre><code class="language-java">    Deque&lt;Node&gt; stk2 = new ArrayDeque&lt;&gt;();
+    stk2.add(tree);
+    
+    while (!stk2.isEmpty()) {
+        Node s = stk2.peek();
+        if (s.left == null &amp;&amp; s.right == null) {
+            sb.append(s.num).append(&quot;\n&quot;);
+            stk2.pollFirst();
+            continue;
+        }
+
+        if (s.left != null) {
+            stk2.addFirst(s.left);
+            s.left = null;
+        }
+        else if (s.right != null) {
+            stk2.addFirst(s.right);
+            s.right = null;
+        }
+    }
+</code></pre>
+<p>마지막으로 결과를 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    System.out.print(sb);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.io.*;
+import java.util.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static class Node {
+        Node left = null;
+        Node right = null;
+        int num;
+        public Node(int num) {
+            this.num = num;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        Deque&lt;Node&gt; stk = new ArrayDeque&lt;&gt;();
+        int root = Integer.parseInt(br.readLine());
+        Node tree = new Node(root);
+        stk.addFirst(tree);
+        while (true) {
+            String numStr = br.readLine();
+            if (numStr == null) break;
+            int num = Integer.parseInt(numStr);
+            if (num &lt; stk.peek().num) {
+                stk.peek().left = new Node(num);
+                stk.addFirst(stk.peek().left);
+            }
+            else {
+                Node parent = stk.pollFirst();
+                while (!stk.isEmpty() &amp;&amp; num &gt; stk.peek().num) {
+                    parent = stk.pollFirst();
+                }
+                parent.right = new Node(num);
+                stk.addFirst(parent.right);
+            }
+        }
+
+        Deque&lt;Node&gt; stk2 = new ArrayDeque&lt;&gt;();
+        stk2.add(tree);
+        
+        while (!stk2.isEmpty()) {
+            Node s = stk2.peek();
+            if (s.left == null &amp;&amp; s.right == null) {
+                sb.append(s.num).append(&quot;\n&quot;);
+                stk2.pollFirst();
+                continue;
+            }
+
+            if (s.left != null) {
+                stk2.addFirst(s.left);
+                s.left = null;
+            }
+            else if (s.right != null) {
+                stk2.addFirst(s.right);
+                s.right = null;
+            }
+        }
+        System.out.print(sb);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>트리를 복원하는 시간복잡도는 앞서 설명했듯 $O(N)$이 걸리며, 트리를 순회하는 시간복잡도도 $O(N)$이다. 따라서 이 프로그램의 시간복잡도는 총 $O(N)$임을 알 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-01-29-%EB%B0%B1%EC%A4%80-5639-%EC%9D%B4%EC%A7%84-%EA%B2%80%EC%83%89-%ED%8A%B8%EB%A6%AC.md"
+        </script>
+      </body>
+  
