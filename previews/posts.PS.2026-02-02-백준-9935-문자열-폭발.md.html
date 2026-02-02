@@ -1,0 +1,201 @@
+
+      <html lang="ko">
+      <head>
+        <title>9935 - 문자열 폭발</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 문자열과 폭탄 문자열이 주어졌을 때, 폭탄 문자열을 연쇄적으로 제거해나간 뒤 남은 문자열만을 출력해야 하는 문제이다. 참고로 폭발 문자열은 같은 문자를 두 개 이상 포함하지 않는다고 한다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>9935 - 문자열 폭발</h1>
+<p>이 문제는 문자열과 폭탄 문자열이 주어졌을 때, 폭탄 문자열을 연쇄적으로 제거해나간 뒤 남은 문자열만을 출력해야 하는 문제이다. 참고로 폭발 문자열은 같은 문자를 두 개 이상 포함하지 않는다고 한다.</p>
+<p>이 문제의 정석 풀이법은 다음과 같다고 한다. 문자열의 왼쪽부터 한 글자씩 스택에 넣는다. 문자열을 넣던 중 스택의 top이 폭발 문자열의 마지막 문자와 같아지면 폭발 문자열의 길이만큼 스택을 검사하여 모두 같은지 확인한다. 만약 모두 일치한다면 폭발 문자열의 길이만큼 스택에서 원소를 pop한다. </p>
+<p>그러나 필자의 경우 다소 복잡한 방식으로 풀었는데, 아래와 같은 성질을 이용하였다.</p>
+<p>먼저 아래 테스트케이스에서 문자열 폭발이 어떻게 일어나는지 관찰해 보자.</p>
+<pre><code class="language-text">12ab112ab2ab
+12ab
+
+↓
+
+****112ab2ab
+
+↓
+
+****1****2ab
+
+↓
+
+************
+</code></pre>
+<p>폭발 문자열 사이에 폭발 문자열이 중첩되어 들어가 있다면, 먼저 안쪽의 문자열이 먼저 터지고 그런 다음 바깥쪽의 문자열이 폭발하여 없어진다. 즉 이는 연쇄 반응처럼 안쪽부터 바깥쪽으로 문자열이 폭발하는 느낌인 것을 알 수 있다.</p>
+<p>반대로 말하면, 어떤 문자열을 감싼 바깥쪽의 문자열들이 폭발 문자열이 될 수 있더라도, 터져야 할 안쪽의 문자열이 폭발 문자열과 다르다면 그 문자열들은 절대로 연쇄 반응을 일으키지 않을 것이다. 즉 하나도 터지지 않을 것이다.</p>
+<p><a href="https://www.acmicpc.net/problem/9935">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>문자열의 위치 idx와 폭발 문자열의 위치 cnt를 담은 State 클래스를 선언한다. </p>
+<pre><code class="language-java">static class State {
+    int idx;
+    int cnt;
+
+    public State(int idx, int cnt) {
+        this.idx = idx;
+        this.cnt = cnt;
+    }
+}
+</code></pre>
+<p>문자열 <code>s</code>와 폭발 문자열 <code>k</code>를 입력받는다. 그런 다음 문자열 <code>s</code>에서 폭발로 부서진 문자열을 추적할 <code>broken</code> 배열과, 상태를 담을 스택인 <code>states</code>, 그리고 폭발 문자열 조건을 충족하는 인덱스를 담을 스택인 <code>st</code>를 선언한다.</p>
+<p>그런 다음 최초의 상태로 <code>State(0, 0)</code>을 스택에 넣는다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    String s = br.readLine();
+    String k = br.readLine();
+
+    boolean[] broken = new boolean[s.length() + 1];
+    
+    State[] states = new State[s.length()];
+    int statesSize = 0;
+
+    int[] st = new int[s.length()];
+    int stSize = 0;
+
+    states[statesSize++] = new State(0, 0);
+</code></pre>
+<p>이 부분이 알고리즘의 핵심이라고 할 수 있다. 이 과정은 <code>states</code> 스택이 비어있지 않을 동안 반복된다.</p>
+<p>먼저 <code>states</code> 스택의 top 원소를 <code>state</code> 변수에 저장한다. 만약 top 원소가 <code>|s|</code> 보다 크거나 같다면 폭발 문자열이 되지 못한 것이고, 그것과 동시에 모든 문자열에 대한 폭발 문자열 확인이 끝난 것이므로 루프를 빠져나온다.</p>
+<p>만약 <code>s[state.idx] == k[state.cnt]</code>라면 해당 상태에서 폭발 문자열의 조건이 깨지지 않은 것을 의미한다. 따라서 해당 문자를 추적하기 위해 <code>st</code>스택에 <code>state.idx</code>를 넣은 다음, <code>state.idx</code> 와 <code>state.cnt</code>를 1씩 증가시켜 준다. 만약 증가한 <code>state.cnt</code>값이 <code>|k|</code>와 같다면 지금까지 추적해온 문자열이 폭발 문자열이 맞다는 뜻이므로 <code>|k|</code> 만큼 <code>st</code> 스택에서 pop한 뒤, 그 위치에 대한 broken 원소 값을 true로 만들어, 깨졌다는 것을 표시해 준다. 그런 다음 <code>statesSize</code> 스택에서 pop해 추적해온 현재 상태를 삭제한다. </p>
+<p>만약 pop한 이후에도 스택이 비지 않았다면 이전에 추적하던 상태가 있다는 뜻이다. 그 상태가 추적할 다음 인덱스는 현재 상태에서 마지막으로 추적한 글자의 다음 글자이므로 <code>states</code>의 top 원소에 대해 인덱스를 <code>state.idx</code>로 업데이트 한다. 
+<code>idx+1</code>이 아닌 <code>idx</code>인 이유는 이미 이전에 <code>idx++</code>를 통해 다음 원소의 인덱스로 이동시켰기 때문이다.</p>
+<p>반대로 스택은 비었는데 <code>state.idx</code>가 <code>|s|</code>보다 작다면 아직 추적할 문자가 더 남았다는 뜻이다. 따라서 <code>state.idx</code>를 기점으로 하고, 아직 <code>k</code>와 일치하는 문자가 하나도 없는 상태를 <code>states</code>스택에 넣어준다.</p>
+<p>이제 위 케이스와 반대인 경우를 보자. <code>s[state.idx] != k[state.cnt]</code>라면 폭발 문자열의 조건이 깨진 것이다. 만약 <code>state.cnt</code>가 0인데 벌써 조건이 깨진 것이면, 이 상태는 앞으로 맞을 가망이 없는 것이다. 또한 이 상태에서 폭발 문자열이 아니었다면 이전까지 추적해오던 상태들도 폭발 문자열이 될 가능성은 없는 것이다. 따라서 <code>states</code>스택과 <code>st</code> 스택을 모두 초기화하고, 다음 위치부터 다시 추적할 수 있도록 <code>state.idx + 1</code> 부터 폭발 문자열을 새로 추적하는 상태를 push 한다.</p>
+<p>한편 <code>state.cnt</code>가 0은 아니지만 조건이 깨졌다면, 여기서부터 새로 시작해서 추적했을 때 폭발 문자열이 될 가능성은 아직 남아 있는 것이다. 따라서 <code>state.idx</code>를 기점으로 폭발 문자열을 추적하는 상태를 push한다.</p>
+<pre><code class="language-java">    while (statesSize &gt; 0) {
+        
+        State state = states[statesSize-1];
+        if (state.idx &gt;= s.length()) {
+            break;
+        }
+
+        if (s.charAt(state.idx) == k.charAt(state.cnt)) {
+            
+            st[stSize++] = state.idx;
+            state.idx++;
+            state.cnt++;
+            
+            if (state.cnt == k.length()) {
+                for (int i = 0; i &lt; k.length(); i++)
+                    broken[st[--stSize]] = true;
+
+                statesSize--;
+                if (statesSize &gt;= 1)
+                    states[statesSize-1].idx = state.idx;
+
+                if (statesSize == 0 &amp;&amp; state.idx &lt; s.length()) {
+                    states[statesSize++] = new State(state.idx, 0);
+                }
+            }
+        }
+        else {
+            if (state.cnt == 0) {
+                statesSize = 0;
+                stSize = 0;
+                states[statesSize++] = new State(state.idx + 1, 0);
+            }
+            else states[statesSize++] = new State(state.idx, 0);
+        }
+    }
+</code></pre>
+<p>반복문을 빠져나왔다면 폭발 문자열을 모두 확인한 것이므로 폭발하여 부서지지 않은 문자열들만 출력을 하면 된다. broken 배열을 확인해 부서지지 않은 문자들만 출력한다. 만약 모든 문자열이 부숴졌다면 문제의 요구대로 &quot;FRULA&quot;를 출력하도록 한다.</p>
+<pre><code class="language-java">    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i &lt; s.length(); i++) {
+        if (!broken[i]) 
+            sb.append(s.charAt(i));
+    }
+    String result = sb.toString();
+    System.out.println(result.equals(&quot;&quot;) ? &quot;FRULA&quot; : result);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    static class State {
+        int idx;
+        int cnt;
+
+        public State(int idx, int cnt) {
+            this.idx = idx;
+            this.cnt = cnt;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        String s = br.readLine();
+        String k = br.readLine();
+
+        boolean[] broken = new boolean[s.length() + 1];
+        
+        State[] states = new State[s.length()];
+        int statesSize = 0;
+
+        int[] st = new int[s.length()];
+        int stSize = 0;
+
+        states[statesSize++] = new State(0, 0);
+        while (statesSize &gt; 0) {
+          
+            State state = states[statesSize-1];
+            if (state.idx &gt;= s.length()) {
+                break;
+            }
+
+            if (s.charAt(state.idx) == k.charAt(state.cnt)) {
+               
+                st[stSize++] = state.idx;
+                state.idx++;
+                state.cnt++;
+                
+                if (state.cnt == k.length()) {
+                    for (int i = 0; i &lt; k.length(); i++)
+                        broken[st[--stSize]] = true;
+
+                    statesSize--;
+                    if (statesSize &gt;= 1)
+                        states[statesSize-1].idx = state.idx;
+
+                    if (statesSize == 0 &amp;&amp; state.idx &lt; s.length()) {
+                        states[statesSize++] = new State(state.idx, 0);
+                    }
+                }
+            }
+            else {
+                if (state.cnt == 0) {
+                    statesSize = 0;
+                    stSize = 0;
+                    states[statesSize++] = new State(state.idx + 1, 0);
+                }
+                else states[statesSize++] = new State(state.idx, 0);
+            }
+        }
+
+    
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i &lt; s.length(); i++) {
+            if (!broken[i]) 
+                sb.append(s.charAt(i));
+        }
+        String result = sb.toString();
+        System.out.println(result.equals(&quot;&quot;) ? &quot;FRULA&quot; : result);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>코드가 조금 복잡하지만 간단히 생각해보자. 이 프로그램에서 상태의 idx는 항상 앞쪽 방향으로만 움직인다. 즉, 절대로 뒤를 돌아보지 않는다. 또한 폭발 문자열을 스택에서 빼는 반복문의 경우에도, 각 폭발 문자열은 최대 한 번씩만 스택에서 빠질 수 있으며 절대로 중복되지 않는다. </p>
+<p>최악의 경우를 생각해보면, $|s| = N$ 이고 $|k| = 1$이며, 문자열 $s$ 의 각 원소들은 모두 k인 경우 시간복잡도는 $O(2 |s|)$ 일 것이다. 그러므로 이 코드의 시간복잡도는 대략 $O(|s|)$에 수렴할 것이다. </p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-02-02-%EB%B0%B1%EC%A4%80-9935-%EB%AC%B8%EC%9E%90%EC%97%B4-%ED%8F%AD%EB%B0%9C.md"
+        </script>
+      </body>
+  
