@@ -1,0 +1,167 @@
+
+      <html lang="ko">
+      <head>
+        <title>2239 - 스도쿠</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 일부 칸이 채워지지 않은 스도쿠가 입력으로 주어졌을 때, 스도쿠 규칙에 따라 맞는 숫자를 모두 채워 출력하는 문제이다. 단, 이 때 답이 여러 개라면 사전순으로 가장 우선하는 답을 출력해야 한다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>2239 - 스도쿠</h1>
+<p>이 문제는 일부 칸이 채워지지 않은 스도쿠가 입력으로 주어졌을 때, 스도쿠 규칙에 따라 맞는 숫자를 모두 채워 출력하는 문제이다. 단, 이 때 답이 여러 개라면 사전순으로 가장 우선하는 답을 출력해야 한다. </p>
+<p>스도쿠 문제는 잘 알려진 NP-complete 문제이다. 즉 일반화된 스도쿠 문제를 다항 시간의 시간복잡도로 풀 수 있는 해답은 존재하지 않는다. 그러나 이 문제는 입력이 작고, 스도쿠 칸을 채울수록 가능한 분기수가 급격히 줄어들기 때문에 백트래킹을 이용하면 문제를 풀 수 있을 것이라 생각할 수 있다.</p>
+<p><a href="https://boj.kr/2239">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>필요한 변수들을 먼저 선언하였다. <code>sudoku</code>는 입력받은 스도쿠를 저장하는 배열이다. <code>rowWise</code>, <code>colWise</code>, <code>boardWise</code>는 어떤 행, 열 또는 3x3 블럭 내에서 어떤 숫자가 쓰였거나 쓰이지 않았는지 추척하기 위한 배열이다. <code>emptyCells</code>는 스도쿠 칸 중 빈 칸만을 담아두는 변수이다. <code>emptyCellSize</code>는 빈 칸의 개수가 몇 개인지 추적하는 변수이다.</p>
+<pre><code class="language-java">class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int[][] sudoku = new int[9][9];
+    static boolean[][] rowWise = new boolean[9][10];
+    static boolean[][] colWise = new boolean[9][10];
+    static boolean[][] boardWise = new boolean[9][10];
+    static int[][] emptyCells = new int[81][2];
+    static int emptyCellSize = 0;
+    static StringBuilder sb = new StringBuilder();
+</code></pre>
+<p>메인 함수에서 입출력을 처리한다. 각 칸별로 <code>sudoku</code> 배열에 값을 저장하고, 이 칸이 위치한 행, 열, 3x3 블럭에서 이 숫자가 사용되었다는 것을 기록해 둔다. 만약 입력받은 값이 0이라면 이 칸은 빈 칸이라는 의미이므로, <code>emptyCells</code>에 위치를 넣고 <code>emptyCellSize</code>를 증가시켜 준다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    for (int i = 0; i &lt; 9; i++) {
+        String row = br.readLine();
+        for (int j = 0; j &lt; 9; j++) {
+            sudoku[i][j] = row.charAt(j) - &#39;0&#39;;
+            rowWise[i][sudoku[i][j]] = true;
+            colWise[j][sudoku[i][j]] = true;
+            boardWise[3*(i/3)+(j/3)][sudoku[i][j]] = true;
+
+            if (sudoku[i][j] == 0) {
+                emptyCells[emptyCellSize][0] = i;
+                emptyCells[emptyCellSize][1] = j;
+                emptyCellSize++;
+            }
+        }
+    }
+</code></pre>
+<p>백트래킹을 위해 첫 번째 빈 칸부터 재귀함수를 호출한다. 재귀함수가 종료되었다면 답이 구해진 것이므로 답을 저장해둔 <code>sb</code>를 출력한다.</p>
+<pre><code class="language-java">    recur(0);
+    System.out.print(sb);
+}
+</code></pre>
+<p>백트래킹을 위한 재귀함수는 아래와 같이 생겼다. 인자로 받는 <code>idx</code>는 몇 번째 빈 칸을 처리할 것인지를 나타내는 값이다. </p>
+<p>종료조건부터 먼저 보자. 만약 <code>idx == emptyCellsSize</code>라면 모든 빈 칸을 채운 것이므로 <code>sb</code>에 결과값을 출력한 뒤 <code>true</code>를 리턴한다.</p>
+<p>종료조건이 아니라면, <code>idx</code>가 가리키는 빈 칸의 행 번호와 열 번호를 <code>r</code>, <code>c</code>에 대입해둔다. 그런 다음 1부터 9까지 반복문을 돌리면서 <code>isValid</code> 함수를 이용해 해당 번호를 이 위치에 넣을 수 있는지 확인한다. 넣을 수 없다면 <code>continue</code>를 통해 즉시 다음 번호로 건너뛴다. 하지만 만약 넣을 수 있다면 <code>rowWise</code>, <code>colWise</code>, <code>boardWise</code>를 통해 해당 행, 열, 3x3 블럭에 선택된 숫자가 이미 있음을 표시해주고, <code>sudoku[r][c] = i</code>를 통해 스도쿠 판에 선택한 숫자를 넣어준다. 이제 <code>recur(idx+1)</code>을 호출해 다음 빈 칸으로 넘어간다. 만약 <code>recur(idx+1)</code>이 <code>true</code>를 출력했다면 보드가 완성된 것이므로 이 함수도 <code>true</code>를 출력해 단계를 더 진행하지 않고 함수를 끝낸다.
+반대로 <code>false</code>를 반환했다면 선택한 이 숫자를 이용해서 보드를 완성할 수 없다는 뜻이므로, <code>sudoku</code>에서 넣어놨던 숫자를 빼고, <code>rowWise</code>, <code>colWise</code>, <code>boardWise</code>에서도 숫자 선택을 해제한다. 만약 반복문을 끝까지 돌아도 가능한 숫자가 없었다면, 현재 상태로는 스도쿠를 완성할 수 없다는 뜻이므로 <code>false</code>를 반환한다.</p>
+<pre><code class="language-java">static boolean recur(int idx) {
+    if (idx == emptyCellSize) {
+        for (int i = 0; i &lt; 9; i++) {
+            for (int j = 0; j &lt; 9; j++) {
+                sb.append(sudoku[i][j]);
+            }
+            sb.append(&quot;\n&quot;);
+        }
+        return true;
+    }
+
+    int r = emptyCells[idx][0];
+    int c = emptyCells[idx][1];
+    for (int i = 1; i &lt; 10; i++) {
+        if (!isValid(r, c, i)) continue;
+        rowWise[r][i] = true;
+        colWise[c][i] = true;
+        boardWise[3*(r/3)+(c/3)][i] = true;
+        sudoku[r][c] = i;
+        if (recur(idx+1)) return true;
+        sudoku[r][c] = 0;
+        rowWise[r][i] = false;
+        colWise[c][i] = false;
+        boardWise[3*(r/3)+(c/3)][i] = false;
+    }
+
+    return false;
+}
+</code></pre>
+<p><code>isValid</code>는 아래와 같다. 함수 인자로 <code>row</code>, <code>col</code>, <code>num</code>을 입력받은 뒤, <code>rowWise</code>, <code>colWise</code>, <code>boardWise</code>에 각각 대응되는 인덱스를 입력해 <code>num</code>을 넣을 수 있는지 확인해 리턴한다.</p>
+<pre><code class="language-java">static boolean isValid(int row, int col, int num) {
+    return !rowWise[row][num] &amp;&amp; !colWise[col][num] &amp;&amp; !boardWise[3*(row/3)+(col/3)][num];
+}
+</code></pre>
+<p>참고로 사전 순으로 가장 우선하는 정답을 출력하라는 조건을 따로 처리하지 않았는데도 정답이 되는 이유가 궁금할 수 있을 것이다. 이는 빈 칸을 입력 순서(행 우선)로 고정하고, 각 칸에서 숫자를 1부터 오름차순으로 시도한 뒤 첫 해답에서 종료하므로, 가장 먼저 달라지는 위치의 값이 최소가 되어 사전순으로 가장 앞선 해를 출력하는 것이 보장되기 때문이다. </p>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int[][] sudoku = new int[9][9];
+    static boolean[][] rowWise = new boolean[9][10];
+    static boolean[][] colWise = new boolean[9][10];
+    static boolean[][] boardWise = new boolean[9][10];
+    static int[][] emptyCells = new int[81][2];
+    static int emptyCellSize = 0;
+    static StringBuilder sb = new StringBuilder();
+
+
+    static boolean recur(int idx) {
+        if (idx == emptyCellSize) {
+            for (int i = 0; i &lt; 9; i++) {
+                for (int j = 0; j &lt; 9; j++) {
+                    sb.append(sudoku[i][j]);
+                }
+                sb.append(&quot;\n&quot;);
+            }
+            return true;
+        }
+
+        int r = emptyCells[idx][0];
+        int c = emptyCells[idx][1];
+        for (int i = 1; i &lt; 10; i++) {
+            if (!isValid(r, c, i)) continue;
+            rowWise[r][i] = true;
+            colWise[c][i] = true;
+            boardWise[3*(r/3)+(c/3)][i] = true;
+            sudoku[r][c] = i;
+            if (recur(idx+1)) return true;
+            sudoku[r][c] = 0;
+            rowWise[r][i] = false;
+            colWise[c][i] = false;
+            boardWise[3*(r/3)+(c/3)][i] = false;
+        }
+
+        return false;
+    }
+    
+    public static void main(String[] args) throws IOException {
+        for (int i = 0; i &lt; 9; i++) {
+            String row = br.readLine();
+            for (int j = 0; j &lt; 9; j++) {
+                sudoku[i][j] = row.charAt(j) - &#39;0&#39;;
+                rowWise[i][sudoku[i][j]] = true;
+                colWise[j][sudoku[i][j]] = true;
+                boardWise[3*(i/3)+(j/3)][sudoku[i][j]] = true;
+
+                if (sudoku[i][j] == 0) {
+                    emptyCells[emptyCellSize][0] = i;
+                    emptyCells[emptyCellSize][1] = j;
+                    emptyCellSize++;
+                }
+            }
+        }
+
+        recur(0);
+        System.out.print(sb);
+    }
+
+    static boolean isValid(int row, int col, int num) {
+        return !rowWise[row][num] &amp;&amp; !colWise[col][num] &amp;&amp; !boardWise[3*(row/3)+(col/3)][num];
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>시간복잡도는 $O(9^N)$, $N = \text{(빈 칸의 개수)}$이다. $N$은 최대 81이 될 수 있으므로 시간복잡도 상으로는 문제를 통과하기 어려워 보인다. </p>
+<p>그러나 스도쿠의 특성상 숫자를 채울 때마다 선택할 수 있는 숫자가 급격히 줄어들게 된다. 즉 상태 공간 트리의 깊이가 깊어질수록 다음 분기 수는 빠르게 줄어든다. 이를 엄밀하게 표현해보면 $O(\prod_{t=1}^{N} b_t)$이며, 여기서 $b_t$는 단계별로 가능한 다음 상태 노드의 가짓수이다. 따라서 $9 \times 9$의 한정된 스도쿠 칸에서는 시간 초과를 내지 않고 문제를 풀 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-02-03-%EB%B0%B1%EC%A4%80-2239-%EC%8A%A4%EB%8F%84%EC%BF%A0.md"
+        </script>
+      </body>
+  
