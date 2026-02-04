@@ -1,0 +1,173 @@
+
+      <html lang="ko">
+      <head>
+        <title>10942 - 팰린드롬?</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 길이가 N인 어떤 수열이 주어졌을 때, `[S, E]`가 회문인지에 대한 M개의 질의에 대해 답해야 한다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>10942 - 팰린드롬?</h1>
+<p>이 문제는 길이가 N인 어떤 수열이 주어졌을 때, <code>[S, E]</code>가 회문인지에 대한 M개의 질의에 대해 답해야 한다. </p>
+<p>만약 이 문제를 단순히 하나의 질의마다 <code>[S,E]</code>까지가 회문인지 확인해 답변한다면, 최악의 경우 NM번의 계산을 할 것이고 그 결과 시간제한에 걸릴 것이다. 따라서 이것보다 효율적인 방법을 생각해 내야 한다.</p>
+<p>여기서 회문의 성질을 생각해보자. 회문은 문자열의 중심을 기준으로 좌, 우가 대칭인 문자열이다. 즉 아래와 같은 형태이다.</p>
+<pre><code>1 2 3 4 5 4 3 2 1
+</code></pre>
+<p>이러한 성질을 이용하면 다음과 같은 점화식을 떠올릴 수 있다.</p>
+<ol>
+<li><code>S == E</code>, 즉 수열의 길이가 1이면 회문이다.</li>
+<li><code>S + 1 == E</code>, 즉 수열의 길이가 2이면 두 숫자가 같을 때 회문이다.</li>
+<li><code>S + 1 &lt; E</code>, 즉 수열의 길이가 2보다 크면 <code>[S+1, E-1]</code>이 회문이면서 S번째 숫자와 E번째 숫자가 같을 때 회문이다.</li>
+</ol>
+<p>그러나 또 하나의 고민은 점화식을 어떤 순서로 계산해야 하는가이다. 이를 탐구하기 위해 아래 표를 보자. 아래 표는 <code>dp[s][e]</code>를 계산할 때 참조해야 하는 이전 (s,e)를 작성해 놓은 표이다. 예를 들어 <code>dp[2][5]</code>를 알아내고 싶다면 <code>dp[3][4]</code>의 값을 참조해야 한다. 또한 x표시는 이전 dp값을 참조할 필요가 없다는 뜻이다. 문자열의 길이가 1개이거나 2개이면 내부에 문자열이 더 없기 때문이다.</p>
+<table>
+<thead>
+<tr>
+<th>S\E</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>x</td>
+<td>x</td>
+<td>(2,2)</td>
+<td>(2,3)</td>
+<td>(2,4)</td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td>x</td>
+<td>x</td>
+<td>(3,3)</td>
+<td>(3,4)</td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td></td>
+<td>x</td>
+<td>x</td>
+<td>(4,4)</td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td></td>
+<td></td>
+<td>x</td>
+<td>x</td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>x</td>
+</tr>
+</tbody></table>
+<p>위 표를 관찰해 보면 <code>S=3</code> 은 <code>S=4</code>를 참조하고, <code>S=2</code>는 <code>S=3</code>을 참조하는 것을 볼 수 있다. 한편 <code>E</code> 기준으로는 <code>E=5</code>일 때 <code>E=4</code>를 참조하고, <code>E=3</code>일 때 <code>E=2</code>를 참조한다. 그러므로 S 기준으로는 역행, E 기준으로는 순행으로 반복문을 돌면 된다. 즉 S는 5부터 1까지, E는 S부터 5까지 중첩 for문을 돌리면 된다.</p>
+<p><a href="https://www.acmicpc.net/problem/10942">🔗 문제 코드</a></p>
+<h2>코드</h2>
+<p>필요한 변수를 선언한다. <code>dp</code>는 점화식의 결과를 담을 배열이고, <code>nums</code>는 수열의 원소들을 담아놓을 배열이다. </p>
+<pre><code class="language-java">class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static boolean[][] dp;
+    static int[] nums;
+</code></pre>
+<p>메인 메서드에서 <code>n</code>을 입력받은 뒤, <code>nums</code> 배열과 <code>dp</code> 배열을 메모리에 할당한다. 그런 다음 수열 정보를 입력받는다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+    int n = Integer.parseInt(br.readLine());
+    nums = new int[n+1];
+    dp = new boolean[n+1][n+1];
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    for (int i = 1; i &lt;= n; i++)
+        nums[i] = Integer.parseInt(st.nextToken());
+</code></pre>
+<p>앞서 말했던 규칙에 따라 점화식을 계산한다. 먼저 문자열의 길이가 1인 경우 항상 회문으로 불 수 있으므로 먼저 <code>dp[i][i] = true</code>로 저장해 둔다. 그런 다음 <code>i = n .. 1</code>까지, <code>j = i+1 .. n</code>까지 반복하며 점화식을 계산한다.</p>
+<p>점화식의 의미는 <code>i+1 == j</code> 이면 <code>nums[i] == nums[j]</code>를 계산하고, 그렇지 않으면 <code>dp[i+1][j-1]</code>과 <code>nums[i] == nums[j]</code>가 모두 참인지 확인하라는 의미이다.</p>
+<pre><code class="language-java">    for (int i = 1; i &lt;= n; i++) 
+        dp[i][i] = true;
+
+    for (int i = n; i &gt;= 1; i--) {
+        for (int j = i+1; j &lt;= n; j++) {
+            dp[i][j] = (i+1 == j || dp[i+1][j-1]) &amp;&amp; (nums[i] == nums[j]);
+        }
+    }
+</code></pre>
+<p>마지막으로 m개의 질의를 입력받아 <code>dp</code> 배열을 통해 회문 여부를 판별한 뒤 그 결과를 출력한다.</p>
+<pre><code class="language-java">    int m = Integer.parseInt(br.readLine());
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i &lt; m; i++) {
+        st = new StringTokenizer(br.readLine());
+        int s, e;
+
+        s = Integer.parseInt(st.nextToken());
+        e = Integer.parseInt(st.nextToken());
+
+        sb.append(dp[s][e] ? 1 : 0).append(&quot;\n&quot;);
+
+    }  
+    System.out.print(sb);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static boolean[][] dp;
+    static int[] nums;
+
+    public static void main(String[] args) throws IOException {
+        int n = Integer.parseInt(br.readLine());
+        nums = new int[n+1];
+        dp = new boolean[n+1][n+1];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 1; i &lt;= n; i++)
+            nums[i] = Integer.parseInt(st.nextToken());
+
+
+        for (int i = 1; i &lt;= n; i++) 
+            dp[i][i] = true;
+
+        for (int i = n; i &gt;= 1; i--) {
+            for (int j = i+1; j &lt;= n; j++) {
+                dp[i][j] = (i+1 == j || dp[i+1][j-1]) &amp;&amp; (nums[i] == nums[j]);
+            }
+        }
+
+        int m = Integer.parseInt(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i &lt; m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int s, e;
+
+            s = Integer.parseInt(st.nextToken());
+            e = Integer.parseInt(st.nextToken());
+
+            sb.append(dp[s][e] ? 1 : 0).append(&quot;\n&quot;);
+
+        }  
+        System.out.print(sb);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>dp 배열을 완성하는 데 $O(N^2)$, $M$개의 질의에 대한 결과를 출력하는 데 $O(M)$의 시간복잡도가 걸린다. 따라서 이 코드의 시간복잡도는 $O(N^2 + M)$이다. </p>
+<p>$N \le 2,000$, $M \le 1,000,000$ 이므로 최악의 경우 <code>4,000,000 + 1,000,000 = 5,000,000</code>번, 즉 5백만번 연산하게 된다. 이는 0.5초 내 충분히 통과할 수 있는 연산 횟수이다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-02-04-%EB%B0%B1%EC%A4%80-10942-%ED%8C%B0%EB%A6%B0%EB%93%9C%EB%A1%AC%EF%BC%9F.md"
+        </script>
+      </body>
+  
