@@ -25,53 +25,53 @@
 <table>
 <thead>
 <tr>
-<th>S\E</th>
-<th>1</th>
-<th>2</th>
-<th>3</th>
-<th>4</th>
-<th>5</th>
+<th align="center">S\E</th>
+<th align="center">1</th>
+<th align="center">2</th>
+<th align="center">3</th>
+<th align="center">4</th>
+<th align="center">5</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>1</td>
-<td>x</td>
-<td>x</td>
-<td>(2,2)</td>
-<td>(2,3)</td>
-<td>(2,4)</td>
+<td align="center">1</td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">(2,2)</td>
+<td align="center">(2,3)</td>
+<td align="center">(2,4)</td>
 </tr>
 <tr>
-<td>2</td>
-<td></td>
-<td>x</td>
-<td>x</td>
-<td>(3,3)</td>
-<td>(3,4)</td>
+<td align="center">2</td>
+<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">(3,3)</td>
+<td align="center">(3,4)</td>
 </tr>
 <tr>
-<td>3</td>
-<td></td>
-<td></td>
-<td>x</td>
-<td>x</td>
-<td>(4,4)</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">(4,4)</td>
 </tr>
 <tr>
-<td>4</td>
-<td></td>
-<td></td>
-<td></td>
-<td>x</td>
-<td>x</td>
+<td align="center">4</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
 </tr>
 <tr>
-<td>5</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>x</td>
+<td align="center">5</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">x</td>
 </tr>
 </tbody></table>
 <p>위 표를 관찰해 보면 <code>S=3</code> 은 <code>S=4</code>를 참조하고, <code>S=2</code>는 <code>S=3</code>을 참조하는 것을 볼 수 있다. 한편 <code>E</code> 기준으로는 <code>E=5</code>일 때 <code>E=4</code>를 참조하고, <code>E=3</code>일 때 <code>E=2</code>를 참조한다. 그러므로 S 기준으로는 역행, E 기준으로는 순행으로 반복문을 돌면 된다. 즉 S는 5부터 1까지, E는 S부터 5까지 중첩 for문을 돌리면 된다.</p>
