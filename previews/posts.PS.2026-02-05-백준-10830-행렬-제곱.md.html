@@ -13,7 +13,8 @@
 <p>이 문제는 크기가 $N \times N$인 행렬이 주어질 때, 그 행렬의 $B$제곱을 구해서 출력해야 하는 문제이다. 이 부분에서 특히 눈여겨봐야 할 것은 $B$의 최대값이다. $B$는 이 문제에서 최대 1천억까지 될 수 있으며 따라서 행렬을 단순히 $B$번 곱하는 방식으로 거듭제곱을 구하면 시간 초과로 인해 문제를 풀지 못할 것이다.</p>
 <p>그렇다면 이 문제를 시간 내에 풀기 위해서는 어떻게 해야 할까? 어떤 행렬 $\mathbf{A}$가 있을 때 $\mathbf A^{16}$을 구해야 한다고 생각해보자. 그렇다면 $\mathbf A^{16} = \mathbf A^{8} \cdot \mathbf A^8$ 로 분리할 수 있다. 이렇게 분리해서 계산하면 어떤 점이 좋을까? $\mathbf A^{16}$을 계산하는 대신, $\mathbf A^8$을 한 번 계산하고 그 결과를 제곱하면 $\mathbf A^{16}$을 얻을 수 있다. 즉 계산 횟수가 16번이 아니라 9번으로 줄어든다! 또한 $\mathbf A^{16} = \mathbf A^8 \cdot \mathbf A^8$ 로 분리했던 것처럼, $\mathbf A^8 = \mathbf A^4 \cdot \mathbf A^4$로 분리할 수 있으며, 이러한 방식으로 계속 분리하면 $\mathbf A^2 = \mathbf A \cdot \mathbf A$처럼 끝까지 분리시킬 수 있다. 즉, 재귀적으로 행렬곱 계산 횟수를 줄일 수 있다. 이렇게 줄어든 행렬곱 계산 횟수는 $\log_2 B$ 에 비례하게 된다.</p>
 <p>조금 더 자세히 표현하면 아래와 같다</p>
-<p>$$\mathbf A^N = \begin{cases}
+<p>$$
+\mathbf A^N = \begin{cases}
     (\mathbf A^{N/2})^2 &amp; \text{if N is even} \
     \mathbf A \cdot \mathbf A^{N-1} &amp; \text{if N is odd}
 \end{cases}
