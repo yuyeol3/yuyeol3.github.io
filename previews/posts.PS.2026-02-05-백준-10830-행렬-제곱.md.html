@@ -1,0 +1,156 @@
+
+      <html lang="ko">
+      <head>
+        <title>10830 - 행렬 제곱</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 크기가 $N \times N$인 행렬이 주어질 때, 그 행렬의 $B$제곱을 구해서 출력해야 하는 문제이다. 이 부분에서 특히 눈여겨봐야 할 것은 $B$의 최대값이다. $B$는 이 문제에서 최대 1천억까지 될 수 있으며 따라서 행렬을 단순히 $B$번 곱하는 방식으로 거듭제곱을 구하면 시간 초과로 인해 문제를 풀지 못할 것이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>10830 - 행렬 제곱</h1>
+<p>이 문제는 크기가 $N \times N$인 행렬이 주어질 때, 그 행렬의 $B$제곱을 구해서 출력해야 하는 문제이다. 이 부분에서 특히 눈여겨봐야 할 것은 $B$의 최대값이다. $B$는 이 문제에서 최대 1천억까지 될 수 있으며 따라서 행렬을 단순히 $B$번 곱하는 방식으로 거듭제곱을 구하면 시간 초과로 인해 문제를 풀지 못할 것이다.</p>
+<p>그렇다면 이 문제를 시간 내에 풀기 위해서는 어떻게 해야 할까? 어떤 행렬 $\mathbf{A}$가 있을 때 $\mathbf A^{16}$을 구해야 한다고 생각해보자. 그렇다면 $\mathbf A^{16} = \mathbf A^{8} \cdot \mathbf A^8$ 로 분리할 수 있다. 이렇게 분리해서 계산하면 어떤 점이 좋을까? $\mathbf A^{16}$을 계산하는 대신, $\mathbf A^8$을 한 번 계산하고 그 결과를 제곱하면 $\mathbf A^{16}$을 얻을 수 있다. 즉 계산 횟수가 16번이 아니라 9번으로 줄어든다! 또한 $\mathbf A^{16} = \mathbf A^8 \cdot \mathbf A^8$ 로 분리했던 것처럼, $\mathbf A^8 = \mathbf A^4 \cdot \mathbf A^4$로 분리할 수 있으며, 이러한 방식으로 계속 분리하면 $\mathbf A^2 = \mathbf A \cdot \mathbf A$처럼 끝까지 분리시킬 수 있다. 즉, 재귀적으로 행렬곱 계산 횟수를 줄일 수 있다. 이렇게 줄어든 행렬곱 계산 횟수는 $\log_2 B$ 에 비례하게 된다.</p>
+<p>조금 더 자세히 표현하면 아래와 같다</p>
+<p>$$\mathbf A^N = \begin{cases}
+    (\mathbf A^{N/2})^2 &amp; \text{if N is even} \
+    \mathbf A \cdot \mathbf A^{N-1} &amp; \text{if N is odd}
+\end{cases}
+$$</p>
+<p>즉, 짝수일 경우 지수를 절반으로 나누면 되고, 홀수일 경우 짝수 지수로 만들어주기 위해 곱 하나를 떼어내면 된다. 이 식에 따라 재귀적으로 행렬 거듭제곱을 분리해 지수가 1이 될 때까지 반복하면 된다. </p>
+<p><a href="https://www.acmicpc.net/problem/10830">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>행렬 원소를 저장할 변수 <code>mat</code>를 선언한다. 그런 다음 메인 메서드에서 행렬의 크기 <code>N</code>과 거듭제곱의 수 <code>B</code>를 입력받고, 행렬의 크기에 따라 <code>mat</code> 배열을 메모리에 할당한다.</p>
+<pre><code class="language-java">static int[][] mat;
+public static void main(String[] args) throws IOException {
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    int N;
+    long B;
+
+    N = Integer.parseInt(st.nextToken());
+    B = Long.parseLong(st.nextToken());
+
+    mat = new int[N][N];
+</code></pre>
+<p>이제 행렬의 원소들을 입력받는다. 입력받은 수에 <code>% 1000</code>으로 모듈러 연산을 하는 이유는 <code>B</code>가 1이어서 거듭제곱을 하지 않는 경우에도 문제의 요구에 따라 모듈러 연산을 한 결과를 보여주기 위해서이다.</p>
+<pre><code class="language-java">    for (int i = 0; i &lt; N; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int j = 0; j &lt; N; j++) {
+            mat[i][j] = Integer.parseInt(st.nextToken()) % 1000;
+        }
+    }
+</code></pre>
+<p>그런 다음 위에서 살펴본 원리에 따라 만든 재귀함수 <code>matPow(B)</code>를 호출해 행렬 <code>mat</code>에 대한 <code>B</code> 거듭제곱의 결과를 만들어 <code>res</code>에 저장한다. 그런 다음 그 결과를 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    int[][] res = matPow(B);
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i &lt; N; i++) {
+        for (int j = 0; j &lt; N; j++) {
+            sb.append(res[i][j]).append(&quot; &quot;);
+        }
+        sb.append(&quot;\n&quot;);
+    }
+    System.out.print(sb);
+}
+</code></pre>
+<p>행렬 거듭제곱을 수행하는 함수이다. 앞서서 언급했듯 짝수일 경우와 홀수일 경우에 따라 지수를 처리한 뒤 <code>matPow</code>함수를 재귀적으로 호출해 결과를 반환받은 다음 미리 구현해둔 행렬곱 함수 <code>matMul</code>을 이용해 최종 결과를 계산한다. 기저 조건은 <code>n==1</code>로 특별한 처리 없이 입력받은 <code>mat</code> 행렬을 반환한다.</p>
+<p>여기서 눈여겨봐야 할 점은 <code>return matMul(matPow(n/2), matPow(n/2))</code> 가 아니라 <code>half = matPow(n/2)</code>로 계산한 다음 <code>matMul</code>을 이용해 <code>half</code>를 제곱한다는 점이다. 계산량을 줄이기 위해서는 지수를 분리한 다음 재귀함수를 두 번 호출하는 것이 아니라 한 번만 호출하고 그 값을 이용해 원래 구하고자 하는 값을 계산해야 한다. 두 번 호출할 경우 결국 행렬을 N번 곱하는 것과 같아지니 이 점을 유의해야 한다.</p>
+<pre><code class="language-java">static int[][] matPow(long n) {
+    if (n == 1)
+        return mat;
+    
+    if (n % 2 == 0) {
+        int[][] half = matPow(n / 2);
+        return matMul(half, half);
+    }
+
+    return matMul(mat, matPow(n-1));
+}
+</code></pre>
+<p>행렬곱을 수행하는 함수이다. 두 행렬을 받은 다음 행렬의 $(i,j)$ 원소에 대해 $\sum_{k=0}^{N} A_{ik} \cdot B_{kj}$ 으로 행렬곱의 결과를 계산한다.</p>
+<pre><code class="language-java">static int[][] matMul(final int[][] a, final int[][] b) {
+    int n = a.length;
+    int[][] result = new int[n][n];
+    for (int i = 0; i &lt; n; i++) {
+        for (int j = 0; j &lt; n; j++) {
+            for (int k = 0; k &lt; n; k++)
+                result[i][j] = (result[i][j] + a[i][k] * b[k][j]) % 1000;
+        }
+    }
+
+    return result;
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    static int[][] mat;
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N;
+        long B;
+
+        N = Integer.parseInt(st.nextToken());
+        B = Long.parseLong(st.nextToken());
+
+        mat = new int[N][N];
+
+        for (int i = 0; i &lt; N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j &lt; N; j++) {
+                mat[i][j] = Integer.parseInt(st.nextToken()) % 1000;
+            }
+        }
+
+        int[][] res = matPow(B);
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i &lt; N; i++) {
+            for (int j = 0; j &lt; N; j++) {
+                sb.append(res[i][j]).append(&quot; &quot;);
+            }
+            sb.append(&quot;\n&quot;);
+        }
+        System.out.print(sb);
+    }
+
+    static int[][] matMul(final int[][] a, final int[][] b) {
+        int n = a.length;
+        int[][] result = new int[n][n];
+        for (int i = 0; i &lt; n; i++) {
+            for (int j = 0; j &lt; n; j++) {
+                for (int k = 0; k &lt; n; k++)
+                    result[i][j] = (result[i][j] + a[i][k] * b[k][j]) % 1000;
+            }
+        }
+
+        return result;
+    }
+
+    static int[][] matPow(long n) {
+        if (n == 1)
+            return mat;
+        
+        if (n % 2 == 0) {
+            int[][] half = matPow(n / 2);
+            return matMul(half, half);
+        }
+
+        return matMul(mat, matPow(n-1));
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>앞서 말했듯 분할 정복 방식으로 행렬의 거듭제곱을 구하면, 행렬곱을 해야 하는 횟수는 $O(\log B)$ 에 비례하게 되고, 행렬곱 자체의 시간복잡도는 $O(N^3)$가 된다. 따라서 이 코드의 시간복잡도는 $O(N^3 \log B)$가 된다. </p>
+<p>$N \le 5$, $B \le 100,000,000,000$ 이므로 최악의 경우에도 $5 \log_2 100,000,000,000 \approx 125 \times 33 = 4125 $ 회로 제한시간 내에 충분히 통과할 수 있다.</p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-02-05-%EB%B0%B1%EC%A4%80-10830-%ED%96%89%EB%A0%AC-%EC%A0%9C%EA%B3%B1.md"
+        </script>
+      </body>
+  
