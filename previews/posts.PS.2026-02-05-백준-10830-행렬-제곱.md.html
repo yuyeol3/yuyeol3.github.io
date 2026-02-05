@@ -69,7 +69,7 @@ public static void main(String[] args) throws IOException {
     return matMul(mat, matPow(n-1));
 }
 </code></pre>
-<p>행렬곱을 수행하는 함수이다. 두 행렬을 받은 다음 행렬의 $(i,j)$ 원소에 대해 $\sum_{k=0}^{N} A_{ik} \cdot B_{kj}$ 으로 행렬곱의 결과를 계산한다.</p>
+<p>행렬곱을 수행하는 함수이다. 두 행렬을 받은 다음 행렬의 $(i,j)$ 원소에 대해 $\sum_{k=0}^{N} A_{ik} \cdot B_{kj}$ 으로 행렬곱의 결과를 계산한다. 이 때 문제의 요구사항에 맞춰 모듈러 연산을 같이 수행해 준다.</p>
 <pre><code class="language-java">static int[][] matMul(final int[][] a, final int[][] b) {
     int n = a.length;
     int[][] result = new int[n][n];
