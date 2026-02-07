@@ -1,0 +1,148 @@
+
+      <html lang="ko">
+      <head>
+        <title>17404 - RGB 거리 2</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제는 N개의 집이 있을 때 다음과 같은 규칙을 따르면서 집을 색칠하는 최소 비용을 구해야 하는 문제이다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>17404 - RGB 거리 2</h1>
+<p>이 문제는 N개의 집이 있을 때 다음과 같은 규칙을 따르면서 집을 색칠하는 최소 비용을 구해야 하는 문제이다.</p>
+<p>그 조건은 다음과 같다.</p>
+<ol>
+<li>1번 집의 색은 2번, N번 집의 색과 같지 않아야 한다.</li>
+<li>N번 집의 색은 N-1번, 1번 집의 색과 같지 않아야 한다.</li>
+<li>i(2 $\le$ i $\le$ N-1) 번 집의 색은 i-1, i+1번 집의 색과 같지 않아야 한다.</li>
+</ol>
+<p>위 조건을 지키면서 집들을 색칠하려면 어떻게 해야 할까? 선형으로 보면 2부터 N-1번째 집은 이전 집과만 다르게 칠하면 인접 조건을 만족시킬 수 있지만 N번째 집은 N-1번과 다를 뿐 아니라 1번 집과도 달라야 하므로 추가 처리가 필요하다. 그렇다면 이 조건을 어떻게 충족시켜야 할까?</p>
+<p>가장 간단하게 생각해볼 수 있는 방법은 다이나믹 프로그래밍을 이용해 색칠 비용을 추적하면서, 첫 번째 집에 색칠한 색깔을 함께 점화식 조건으로 넣는 것이다. 예를 들자면 아래와 같은 형태로 만드는 것이다.</p>
+<p>$$
+dp[i][first][cur]
+$$</p>
+<p>여기서 $i$는 집의 번호, $first$는 첫 번째 집의 색깔, $cur$은 $i$번째 집을 색칠할 색깔의 번호이다. <code>RED = 0</code>, <code>GREEN = 1</code>, <code>BLUE = 2</code>라고 생각해 보자.  그렇다면 초항은 자명하게 다음과 같다.</p>
+<p>$$
+\begin{aligned}</p>
+<p>dp[1][0][0] \leftarrow &amp;&amp; costs[1][0] \
+dp[1][1][1] \leftarrow &amp;&amp; costs[1][1] \
+dp[1][2][2] \leftarrow &amp;&amp; costs[1][2] \
+\text{others} \leftarrow &amp;&amp; \infty</p>
+<p>\end{aligned}
+$$</p>
+<p>여기서 $costs$는 각 집별 어떤 색깔로 색칠하는 데 드는 비용이다.</p>
+<p>또한 $dp[1][0][0], dp[1][1][1], dp[1][2][2]$를 제외한 다른 값들을 모두 무한대로 먼저 초기화해두는 이유는, $dp[1][1][0]$이나 $dp[1][0][2]$ 같은 불가능한 케이스에 대해, 점화식을 통해 값을 채워나갈 때 선택되지 않도록 하기 위해서이다. 그렇다면 여기서 무한대를 대입해두는 것이 선택되지 않는 것과 어떤 관계가 있는지 궁금할 수 있을 것인데, 이는 아래 점화식을 보면 이해할 수 있을 것이다.</p>
+<p>이 문제를 풀기 위해 사용되는 점화식은 아래와 같다.</p>
+<p>$$
+dp[i][j][k] = \min(dp[i-1][j][(k+1) \mod 3], dp[i-1][j][(k+2) \mod 3]) + costs[i][k];
+$$</p>
+<p>$j$는 &#39;1번 집 색&#39;이므로 $i$가 커져도 그대로 유지되고, 전이에서도 $dp[i-1][j][*]$에서만 올 수 있다. 또한 앞서 말했듯 $i$번째에서 $k$번째 색으로 칠할 것이라면 이전 집은 $k$번째 색으로 칠해져 있으면 안 되므로, $(k+1) \mod 3$, $(k+2) \mod 3$을 통해 겹치지 않는 다른 색을 고르고 $\min$함수를 이용해 그 중 최소 누적 비용을 가진 색을 선택한다. 그런 다음 $i$번째 집에서 색칠할 색에 대한 비용을 더해주면 $dp[i][j][k]$ 값을 구하게 된다.</p>
+<p>앞서 언급했듯이 무한대를 대입해두는 것이 선택되지 않는 것을 보장하는 이유는 $\min$ 함수를 사용하므로 항상 작은 값을 먼저 선택하기 때문이다. 즉 $\min(\infty, x) \ (x \lt \infty)$과 같은 상황이었다면 $\infty$는 절대로 선택되지 않을 것이다. 한편 $\min(\infty, \infty)$ 와 같이 되더라도 해당 상황이 불가능한 상황임을 자연스럽게 표시하게 되는 것이므로 문제가 없다.</p>
+<p>위 점화식을 통해 $dp$ 배열을 모두 채우면, $\min({dp[N][i][j] \mid  i \ne j})$ 를 통해 정답을 구할 수 있다.</p>
+<p><a href="https://www.acmicpc.net/problem/17404">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>무한대를 표현하는 <code>INF</code> 변수를 선언해 둔다. <code>1000005</code>로 설정해 둔 이유는 $N \le 1000$이고, 각 비용 또한 최대 1000 이기 때문에 모든 집을 색칠하는 비용의 총합이 <code>1000000</code> 이하일 것이기 때문이다.</p>
+<pre><code class="language-java">static final int INF = 1000005;
+
+public static void main(String[] args) throws IOException {
+</code></pre>
+<p><code>N</code>을 입력받은 후 비용을 저장할 배열 <code>costs</code>와 점화식 값들을 저장해둘 배열 <code>dp</code>를 선언해 둔다.</p>
+<pre><code class="language-java">    int N = Integer.parseInt(br.readLine());
+    int[][] costs = new int[N+1][3];
+    int[][][] dp = new int[N+1][3][3];
+</code></pre>
+<p>비용들을 입력받아 <code>costs</code> 배열에 채워준다. 동시에 <code>dp</code> 배열을 모두 <code>INF</code>값으로 초기화해 준다.</p>
+<pre><code class="language-java">    StringTokenizer st;
+    for (int i = 1; i &lt;= N; i++) {
+        st = new StringTokenizer(br.readLine());
+        for (int j = 0; j &lt; 3; j++) {
+            Arrays.fill(dp[i][j], INF);
+            costs[i][j] = Integer.parseInt(st.nextToken());
+        }
+    }
+</code></pre>
+<p>앞서 설명한대로 초항 값을 대입해준다.</p>
+<pre><code class="language-java">    dp[1][0][0] = costs[1][0];
+    dp[1][1][1] = costs[1][1];
+    dp[1][2][2] = costs[1][2];
+</code></pre>
+<p><code>i</code>는 2부터 <code>N</code>까지, 모든 <code>(j,k)</code> 조합에 대해 점화식을 통해 <code>dp</code> 배열을 채워준다. </p>
+<pre><code class="language-java">    for (int i = 2; i &lt;= N; i++) {
+        for (int j = 0; j &lt; 3; j++) {
+            for (int k = 0; k &lt; 3; k++) {
+                dp[i][j][k] = Math.min(dp[i-1][j][(k+1)%3], dp[i-1][j][(k+2)%3]) + costs[i][k];
+            }
+        }
+    }
+</code></pre>
+<p><code>dp</code> 배열을 다 채웠다면 <code>i != j</code>인 모든 <code>(i,j)</code> 조합에 대해 <code>dp[N][i][j]</code>를 확인하며 최소값을 찾은 뒤 출력한 다음 프로그램을 종료한다. 참고로 <code>i != j</code>만 고려하는 이유는 1번 집 색과 N번 집 색이 달라야 한다는 원형 조건을 반영하기 위함이다.</p>
+<pre><code class="language-java">    int minimum = INF;
+    for (int i = 0; i &lt; 3; i++) {
+        for (int j = 0; j &lt; 3; j++) {
+            if (i==j) continue;
+            minimum = Math.min(minimum, dp[N][i][j]);
+        }
+    }
+
+    System.out.println(minimum);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static final int INF = 1000005;
+
+    public static void main(String[] args) throws IOException {
+
+        int N = Integer.parseInt(br.readLine());
+        int[][] costs = new int[N+1][3];
+        int[][][] dp = new int[N+1][3][3];
+
+        StringTokenizer st;
+        for (int i = 1; i &lt;= N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j &lt; 3; j++) {
+                Arrays.fill(dp[i][j], INF);
+                costs[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+
+        dp[1][0][0] = costs[1][0];
+        dp[1][1][1] = costs[1][1];
+        dp[1][2][2] = costs[1][2];
+
+        for (int i = 2; i &lt;= N; i++) {
+            for (int j = 0; j &lt; 3; j++) {
+                for (int k = 0; k &lt; 3; k++) {
+                    dp[i][j][k] = Math.min(dp[i-1][j][(k+1)%3], dp[i-1][j][(k+2)%3]) + costs[i][k];
+                }
+            }
+        }
+
+
+        int minimum = INF;
+        for (int i = 0; i &lt; 3; i++) {
+            for (int j = 0; j &lt; 3; j++) {
+                if (i==j) continue;
+                minimum = Math.min(minimum, dp[N][i][j]);
+            }
+        }
+
+        System.out.println(minimum);
+    }
+
+    
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>점화식을 계산하는 데 $O(9N)$, 최종 비용의 최소값을 찾는 데 $O(9)$의 시간복잡도를 가지므로, 최종 시간복잡도는 $O(9N + 9) \approx O(N)$이다. </p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-02-07-%EB%B0%B1%EC%A4%80-17404-RGB-%EA%B1%B0%EB%A6%AC-2.md"
+        </script>
+      </body>
+  

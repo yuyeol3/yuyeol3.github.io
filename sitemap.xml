@@ -3,19 +3,19 @@
         
     <url>
       <loc>https://yuyeol3.github.io/</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
     </url>
   
         
     <url>
       <loc>https://yuyeol3.github.io/board-view</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
     </url>
   
         
     <url>
       <loc>https://yuyeol3.github.io/search-view</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
     </url>
   
         
@@ -76,7 +76,12 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=CS／알고리즘&amp;page=1</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
+    </url>
+  
+    <url>
+      <loc>https://yuyeol3.github.io/post-view?href=posts/PS/2026-02-07-백준-17404-RGB-거리-2.md</loc>
+      <lastmod>2026-02-07</lastmod>
     </url>
   
     <url>
@@ -236,7 +241,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=PS&amp;page=1</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
     </url>
   
     <url>
@@ -271,7 +276,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=수학&amp;page=1</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
     </url>
   
     <url>
@@ -281,7 +286,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=일반&amp;page=1</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
     </url>
   
     <url>
@@ -316,7 +321,7 @@
   
     <url>
       <loc>https://yuyeol3.github.io/board-view?name=프로젝트&amp;page=1</loc>
-      <lastmod>2026-02-5</lastmod>
+      <lastmod>2026-02-7</lastmod>
     </url>
   
       </urlset>
