@@ -1,0 +1,126 @@
+
+      <html lang="ko">
+      <head>
+        <title>27172 - 수 나누기 게임</title>
+        <link rel="canonical" href="http://yuyeol3.github.io/"/>
+        <meta charset="utf-8"/>
+        <meta name="description" content="이 문제에서는 플레이어들이 가진 카드의 수가 모두 주어질 때, 게임이 끝난 후 각 플레이어의 점수가 몇 점인지 모두 구해야 하는 문제이다. 이 문제에서 정의하는 게임의 규칙은 다음과 같다.">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
+      <body style="display : none;">
+        
+        <h1>27172 - 수 나누기 게임</h1>
+<p>이 문제에서는 플레이어들이 가진 카드의 수가 모두 주어질 때, 게임이 끝난 후 각 플레이어의 점수가 몇 점인지 모두 구해야 하는 문제이다. 이 문제에서 정의하는 게임의 규칙은 다음과 같다.</p>
+<ol>
+<li>게임을 시작하기 전 플레이어에게 자연수가 적힌 카드 한 장을 나눠준다.</li>
+<li>매 턴마다 플레이어는 다른 플레이어와 결투를 한다.<ul>
+<li><code>b % a == 0</code>이면, a를 가지고 있는 플레이어는 1점을 얻고, b를 가진 플레이어는 1점을 잃는다.</li>
+<li><code>a % b == 0</code>이면 반대이다.</li>
+<li>둘 다 아니라면 무승부이다.</li>
+</ul>
+</li>
+<li>본인을 제외한 모든 플레이어와 한 번씩 결투를 하고 나면 게임이 종료된다.</li>
+</ol>
+<p>즉 이 문제에서 요구하는 것은 주어진 모든 카드의 수에 대해서, 한 카드의 수가 다른 카드의 수의 약수인지를 판별해 그 여부에 따라 점수를 더하거나 빼 최종 점수를 구하는 문제이다.</p>
+<p>만약 이 문제를 단순히 모든 조합에 대해 약수인지 확인하여 최종 점수를 구하려고 하였으면 시간복잡도는 $O(N^2)$이므로 최악의 경우 연산 횟수가 10억이 되어 시간초과되었을 것이다. 따라서 이것보다는 최적화가 더 필요하다.</p>
+<p>가장 간단히 떠올릴 수 있는 방법은 어떤 수 $M$에 대해 $\sqrt M$ 까지 검사하면 $M$의 모든 약수를 알 수 있다는 점을 응용하는 방법이다. 주어진 모든 패의 수에 대해, 수 하나씩 모든 약수를 구하면서, 그 약수가 플레이어의 패 중에 실제로 존재하는지 확인한다. 실제로 존재한다면 약수를 가진 플레이어의 점수를 1점 증가시키고, 반대로 그 약수를 가진 숫자를 보유하고 있는 플레이어의 점수는 1점 감소시킨다. 이런 식으로 문제를 풀면 $O(N \sqrt M)$ 이 걸린다. (단 $N$은 패의 수, $M$은 패에 적힌 수 중 최대값)</p>
+<p>그러나 더 효율적인 방법이 있는데, 바로 에라토스테네스의 체를 응용하는 방법이다. 이 방법의 경우는 위와는 반대로, 주어진 모든 패의 수에 대해, 수 하나씩 모든 배수를 구하면서, 그 배수가 플레이어의 패 중에 실제로 존재한다면 배수를 가진 플레이어의 점수는 감점하고, 그 배수를 가진 숫자를 보유하고 있는 플레이어의 점수는 증가시킨다. 아래에서 이 방법에 대해 살펴보자.</p>
+<p><a href="https://boj.kr/27172">🔗 문제 링크</a></p>
+<h2>코드</h2>
+<p>필요한 전역변수를 선언한다. <code>MX</code>는 (입력될 수 있는 패의 숫자의 최대값 + 1) 을 저장해둔 변수이다. 그런 다음, 어떤 숫자를 가진 플레이어의 점수를 관리할 <code>scores</code> 배열과, 그 숫자가 실제로 패에 존재하는지 편하게 확인할 수 있도록 <code>exists</code> 배열을 선언해 준다. </p>
+<pre><code class="language-java">static final int MX = 1000001;
+static int[] scores = new int[MX];
+static boolean[] exists = new boolean[MX];
+</code></pre>
+<p>다음으로 플레이어의 수(= 패의 개수)인 <code>n</code>을 입력받는다. 패의 숫자 목록을 저장해두기 위해 배열 <code>nums</code>를 선언한다. 또한 존재하는 패의 숫자 중 최대값을 관리하기 위해 <code>maximum</code>을 선언해 둔다. 수를 입력받으며 동시에 <code>maximum</code>과 <code>exists</code>를 업데이트해 준다.</p>
+<pre><code class="language-java">public static void main(String[] args) throws IOException {
+
+    int n = Integer.parseInt(br.readLine());
+    int[] nums = new int[n];
+    int maximum = 0;
+    StringTokenizer st = new StringTokenizer(br.readLine());
+    for (int i = 0; i &lt; n; i++) {
+        nums[i] = Integer.parseInt(st.nextToken());
+        maximum = Math.max(maximum, nums[i]);
+        exists[nums[i]] = true;
+    }
+</code></pre>
+<p>이제 본격적으로 각 패의 숫자별 배수를 확인해준다. 앞서 언급했던 것처럼, <code>nums[i]</code>에 대해 최대값 이하의 모든 배수를 구한다. 배수가 패에 실제로 존재하지 않으면 단계를 건너뛴다. 만약 그 배수가 실제로 패에 존재하면, 배수를 가진 플레이어의 점수는 1 감소시키고, 그 수를 나누는 <code>nums[i]</code>를 가진 플레이어의 점수는 1 증가시킨다. </p>
+<pre><code class="language-java">    for (int i = 0; i &lt; n; i++) {
+        for (int target = 2 * nums[i]; target &lt;= maximum; target += nums[i] ) {
+            if (!exists[target]) continue;
+            scores[target]--;
+            scores[nums[i]]++;
+        }
+    }
+</code></pre>
+<p>반복문을 빠져나오면, 모든 플레이어의 최종 점수가 구해진 것이다. 마지막으로 각 플레이어별 점수를 출력하고 프로그램을 종료한다.</p>
+<pre><code class="language-java">    StringBuilder sb = new StringBuilder();
+    for (int num : nums) {
+        sb.append(scores[num]).append(&#39; &#39;);
+    }
+    System.out.println(sb);
+}
+</code></pre>
+<h2>전체 코드</h2>
+<pre><code class="language-java">import java.util.*;
+import java.io.*;
+
+class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static final int MX = 1000001;
+    static int[] scores = new int[MX];
+    static boolean[] exists = new boolean[MX];
+
+    public static void main(String[] args) throws IOException {
+
+        int n = Integer.parseInt(br.readLine());
+        int[] nums = new int[n];
+        int maximum = 0;
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i &lt; n; i++) {
+            nums[i] = Integer.parseInt(st.nextToken());
+            maximum = Math.max(maximum, nums[i]);
+            exists[nums[i]] = true;
+        }
+
+        for (int i = 0; i &lt; n; i++) {
+            for (int target = 2 * nums[i]; target &lt;= maximum; target += nums[i] ) {
+                if (!exists[target]) continue;
+                scores[target]--;
+                scores[nums[i]]++;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int num : nums) {
+            sb.append(scores[num]).append(&#39; &#39;);
+        }
+        System.out.println(sb);
+    }
+}
+</code></pre>
+<h2>시간복잡도</h2>
+<p>위 코드의 시간복잡도는 얼마일까? 만약 최악의 경우를 상정하여, 입력으로 $[1,M]$ 까지 연속적으로 패가 주어졌다고 가정해 보면, 반복 횟수는 </p>
+<p>$$
+M + \frac M 2 + \frac M 3 + \cdots + \frac MM
+$$</p>
+<p>위 수식을 다시 써보면</p>
+<p>$$
+M \sum_{k=1}^M \frac{1}{k} = M \left(1 + \frac 1 2 + \frac 1 3 + \cdots  + \frac 1 M \right)
+$$</p>
+<p>이 된다. 또한 수학적으로 </p>
+<p>$$ 
+\sum_{k=1}^M \frac{1}{k} \approx \int_1^M \frac 1 x dx = \ln M
+$$</p>
+<p>임이 알려져 있으므로 위 수식을 다시 쓰면 </p>
+<p>$$</p>
+<p>M \sum_{k=1}^M \frac 1 k = M \ln M</p>
+<p>$$</p>
+<p>이 된다. 따라서 위 코드의 시간복잡도는 $O(M \log M)$이 된다. </p>
+
+        <script>
+          location.href = "/post-view?href=posts%2FPS%2F2026-02-10-%EB%B0%B1%EC%A4%80-27172-%EC%88%98-%EB%82%98%EB%88%84%EA%B8%B0-%EA%B2%8C%EC%9E%84.md"
+        </script>
+      </body>
+  
