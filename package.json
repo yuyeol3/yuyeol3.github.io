@@ -1,23 +1,35 @@
 {
   "name": "yuyeol3.github.io",
-  "version": "1.0.0",
-  "description": "",
-  "main": "build.js",
+  "version": "2.0.0",
+  "private": true,
   "scripts": {
-    "build": "cd frontend && npm run build && cd .. && cp -r ./dist/* .",
-    "test": "cd frontend && npm run build && cd .. && node build.js && nodemon test.js",
-    "post": "git pull & git add . && git commit -m \"posts 업데이트\" && git push"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.13.1",
-    "express": "^4.21.2",
-    "ts-node": "^10.9.2"
+    "dev": "next dev",
+    "build": "next build",
+    "postbuild": "node scripts/check-export.mjs",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
-    "marked": "^15.0.7"
+    "github-slugger": "^2.0.0",
+    "katex": "^0.16.22",
+    "next": "^16.3.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-markdown": "^10.1.0",
+    "react-syntax-highlighter": "^15.6.1",
+    "rehype-katex": "^7.0.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "eslint": "^9.39.0",
+    "eslint-config-next": "^16.3.0",
+    "typescript": "^5.9.0"
   }
 }
