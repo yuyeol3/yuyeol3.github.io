@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+import ThemeToggle from "@/components/ThemeToggle";
 import type { CategoryGroup } from "@/lib/posts";
 
 interface BlogShellProps {
@@ -58,6 +59,7 @@ export default function BlogShell({ categoryGroups, children }: BlogShellProps) 
           <Link className="blog-title" href="/">yuyeol3.github.io</Link>
         </div>
         <div className="header-right">
+          <ThemeToggle />
           <Link aria-label="게시글 검색" className="search-button" href="/search/">
             <Image alt="" aria-hidden="true" height={24} src="/search-icon.svg" width={24} />
           </Link>

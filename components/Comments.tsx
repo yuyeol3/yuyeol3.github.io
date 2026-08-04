@@ -8,6 +8,10 @@ interface CommentsProps {
 
 type CommentStatus = "idle" | "loading" | "ready" | "failed";
 
+function getUtterancesTheme() {
+  return document.documentElement.dataset.theme === "dark" ? "github-dark" : "github-light";
+}
+
 export default function Comments({ term }: CommentsProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
@@ -45,13 +49,32 @@ export default function Comments({ term }: CommentsProps) {
     script.src = "https://utteranc.es/client.js";
     script.setAttribute("issue-term", term);
     script.setAttribute("repo", "yuyeol3/yuyeol3.github.io");
-    script.setAttribute("theme", "github-light");
+    script.setAttribute("theme", getUtterancesTheme());
     script.onload = () => setStatus("ready");
     script.onerror = () => setStatus("failed");
     container.appendChild(script);
 
     return () => script.remove();
   }, [status, term]);
+
+  useEffect(() => {
+    const updateTheme = () => {
+      const iframe = commentsRef.current?.querySelector("iframe");
+
+      iframe?.contentWindow?.postMessage(
+        { theme: getUtterancesTheme(), type: "set-theme" },
+        "https://utteranc.es",
+      );
+    };
+    const observer = new MutationObserver(updateTheme);
+
+    observer.observe(document.documentElement, {
+      attributeFilter: ["data-theme"],
+      attributes: true,
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="comments-wrapper" ref={wrapperRef}>
