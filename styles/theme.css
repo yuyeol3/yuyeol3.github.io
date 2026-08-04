@@ -1,0 +1,191 @@
+:root {
+  color-scheme: light;
+  --code-block-background: #f6f8fa;
+  --code-text: #1f2328;
+  --syntax-comment: slategray;
+  --syntax-function: #dd4a68;
+  --syntax-keyword: #07a;
+  --syntax-number: #905;
+  --syntax-operator: #9a6e3a;
+  --syntax-punctuation: #999;
+  --syntax-string: #690;
+  --syntax-variable: #e90;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --code-block-background: #161b22;
+  --code-text: #e6edf3;
+  --syntax-comment: #8b949e;
+  --syntax-function: #d2a8ff;
+  --syntax-keyword: #ff7b72;
+  --syntax-number: #79c0ff;
+  --syntax-operator: #d2a8ff;
+  --syntax-punctuation: #c9d1d9;
+  --syntax-string: #a5d6ff;
+  --syntax-variable: #ffa657;
+}
+
+.theme-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #333;
+  background: transparent;
+  cursor: pointer;
+}
+
+.theme-button:hover {
+  background-color: #f3f4f6;
+  color: #0077cc;
+}
+
+.theme-button:focus-visible {
+  outline: 2px solid #0077cc;
+  outline-offset: 2px;
+}
+
+.theme-icon--sun {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-icon--moon {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-icon--sun {
+  display: block;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] .App {
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+
+html[data-theme="dark"] .header,
+html[data-theme="dark"] .side-bar,
+html[data-theme="dark"] .footer {
+  background-color: #161b22;
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .contents,
+html[data-theme="dark"] .board,
+html[data-theme="dark"] .markdown-body {
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+
+html[data-theme="dark"] .header a,
+html[data-theme="dark"] .theme-button,
+html[data-theme="dark"] .side-bar h3,
+html[data-theme="dark"] .sidebar-item,
+html[data-theme="dark"] .button-area span[aria-current="page"] {
+  color: #e6edf3;
+}
+
+html[data-theme="dark"] .header img {
+  filter: invert(1);
+}
+
+html[data-theme="dark"] .header a:hover,
+html[data-theme="dark"] .theme-button:hover,
+html[data-theme="dark"] .table-of-contents a,
+html[data-theme="dark"] .markdown-body a {
+  color: #58a6ff;
+}
+
+html[data-theme="dark"] .header .search-button:hover,
+html[data-theme="dark"] .theme-button:hover,
+html[data-theme="dark"] .sidebar-item:hover {
+  background-color: #21262d;
+}
+
+html[data-theme="dark"] .post-preview,
+html[data-theme="dark"] .table-of-contents {
+  background-color: #161b22;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+html[data-theme="dark"] .post-preview:hover {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+html[data-theme="dark"] .board h1,
+html[data-theme="dark"] .hr,
+html[data-theme="dark"] .markdown-body h1,
+html[data-theme="dark"] .markdown-body h2,
+html[data-theme="dark"] .markdown-body .footnotes {
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .search-bar-input {
+  color: #e6edf3;
+  background-color: #0d1117;
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .search-bar-input::placeholder,
+html[data-theme="dark"] .not-found,
+html[data-theme="dark"] .loading,
+html[data-theme="dark"] .markdown-body h6,
+html[data-theme="dark"] .markdown-body blockquote,
+html[data-theme="dark"] .markdown-body .footnotes {
+  color: #8b949e;
+}
+
+html[data-theme="dark"] .markdown-body blockquote {
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .markdown-body hr {
+  background-color: #30363d;
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .markdown-body mark {
+  color: #e6edf3;
+  background-color: #5a4600;
+}
+
+html[data-theme="dark"] .markdown-body code,
+html[data-theme="dark"] .markdown-body tt,
+html[data-theme="dark"] .markdown-body kbd,
+html[data-theme="dark"] .markdown-body pre {
+  color: #e6edf3;
+  background-color: #161b22;
+  border-color: #30363d;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .markdown-body table td,
+html[data-theme="dark"] .markdown-body table th {
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .markdown-body table tr {
+  background-color: #0d1117;
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .markdown-body table tr:nth-child(2n) {
+  background-color: #161b22;
+}
+
+html[data-theme="dark"] .float-menu button {
+  color: #e6edf3;
+  background-color: rgb(48 54 61 / 85%);
+}
+
+html[data-theme="dark"] .float-menu button:hover {
+  background-color: #484f58;
+}

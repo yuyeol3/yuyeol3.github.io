@@ -10,6 +10,16 @@ import "@/styles/app.css";
 import "@/styles/board.css";
 import "@/styles/markdown.css";
 import "@/styles/post.css";
+import "@/styles/theme.css";
+
+const themeInitScript = `
+  (() => {
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.dataset.theme =
+      savedTheme === "dark" || (!savedTheme && prefersDark) ? "dark" : "light";
+  })();
+`;
 
 export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
@@ -22,7 +32,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body>
         <BlogShell categoryGroups={getCategoryGroups()}>{children}</BlogShell>
       </body>

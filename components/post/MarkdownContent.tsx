@@ -1,4 +1,4 @@
-import React, { isValidElement, type ReactNode } from "react";
+import React, { isValidElement, type CSSProperties, type ReactNode } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { prism as codeStyle } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -13,6 +13,46 @@ import { getLocalImageDimensions } from "@/lib/image-dimensions";
 interface MarkdownContentProps {
   markdown: string;
 }
+
+const syntaxColorVariables: Record<string, string> = {
+  "#07a": "var(--syntax-keyword)",
+  "#690": "var(--syntax-string)",
+  "#905": "var(--syntax-number)",
+  "#999": "var(--syntax-punctuation)",
+  "#9a6e3a": "var(--syntax-operator)",
+  "#DD4A68": "var(--syntax-function)",
+  "#e90": "var(--syntax-variable)",
+  black: "var(--code-text)",
+  slategray: "var(--syntax-comment)",
+};
+
+const customCodeStyle = Object.fromEntries(
+  Object.entries(codeStyle).map(([token, style]) => {
+    const color = typeof style.color === "string" ? syntaxColorVariables[style.color] : undefined;
+    const transparentBackground = style.background === "hsla(0, 0%, 100%, .5)";
+
+    return [
+      token,
+      {
+        ...style,
+        ...(color ? { color } : {}),
+        ...(transparentBackground ? { background: "transparent" } : {}),
+      },
+    ];
+  }),
+) as Record<string, CSSProperties>;
+
+customCodeStyle['pre[class*="language-"]'] = {
+  ...customCodeStyle['pre[class*="language-"]'],
+  background: "var(--code-block-background)",
+  color: "var(--code-text)",
+  textShadow: "none",
+};
+customCodeStyle['code[class*="language-"]'] = {
+  ...customCodeStyle['code[class*="language-"]'],
+  color: "var(--code-text)",
+  textShadow: "none",
+};
 
 function nodeToText(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") {
@@ -39,13 +79,6 @@ function heading(level: 1 | 2 | 3 | 4 | 5 | 6, slugger: GithubSlugger) {
 
 export default function MarkdownContent({ markdown }: MarkdownContentProps) {
   const slugger = new GithubSlugger();
-  const customCodeStyle = {
-    ...codeStyle,
-    'pre[class*="language-"]': {
-      ...codeStyle['pre[class*="language-"]'],
-      background: "#f6f8fa",
-    },
-  };
   const components: Components = {
     code({ children, className }) {
       const language = /language-(\w+)/.exec(className ?? "")?.[1];
