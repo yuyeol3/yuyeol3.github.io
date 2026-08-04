@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-The Next.js App Router application lives at the repository root. Routes are under `app/`, reusable UI is in `components/`, build-time blog content utilities are in `lib/`, and styles are in `styles/`. Blog content belongs in `posts/<category>/` as Markdown, with related media under `public/images/`. Files in `out/` are generated static-export artifacts and must not be hand-edited or committed.
+The Next.js App Router application lives at the repository root. Routes are under `app/`, reusable UI is in `components/`, build-time blog content utilities are in `lib/`, and styles are in `styles/`. Grouped blog content belongs in `posts/<group>/<category>/` as Markdown; ungrouped categories may remain in `posts/<category>/`, with related media under `public/images/`. Files in `out/` are generated static-export artifacts and must not be hand-edited or committed.
 
 ## Build, Test, and Development Commands
 

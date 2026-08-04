@@ -8,14 +8,6 @@ import { POSTS_PER_PAGE } from "@/lib/site";
 
 const postsDirectory = path.join(process.cwd(), "posts");
 
-const configuredGroups: ReadonlyArray<{
-  name: string;
-  categories: readonly string[];
-}> = [
-  { name: "개발", categories: ["CS／알고리즘", "프로젝트", "PS"] },
-  { name: "공부", categories: ["수학"] },
-];
-
 export interface Heading {
   id: string;
   level: number;
@@ -35,6 +27,7 @@ export interface PostSummary {
 }
 
 export interface PostContent extends PostSummary {
+  group?: string;
   headings: Heading[];
   markdown: string;
 }
@@ -136,10 +129,13 @@ function parsePost(filePath: string): PostContent {
   const relativePath = path.relative(postsDirectory, filePath).replace(/\\/g, "/");
   const pathParts = relativePath.split("/");
   const fileName = pathParts.at(-1);
-  const category = pathParts[0];
+  const category = pathParts.at(-2);
+  const group = pathParts.length === 3 ? pathParts[0] : undefined;
 
-  if (!fileName || pathParts.length !== 2) {
-    throw new Error(`게시글은 posts/<category>/<file>.md 형식이어야 합니다: ${relativePath}`);
+  if (!fileName || !category || (pathParts.length !== 2 && pathParts.length !== 3)) {
+    throw new Error(
+      `게시글은 posts/<category>/<file>.md 또는 posts/<group>/<category>/<file>.md 형식이어야 합니다: ${relativePath}`,
+    );
   }
 
   const lines = parsed.content.replace(/\r\n/g, "\n").split("\n");
@@ -159,7 +155,7 @@ function parsePost(filePath: string): PostContent {
           .trimStart()
       : parsed.content.trimStart();
   const slug = path.basename(fileName, ".md");
-  const sourcePath = `posts/${relativePath}`;
+  const sourcePath = `posts/${category}/${fileName}`;
 
   return {
     category,
@@ -169,6 +165,7 @@ function parsePost(filePath: string): PostContent {
         ? parsed.data.description
         : getDescription(markdown),
     fileName,
+    group,
     headings: getHeadings(markdown),
     legacyHref: `/post-view?href=${encodeURIComponent(sourcePath)}`,
     markdown,
@@ -231,15 +228,28 @@ export function getCategoryPageCount(category: string): number {
 }
 
 export function getCategoryGroups(): CategoryGroup[] {
-  const categories = getCategories();
-  const groupedCategories = new Set(configuredGroups.flatMap((group) => group.categories));
-  const groups = configuredGroups
-    .map((group) => ({
-      name: group.name,
-      categories: group.categories.filter((category) => categories.includes(category)),
-    }))
-    .filter((group) => group.categories.length > 0);
-  const ungrouped = categories.filter((category) => !groupedCategories.has(category));
+  const groupedCategories = new Map<string, Set<string>>();
+  const ungroupedCategories = new Set<string>();
+
+  for (const post of getAllPosts()) {
+    if (!post.group) {
+      ungroupedCategories.add(post.category);
+      continue;
+    }
+
+    const categories = groupedCategories.get(post.group) ?? new Set<string>();
+    categories.add(post.category);
+    groupedCategories.set(post.group, categories);
+  }
+
+  const compareNames = (left: string, right: string) => left.localeCompare(right, "ko");
+  const groups = [...groupedCategories]
+    .sort(([left], [right]) => compareNames(left, right))
+    .map(([name, categories]) => ({
+      name,
+      categories: [...categories].sort(compareNames),
+    }));
+  const ungrouped = [...ungroupedCategories].sort(compareNames);
 
   return ungrouped.length > 0 ? [...groups, { name: "noGroup", categories: ungrouped }] : groups;
 }
