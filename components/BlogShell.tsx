@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
 import type { CategoryGroup } from "@/lib/posts";
@@ -13,6 +14,12 @@ interface BlogShellProps {
 
 export default function BlogShell({ categoryGroups, children }: BlogShellProps) {
   const [menuOpen, setMenuOpen] = useState<boolean | null>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 900px)");
