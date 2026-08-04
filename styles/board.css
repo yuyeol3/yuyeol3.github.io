@@ -94,6 +94,9 @@
     font-size: 14px;
     transition: border-color 0.2s ease;
     flex: 1;
+    min-width: 0;
+    height: 44px;
+    box-sizing: border-box;
 }
 
 .search-bar-input:focus {
@@ -110,6 +113,9 @@
     cursor: pointer;
     border-radius: 0 4px 4px 0;    /* 오른쪽 모서리 둥글게 */
     transition: background-color 0.3s ease, transform 0.2s ease;
+    height: 44px;
+    box-sizing: border-box;
+    flex-shrink: 0;
 
 }
 
@@ -141,6 +147,12 @@
 @media (max-width: 900px) {
     .search-bar form{
         width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-bar form {
+        width: 100%;
     }
 }
 

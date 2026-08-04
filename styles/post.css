@@ -75,6 +75,10 @@
     min-height: 50vh;
 }
 
+.markdown-body img {
+    height: auto;
+}
+
 .post-footer {
     min-height: 400px;
     margin-bottom: 100px;

@@ -22,6 +22,17 @@ function requireFile(filePath) {
   }
 }
 
+function getLocalImageTags(exportedPost) {
+  return exportedPost.match(/<img\b(?=[^>]*\bsrc="\/images\/)[^>]*>/gi) ?? [];
+}
+
+function requirePrerenderedImageSize(imageTag, relativePath) {
+  if (!/\bwidth="\d+"/.test(imageTag) || !/\bheight="\d+"/.test(imageTag)) {
+    const imageSource = imageTag.match(/\bsrc="([^"]+)"/i)?.[1] ?? "unknown image";
+    throw new Error(`Local image is missing prerendered dimensions: ${relativePath} (${imageSource})`);
+  }
+}
+
 for (const relativePath of ["index.html", "404.html", "sitemap.xml", "robots.txt", ".nojekyll"]) {
   requireFile(path.join(outDirectory, relativePath));
 }
@@ -39,6 +50,10 @@ for (const filePath of markdownFiles) {
   const exportedPost = fs.readFileSync(exportedPostPath, "utf8");
   if (!exportedPost.includes('class="post-header"')) {
     throw new Error(`Exported post is missing its rendered content: ${relativePath}`);
+  }
+
+  for (const imageTag of getLocalImageTags(exportedPost)) {
+    requirePrerenderedImageSize(imageTag, relativePath);
   }
   categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
 }
