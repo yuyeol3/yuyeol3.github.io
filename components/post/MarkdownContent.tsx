@@ -8,6 +8,8 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
+import { getLocalImageDimensions } from "@/lib/image-dimensions";
+
 interface MarkdownContentProps {
   markdown: string;
 }
@@ -55,6 +57,14 @@ export default function MarkdownContent({ markdown }: MarkdownContentProps) {
       ) : (
         <code className={className}>{children}</code>
       );
+    },
+    img({ alt, node, src, ...props }) {
+      void node;
+      const dimensions = getLocalImageDimensions(typeof src === "string" ? src : undefined);
+
+      // Markdown supports arbitrary remote URLs, which cannot always use next/image safely.
+      // eslint-disable-next-line @next/next/no-img-element
+      return <img alt={alt ?? ""} {...props} {...dimensions} src={src} />;
     },
     h1: heading(1, slugger),
     h2: heading(2, slugger),

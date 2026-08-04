@@ -34,6 +34,36 @@
     justify-content: center;
 }
 
+.header .header-left {
+    min-width: 0;
+}
+
+.header .blog-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.header .search-button {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0;
+}
+
+.header .search-button:hover {
+    background-color: #f3f4f6;
+}
+
+.header .search-button:focus-visible {
+    outline: 2px solid #0077cc;
+    outline-offset: 2px;
+}
+
 .header a:hover {
     color: #0077cc;
 }
@@ -124,7 +154,11 @@
     border: none;              /* 기본 테두리 제거 */
     cursor: pointer;           /* 마우스 커서 변경 */
     transition: background-color 0.3s ease, transform 0.2s ease; /* 전환 효과 */
-    margin-right: 10px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 8px;
+    margin-right: 4px;
     /*height: 10px;*/
 
     display: flex;
@@ -162,6 +196,14 @@
 
 /* 반응형 디자인 (화면이 작을 때) */
 @media (max-width: 900px) {
+    .header {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .header .blog-title {
+        font-size: 1.1rem;
+    }
+
     .contents {
         max-width: 100%;
         width: 100%;
