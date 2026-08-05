@@ -3,9 +3,12 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
+    "predev": "npm run images:metadata",
     "dev": "next dev",
+    "prebuild": "npm run images:metadata",
     "build": "next build",
     "postbuild": "node scripts/check-export.mjs",
+    "images:metadata": "node scripts/collect-remote-image-dimensions.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },

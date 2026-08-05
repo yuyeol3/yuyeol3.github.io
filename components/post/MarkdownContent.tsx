@@ -8,7 +8,8 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
-import { getLocalImageDimensions } from "@/lib/image-dimensions";
+import PostImage from "@/components/post/PostImage";
+import { getImageDimensions } from "@/lib/image-dimensions";
 
 interface MarkdownContentProps {
   markdown: string;
@@ -93,7 +94,20 @@ export default function MarkdownContent({ markdown }: MarkdownContentProps) {
     },
     img({ alt, node, src, ...props }) {
       void node;
-      const dimensions = getLocalImageDimensions(typeof src === "string" ? src : undefined);
+      const imageSource = typeof src === "string" ? src : undefined;
+      const dimensions = getImageDimensions(imageSource);
+
+      if (imageSource && dimensions) {
+        return (
+          <PostImage
+            alt={alt ?? ""}
+            {...props}
+            intrinsicHeight={dimensions.height}
+            intrinsicWidth={dimensions.width}
+            src={imageSource}
+          />
+        );
+      }
 
       // Markdown supports arbitrary remote URLs, which cannot always use next/image safely.
       // eslint-disable-next-line @next/next/no-img-element

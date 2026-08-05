@@ -1,6 +1,7 @@
 /node_modules
 /.next
 /out
+/.cache
 /next-env.d.ts
 /.idea
 *.iml

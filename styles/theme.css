@@ -10,6 +10,8 @@
   --syntax-punctuation: #999;
   --syntax-string: #690;
   --syntax-variable: #e90;
+  --image-skeleton-base: #eaeef2;
+  --image-skeleton-highlight: #f6f8fa;
 }
 
 html[data-theme="dark"] {
@@ -24,6 +26,8 @@ html[data-theme="dark"] {
   --syntax-punctuation: #c9d1d9;
   --syntax-string: #a5d6ff;
   --syntax-variable: #ffa657;
+  --image-skeleton-base: #21262d;
+  --image-skeleton-highlight: #30363d;
 }
 
 .theme-button {
