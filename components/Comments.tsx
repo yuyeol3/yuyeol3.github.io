@@ -6,42 +6,45 @@ interface CommentsProps {
   term: string;
 }
 
-type CommentStatus = "idle" | "loading" | "ready" | "failed";
+type CommentStatus = "loading" | "ready" | "failed";
+
+interface CommentState {
+  status: CommentStatus;
+  term: string;
+}
 
 function getUtterancesTheme() {
   return document.documentElement.dataset.theme === "dark" ? "github-dark" : "github-light";
 }
 
 export default function Comments({ term }: CommentsProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
-  const [status, setStatus] = useState<CommentStatus>("idle");
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper || status !== "idle") {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setStatus("loading");
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "300px" },
-    );
-
-    observer.observe(wrapper);
-    return () => observer.disconnect();
-  }, [status]);
+  const [commentState, setCommentState] = useState<CommentState>({ status: "loading", term });
+  const status = commentState.term === term ? commentState.status : "loading";
 
   useEffect(() => {
     const container = commentsRef.current;
-    if (!container || status !== "loading") {
+    if (!container) {
       return;
     }
+
+    const observer = new MutationObserver(() => {
+      const iframe = container.querySelector<HTMLIFrameElement>(".utterances-frame");
+      iframe?.setAttribute("loading", "eager");
+
+      const utterances = container.querySelector<HTMLElement>(".utterances");
+      if (utterances?.style.height) {
+        observer.disconnect();
+        setCommentState({ status: "ready", term });
+      }
+    });
+
+    observer.observe(container, {
+      attributeFilter: ["style"],
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
 
     const script = document.createElement("script");
     script.async = true;
@@ -50,12 +53,18 @@ export default function Comments({ term }: CommentsProps) {
     script.setAttribute("issue-term", term);
     script.setAttribute("repo", "yuyeol3/yuyeol3.github.io");
     script.setAttribute("theme", getUtterancesTheme());
-    script.onload = () => setStatus("ready");
-    script.onerror = () => setStatus("failed");
-    container.appendChild(script);
+    script.onerror = () => {
+      observer.disconnect();
+      setCommentState({ status: "failed", term });
+    };
+    const loadTimer = window.setTimeout(() => container.appendChild(script));
 
-    return () => script.remove();
-  }, [status, term]);
+    return () => {
+      window.clearTimeout(loadTimer);
+      observer.disconnect();
+      container.replaceChildren();
+    };
+  }, [term]);
 
   useEffect(() => {
     const updateTheme = () => {
@@ -77,8 +86,8 @@ export default function Comments({ term }: CommentsProps) {
   }, []);
 
   return (
-    <div className="comments-wrapper" ref={wrapperRef}>
-      {status === "idle" || status === "loading" ? <p className="loading">댓글 불러오는 중...</p> : null}
+    <div className="comments-wrapper">
+      {status === "loading" ? <p className="loading">댓글 불러오는 중...</p> : null}
       {status === "failed" ? <p className="not-found">댓글을 불러오지 못했습니다.</p> : null}
       <div ref={commentsRef} />
     </div>
