@@ -1,4 +1,7 @@
-# 자료구조 - Binary Search Tree
+---
+title: 자료구조 - Binary Search Tree
+description: '- $O(N)$의 시간 복잡도   - 평균 $N/2$번의 비교'
+---
 
 ## 1. Linear Linked List
 

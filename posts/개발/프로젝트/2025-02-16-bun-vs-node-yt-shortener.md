@@ -1,4 +1,9 @@
-# Bun 도입해보기
+---
+title: Bun 도입해보기
+description: >-
+  최근 Bun이 Node.js보다 성능이 최대 3배까지 좋다는 글을 읽어 최근에 만들어본 Youtube-Shortener 백엔드에 적용해보기로
+  하였다.
+---
 
 최근 Bun이 Node.js보다 성능이 최대 3배까지 좋다는 글을 읽어 최근에 만들어본 [Youtube-Shortener](https://youtube-shortener.duckdns.org/#/) 백엔드에 적용해보기로 하였다.
 

@@ -1,4 +1,10 @@
-# docker container nginx 설정, https 적용
+---
+title: 'docker container nginx 설정, https 적용'
+description: >-
+  현재 사용하고 있는 계정의 aws free-tier가 거의 끝나기도 했고 기존 wigit 서버와 youtube-shortener 서버를 계속
+  돌리고 있어 요금이 많이 나오기도 했다. 따라서 대안을 찾던 중 youtube-shortener 서버를 Google Cloud
+  Platform을 옮기기로 했다.
+---
 
 현재 사용하고 있는 계정의 aws free-tier가 거의 끝나기도 했고 기존 wigit 서버와 youtube-shortener 서버를 계속 돌리고 있어 요금이 많이 나오기도 했다. 따라서 대안을 찾던 중 youtube-shortener 서버를 Google Cloud Platform을 옮기기로 했다. 
 
