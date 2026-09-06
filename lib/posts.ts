@@ -138,22 +138,12 @@ function parsePost(filePath: string): PostContent {
     );
   }
 
-  const lines = parsed.content.replace(/\r\n/g, "\n").split("\n");
-  const titleLineIndex = lines.findIndex((line) => /^#\s+/.test(line));
-  const titleFromContent =
-    titleLineIndex >= 0 ? lines[titleLineIndex].replace(/^#\s+/, "").trim() : undefined;
-  const title = typeof parsed.data.title === "string" ? parsed.data.title : titleFromContent;
-
-  if (!title) {
-    throw new Error(`게시글 제목을 찾을 수 없습니다: ${relativePath}`);
+  const title = parsed.data.title;
+  if (typeof title !== "string") {
+    throw new Error(`게시글 front matter에 title이 없습니다: ${relativePath}`);
   }
 
-  const markdown =
-    titleLineIndex >= 0
-      ? [...lines.slice(0, titleLineIndex), ...lines.slice(titleLineIndex + 1)]
-          .join("\n")
-          .trimStart()
-      : parsed.content.trimStart();
+  const markdown = parsed.content.replace(/\r\n/g, "\n").trimStart();
   const slug = path.basename(fileName, ".md");
   const sourcePath = `posts/${category}/${fileName}`;
 

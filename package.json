@@ -10,7 +10,8 @@
     "postbuild": "node scripts/check-export.mjs",
     "images:metadata": "node scripts/collect-remote-image-dimensions.mjs",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "new": "node scripts/new-post.mjs"
   },
   "dependencies": {
     "github-slugger": "^2.0.0",
