@@ -147,13 +147,16 @@ function parsePost(filePath: string): PostContent {
   const slug = path.basename(fileName, ".md");
   const sourcePath = `posts/${category}/${fileName}`;
 
+  // description 은 front matter 에 값을 채우면 그 값을 쓰고, 비워 두면(없거나 빈 문자열)
+  // 본문 첫 문단에서 자동 발췌한다.
+  const frontMatterDescription = parsed.data.description;
+  const hasDescription =
+    typeof frontMatterDescription === "string" && frontMatterDescription.trim() !== "";
+
   return {
     category,
     date: normalizeDate(parsed.data.date, fileName),
-    description:
-      typeof parsed.data.description === "string"
-        ? parsed.data.description
-        : getDescription(markdown),
+    description: hasDescription ? frontMatterDescription : getDescription(markdown),
     fileName,
     group,
     headings: getHeadings(markdown),
